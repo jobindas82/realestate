@@ -21,6 +21,6 @@ Route::get('/home', 'HomeController@index')->name('home')->middleware('auth');
 
 //Users Routes
 //User List
-Route::get('/view', function(){
+Route::get('/users', function(){
     return View::make('users.index');
 })->middleware('auth');;

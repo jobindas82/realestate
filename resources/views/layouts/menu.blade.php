@@ -49,6 +49,24 @@
                             </li>
                         </ul>
                     </li>
+                    <li class="header">Administration</li>
+                    <li>
+                        <a href="javascript:void(0);" class="menu-toggle">
+                            <span>User & Groups</span>
+                        </a>
+                        <ul class="ml-menu">
+                            <li>
+                                <a href="/user_groups">
+                                    <span>Groups</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/users">
+                                    <span>Users</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                     <li class="header">System Info</li>
                     <li>
                         <a href="pages/changelogs.html">

@@ -15,6 +15,7 @@
                                     <i class="material-icons">more_vert</i>
                                 </a>
                                 <ul class="dropdown-menu pull-right">
+                                    <li><a href="javascript:void(0);">Create</a></li>
                                     <li><a href="javascript:void(0);">Show Active Users</a></li>
                                     <li><a href="javascript:void(0);">Show Blocked Users</a></li>
                                     <li><a href="javascript:void(0);">Show all Users</a></li>
@@ -46,15 +47,25 @@
 
     <script>
         $(function () {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            $('#user_list').DataTable({
+            $('#user_list').on("preXhr.dt", function (e, settings, data) {
+                data.from_date = 1;
+                data.to_date = 1;
+                return data;
+            }).DataTable({
                 responsive: true,
+                // scrollY         : "500px",
+                pageLength      : 50,
+                ajax: {
+                    url: "/ajax-user-list",
+                    type: "POST",
+                    cache : false,
+                },
+                serverSide:     true,
+                fixedColumns:   true,
+                processing: true,
+                order: [[ 1, "desc" ]],
             });
         });
     </script>
+
 @endsection

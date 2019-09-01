@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+
     <title>{{ config('app.name', 'Laravel') }}</title>
     <!-- Favicon-->
     <link rel="icon" href="favicon.ico" type="image/x-icon">
@@ -76,6 +78,9 @@
 
     <!-- Custom Js -->
     <script src="{{ asset('js/admin.js') }}"></script>
+
+    <!-- Custom Js -->
+    <script src="{{ asset('js/skin.js') }}"></script>
 </head>
 
 <body class="{{ config('app.theme', 'theme-indigo') }}">
@@ -87,10 +92,6 @@
     <!-- Overlay For Sidebars -->
     <div class="overlay"></div>
     <!-- #END# Overlay For Sidebars -->
-
-    <!-- Search Bar -->
-        @include('layouts.search_bar')
-    <!-- #END# Search Bar -->
 
     <!-- Top Bar -->
         @include('layouts.topbar')
@@ -155,6 +156,17 @@
         @yield('content')
     </section>
 
+    <!-- AJAX TOKEN -->
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
+    <!-- END-->
+
 </body>
+
 
 </html>

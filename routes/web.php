@@ -24,3 +24,6 @@ Route::get('/home', 'HomeController@index')->name('home')->middleware('auth');
 Route::get('/users', function(){
     return View::make('users.index');
 })->middleware('auth');;
+
+//AJAX DATA
+Route::post('/ajax-user-list', 'UserController@userlist')->middleware('auth');

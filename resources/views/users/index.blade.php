@@ -15,7 +15,7 @@
                                     <i class="material-icons">more_vert</i>
                                 </a>
                                 <ul class="dropdown-menu pull-right">
-                                    <li><a href="javascript:void(0);">Create</a></li>
+                                    <li><a href="/users/create">Create</a></li>
                                     <li><a href="javascript:void(0);">Show Active Users</a></li>
                                     <li><a href="javascript:void(0);">Show Blocked Users</a></li>
                                     <li><a href="javascript:void(0);">Show all Users</a></li>
@@ -28,12 +28,12 @@
                             <table class="table table-bordered table-striped table-hover dataTable" id="user_list">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>S. No</th>
+                                        <th>#</th>
+                                        <th>Username</th>
                                         <th>Name</th>
                                         <th>Email</th>
-                                        <th>Created at</th>
-                                        <th>Action</th>
+                                        <th>Belongs to</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -56,7 +56,7 @@
                 // scrollY         : "500px",
                 pageLength      : 50,
                 ajax: {
-                    url: "/ajax-user-list",
+                    url: "/users/getlist",
                     type: "POST",
                     cache : false,
                 },

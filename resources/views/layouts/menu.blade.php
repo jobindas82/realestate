@@ -61,7 +61,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="/users">
+                                <a href="/users/index">
                                     <span>Users</span>
                                 </a>
                             </li>

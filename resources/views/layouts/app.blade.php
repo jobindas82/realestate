@@ -36,6 +36,9 @@
     <!-- AdminBSB Themes. You can choose a theme from css/themes instead of get all themes -->
     <link href="{{ asset('css/themes/all-themes.css') }}" rel="stylesheet" />
 
+     <!-- Sweetalert Css -->
+     <link href="{{ asset('plugins/sweetalert/sweetalert.css') }}" rel="stylesheet" />
+
     <!-- Jquery Core Js -->
     <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
 
@@ -72,9 +75,12 @@
     <!-- ChartJs -->
     <script src="{{ asset('plugins/chartjs/Chart.bundle.js') }}"></script>
 
-
     <!-- Sparkline Chart Plugin Js -->
     <script src="{{ asset('plugins/jquery-sparkline/jquery.sparkline.js') }}"></script>
+
+    <!-- SweetAlert Plugin Js -->
+    <script src="{{ asset('plugins/sweetalert/sweetalert2.all.min.js') }}"></script>
+
 
     <!-- Custom Js -->
     <script src="{{ asset('js/admin.js') }}"></script>
@@ -149,7 +155,7 @@
         <!-- Right Sidebar -->
             @include('layouts.rightbar')
         <!-- #END# Right Sidebar -->
-        
+
     </section>
 
     <section class="content">

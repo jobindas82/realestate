@@ -19,11 +19,17 @@ Auth::routes();
 Route::get('/', 'HomeController@index')->middleware('auth');
 Route::get('/home', 'HomeController@index')->name('home')->middleware('auth');
 
-//Users Routes
-//User List
-Route::get('/users', function(){
-    return View::make('users.index');
-})->middleware('auth');;
 
+/**
+ * User Master Routes
+ */
+//User List
+Route::get('/users/index', [ 'as' => 'users.index' , 'uses' => 'UserController@index' ])->middleware('auth');
 //AJAX DATA
-Route::post('/ajax-user-list', 'UserController@userlist')->middleware('auth');
+Route::post('/users/getlist', 'UserController@userlist')->middleware('auth');
+//Create new user
+Route::get('/users/create', 'UserController@create')->middleware('auth');
+//Edit existing User
+Route::get('/users/create/{id}', 'UserController@create')->middleware('auth');
+//Save or Update User
+Route::post('/users/update',[ 'as' => 'users.update', 'uses' => 'UserController@update' ])->middleware('auth');

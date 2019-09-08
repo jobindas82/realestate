@@ -33,3 +33,5 @@ Route::get('/users/create', 'UserController@create')->middleware('auth');
 Route::get('/users/create/{id}', 'UserController@create')->middleware('auth');
 //Save or Update User
 Route::post('/users/update',[ 'as' => 'users.update', 'uses' => 'UserController@update' ])->middleware('auth');
+//Update password
+Route::post('/users/changepword',[ 'as' => 'users.changepword', 'uses' => 'UserController@changepword' ])->middleware('auth');

@@ -4,6 +4,16 @@
     <div class="container-fluid">
         <div class="row clearfix">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="/">
+                            <i class="material-icons">home</i> Home
+                        </a>
+                    </li>
+                    <li class="active">
+                        <i class="material-icons">group</i> Users
+                    </li>
+                </ol>
                 <div class="card">
                     <div class="header">
                         <h2>

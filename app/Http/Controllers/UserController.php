@@ -77,15 +77,48 @@ class UserController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Store a newly created resource in storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\userRequest  $request
+     * @return \App\Http\Requests\userRequest $response
      */
-    public function destroy($id)
+    public function changepword(Request $request)
     {
-        //
+        //Input Data
+        $data = $request->all();
+
+        //Validation of Request
+        $validator = \Validator::make($data, [
+            'name' => 'required',
+            'email' => ['required', function ($attribute, $value, $fail) {
+                if (auth()->user()->email != $value && trim($value) != '') {
+                    $count = DB::table('users')->where('email', $value)->count();
+                    if ($count > 0)
+                        $fail('Email already in use!');
+                }
+            }],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), 200);
+        } else {
+
+            $userModel = new User;
+            if ($data['id'] > 0) {
+                $userModel = User::find($data['id']);
+            }
+            $userModel->password = \Hash::make('123456789');
+
+            $userModel->fill($data);
+            $userModel->save();
+
+            return response()->json(['message' => 'success']);
+
+            //        $hashedPassword = \Hash::make($password);
+            //        $check = \Hash::check('plain-text-password', $hashedPassword)
+        }
     }
+
 
     /**
      * Users List JSON Data

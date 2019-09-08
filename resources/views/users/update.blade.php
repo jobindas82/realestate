@@ -4,6 +4,21 @@
     <div class="container-fluid">
         <div class="row clearfix">
              <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                            <li>
+                                <a href="/">
+                                    <i class="material-icons">home</i> Home
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/users/index">
+                                    <i class="material-icons">group</i> Users
+                                </a>
+                            </li>
+                            <li class="active">
+                                <i class="material-icons">group_add</i> Edit user
+                            </li>
+                        </ol>
                 <div class="card">
                     <div class="body">
                         <div>
@@ -44,38 +59,42 @@
                                     {{ Form::close() }}
                                 </div>
                                 <div role="tabpanel" class="tab-pane fade in" id="change_password_settings">
-                                    <form class="form-horizontal">
+                                    {{ Form::open(['method' => 'post', 'class' => 'form-horizontal', 'id' => 'user-password-form']) }}
                                         <div class="form-group">
                                             <label for="OldPassword" class="col-sm-3 control-label">Old Password</label>
                                             <div class="col-sm-9">
                                                 <div class="form-line">
-                                                    <input type="password" class="form-control" id="OldPassword" name="OldPassword" placeholder="Old Password" required>
+                                                    {{ Form::hidden('id', $userModel->id) }}
+                                                    {{ Form::password('old_password', ['class' => 'form-control', 'placeholder' => 'Old Password', 'required' => true ]) }}
                                                 </div>
+                                                <label style="dispaly:none" id="old_password-error" class="error" for="old_password"></label>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="NewPassword" class="col-sm-3 control-label">New Password</label>
                                             <div class="col-sm-9">
                                                 <div class="form-line">
-                                                    <input type="password" class="form-control" id="NewPassword" name="NewPassword" placeholder="New Password" required>
+                                                    {{ Form::password('new_password', ['class' => 'form-control', 'placeholder' => 'New Password', 'required' => true ]) }}
                                                 </div>
+                                                <label style="dispaly:none" id="new_password-error" class="error" for="new_password"></label>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="NewPasswordConfirm" class="col-sm-3 control-label">New Password (Confirm)</label>
                                             <div class="col-sm-9">
                                                 <div class="form-line">
-                                                    <input type="password" class="form-control" id="NewPasswordConfirm" name="NewPasswordConfirm" placeholder="New Password (Confirm)" required>
+                                                    {{ Form::password('confirm_password', ['class' => 'form-control', 'placeholder' => 'New Password (Confirm)', 'required' => true ]) }}
                                                 </div>
+                                                <label style="dispaly:none" id="confirm_password-error" class="error" for="confirm_password"></label>
                                             </div>
                                         </div>
 
                                         <div class="form-group">
                                             <div class="col-sm-offset-3 col-sm-9">
-                                                <button type="submit" class="btn btn-danger">SUBMIT</button>
+                                                    {{ Form::submit('Save', [ 'id' => 'pword_submit', 'class' => 'btn btn-danger'] )  }}
                                             </div>
                                         </div>
-                                    </form>
+                                    {{ Form::close() }}
                                 </div>
                             </div>
                         </div>
@@ -88,10 +107,12 @@
 
     <script>
         $( document ).ready( function() {
+            //general form
             $( '#user-general' ).on( 'submit', function(e) {
                 //Hide Error Fields
                 $('.error').hide();
                 e.preventDefault();
+                $('.page-loader-wrapper').fadeIn();
 
                 $.ajax({
                     type: "POST",
@@ -99,6 +120,7 @@
                     data: $(this).serialize(),
                     success: function( response ) {
                         if( response.message == 'success' ){
+                            $('.page-loader-wrapper').fadeOut();
                             Swal.fire(
                                 'SUCCESS',
                                 'User detailed updated!',
@@ -108,6 +130,40 @@
                                 location.href = "/users/index";
                             });
                         }else{
+                            $('.page-loader-wrapper').fadeOut();
+                            $.each(response, function(fieldName, fieldErrors) {
+                                $('#'+fieldName+'-error').text(fieldErrors.toString());
+                                $('#'+fieldName+'-error').show();
+                            });
+                        }
+                    }
+                });
+            });
+
+            //password update
+            $( '#user-password-form' ).on( 'submit', function(e) {
+                //Hide Error Fields
+                $('.error').hide();
+                e.preventDefault();
+                $('.page-loader-wrapper').fadeIn();
+
+                $.ajax({
+                    type: "POST",
+                    url: '/users/changepword',
+                    data: $(this).serialize(),
+                    success: function( response ) {
+                        if( response.message == 'success' ){
+                            $('.page-loader-wrapper').fadeOut();
+                            Swal.fire(
+                                'SUCCESS',
+                                'Password updated!',
+                                'success'
+                            ).then(function () {
+                                // when click ok then redirect back
+                                location.href = "/users/index";
+                            });
+                        }else{
+                            $('.page-loader-wrapper').fadeOut();
                             $.each(response, function(fieldName, fieldErrors) {
                                 $('#'+fieldName+'-error').text(fieldErrors.toString());
                                 $('#'+fieldName+'-error').show();

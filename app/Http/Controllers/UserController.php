@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use App\User;
 use Illuminate\Http\Request;
+use App\Rules\MatchOldPassword;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -47,32 +49,31 @@ class UserController extends Controller
         //Validation of Request
         $validator = \Validator::make($data, [
             'name' => 'required',
-            'email' => ['required', function ($attribute, $value, $fail) {
-                if (auth()->user()->email != $value && trim($value) != '') {
-                    $count = DB::table('users')->where('email', $value)->count();
-                    if ($count > 0)
-                        $fail('Email already in use!');
-                }
-            }],
+            'email' => 'required'
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->messages(), 200);
         } else {
 
-            $userModel = new User;
-            if ($data['id'] > 0) {
-                $userModel = User::find($data['id']);
+            $count = 0;
+            if ($data['old_email'] != $data['email'] && trim($data['email']) != '') {
+                $count = DB::table('users')->where('email', $data['email'])->count();
             }
-            $userModel->password = \Hash::make('123456789');
 
-            $userModel->fill($data);
-            $userModel->save();
+            if ($count > 0) {
+                return response()->json(['email' => 'Email already exist!'], 200);
+            } else {
 
-            return response()->json(['message' => 'success']);
+                $userModel = new User;
+                if ($data['id'] > 0) {
+                    $userModel = User::find($data['id']);
+                }
+                $userModel->fill($data);
+                $userModel->save();
 
-            //        $hashedPassword = \Hash::make($password);
-            //        $check = \Hash::check('plain-text-password', $hashedPassword)
+                return response()->json(['message' => 'success']);
+            }
         }
     }
 
@@ -89,14 +90,10 @@ class UserController extends Controller
 
         //Validation of Request
         $validator = \Validator::make($data, [
-            'name' => 'required',
-            'email' => ['required', function ($attribute, $value, $fail) {
-                if (auth()->user()->email != $value && trim($value) != '') {
-                    $count = DB::table('users')->where('email', $value)->count();
-                    if ($count > 0)
-                        $fail('Email already in use!');
-                }
-            }],
+            'id' => 'required',
+            'current_password' => ['required', new MatchOldPassword],
+            'new_password' => ['required'],
+            'new_confirm_password' => ['same:new_password'],
         ]);
 
         if ($validator->fails()) {
@@ -107,15 +104,49 @@ class UserController extends Controller
             if ($data['id'] > 0) {
                 $userModel = User::find($data['id']);
             }
-            $userModel->password = \Hash::make('123456789');
 
-            $userModel->fill($data);
+            $userModel->password = Hash::make($data['new_password']);
             $userModel->save();
 
             return response()->json(['message' => 'success']);
+        }
+    }
 
-            //        $hashedPassword = \Hash::make($password);
-            //        $check = \Hash::check('plain-text-password', $hashedPassword)
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \App\Http\Requests\userRequest  $request
+     * @return \App\Http\Requests\userRequest $response
+     */
+    public function store(Request $request)
+    {
+        //Input Data
+        $data = $request->all();
+
+        //Validation of Request
+        $validator = \Validator::make($data, [
+            'name' => 'required',
+            'email' => ['required', function ($attribute, $value, $fail) {
+                if (trim($value) != '') {
+                    $count = DB::table('users')->where('email', $value)->count();
+                    if ($count > 0)
+                        $fail('Email already in use!');
+                }
+            }],
+            'new_password' => ['required'],
+            'new_confirm_password' => ['same:new_password'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), 200);
+        } else {
+
+            $userModel = new User;
+            $userModel->fill($data);
+            $userModel->password = Hash::make($data['new_password']);
+            $userModel->save();
+
+            return response()->json(['message' => 'success']);
         }
     }
 

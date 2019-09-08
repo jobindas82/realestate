@@ -65,9 +65,9 @@
                                             <div class="col-sm-9">
                                                 <div class="form-line">
                                                     {{ Form::hidden('id', $userModel->id) }}
-                                                    {{ Form::password('old_password', ['class' => 'form-control', 'placeholder' => 'Old Password', 'required' => true ]) }}
+                                                    {{ Form::password('current_password', ['class' => 'form-control', 'placeholder' => 'Old Password', 'required' => true ]) }}
                                                 </div>
-                                                <label style="dispaly:none" id="old_password-error" class="error" for="old_password"></label>
+                                                <label style="dispaly:none" id="current_password-error" class="error" for="current_password"></label>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -83,9 +83,9 @@
                                             <label for="NewPasswordConfirm" class="col-sm-3 control-label">New Password (Confirm)</label>
                                             <div class="col-sm-9">
                                                 <div class="form-line">
-                                                    {{ Form::password('confirm_password', ['class' => 'form-control', 'placeholder' => 'New Password (Confirm)', 'required' => true ]) }}
+                                                    {{ Form::password('new_confirm_password', ['class' => 'form-control', 'placeholder' => 'New Password (Confirm)', 'required' => true ]) }}
                                                 </div>
-                                                <label style="dispaly:none" id="confirm_password-error" class="error" for="confirm_password"></label>
+                                                <label style="dispaly:none" id="new_confirm_password-error" class="error" for="new_confirm_password"></label>
                                             </div>
                                         </div>
 

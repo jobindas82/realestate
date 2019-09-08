@@ -29,8 +29,7 @@
                                             <label for="NameSurname" class="col-sm-2 control-label">Name</label>
                                             <div class="col-sm-10">
                                                 <div class="form-line">
-                                                    {{ Form::hidden('id', $userModel->id) }}
-                                                    {{ Form::text('name', $userModel->name, [ 'class' => 'form-control', 'required' => true]) }}
+                                                    {{ Form::text('name', '', [ 'class' => 'form-control', 'required' => true]) }}
                                                 </div>
                                                 <label style="dispaly:none" id="name-error" class="error" for="name"></label>
                                             </div>
@@ -39,8 +38,7 @@
                                             <label for="Email" class="col-sm-2 control-label">Email</label>
                                             <div class="col-sm-10">
                                                 <div class="form-line">
-                                                    {{ Form::hidden('old_email', $userModel->email ) }}
-                                                    {{ Form::email('email', $userModel->email, [ 'class' => 'form-control', 'required' => true ]) }}
+                                                    {{ Form::email('email', '', [ 'class' => 'form-control', 'required' => true ]) }}
                                                 </div>
                                                 <label style="dispaly:none" id="email-error" class="error" for="email"></label>
                                             </div>
@@ -49,16 +47,18 @@
                                                 <label for="NewPassword" class="col-sm-2 control-label">New Password</label>
                                                 <div class="col-sm-9">
                                                     <div class="form-line">
-                                                        <input type="password" class="form-control" id="NewPassword" name="NewPassword" placeholder="New Password" required>
+                                                        {{ Form::password('new_password', ['class' => 'form-control', 'placeholder' => 'New Password', 'required' => true ]) }}
                                                     </div>
+                                                    <label style="dispaly:none" id="new_password-error" class="error" for="new_password"></label>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label for="NewPasswordConfirm" class="col-sm-2 control-label">New Password (Confirm)</label>
                                                 <div class="col-sm-9">
                                                     <div class="form-line">
-                                                        <input type="password" class="form-control" id="NewPasswordConfirm" name="NewPasswordConfirm" placeholder="New Password (Confirm)" required>
+                                                        {{ Form::password('new_confirm_password', ['class' => 'form-control', 'placeholder' => 'New Password (Confirm)', 'required' => true ]) }}
                                                     </div>
+                                                    <label style="dispaly:none" id="new_confirm_password-error" class="error" for="new_confirm_password"></label>
                                                 </div>
 
                                         <div class="form-group">
@@ -87,14 +87,14 @@
 
                 $.ajax({
                     type: "POST",
-                    url: '/users/update',
+                    url: '/users/store',
                     data: $(this).serialize(),
                     success: function( response ) {
                         if( response.message == 'success' ){
                             $('.page-loader-wrapper').fadeOut();
                             Swal.fire(
                                 'SUCCESS',
-                                'User detailed updated!',
+                                'User saved!',
                                 'success'
                             ).then(function () {
                                 // when click ok then redirect back

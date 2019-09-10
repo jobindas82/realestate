@@ -7,6 +7,7 @@ use App\User;
 use Illuminate\Http\Request;
 use App\Rules\MatchOldPassword;
 use Illuminate\Support\Facades\Hash;
+use App\Essentials\UriEncode;
 
 class UserController extends Controller
 {
@@ -26,8 +27,9 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($id = 0)
+    public function create($encrypted = 0)
     {
+        $id = UriEncode::decrypt($encrypted);
         $userModel = new User;
         if ($id > 0)
             $userModel = User::find($id);
@@ -194,7 +196,11 @@ class UserController extends Controller
 
 
         foreach ($users as $eachItem) {
-            $eachItemData[] = array($eachItem->name, $eachItem->name, $eachItem->name, $eachItem->name, $eachItem->name, $eachItem->name);
+            //Edit Button
+            $actions = '<a title="Edit user details" href="/users/create/'. UriEncode::encrypt($eachItem->id) .'"><i class="material-icons" >create</i></a>';
+            //Block Button
+            $actions .= ' <a title="Block User" href="#" onclick="blockUser('.$eachItem->id.')"><i class="material-icons" >block</i></a>';
+            $eachItemData[] = array($eachItem->name, $eachItem->name, $eachItem->name, $eachItem->name, $eachItem->name, '<div class="text-center">'. $actions .'</div>');
         }
         $data['data'] = $eachItemData;
         echo json_encode($data);

@@ -25,10 +25,10 @@
                                     <i class="material-icons">more_vert</i>
                                 </a>
                                 <ul class="dropdown-menu pull-right">
-                                    <li><a href="/users/create">Create</a></li>
-                                    <li><a href="javascript:void(0);">Show Active Users</a></li>
-                                    <li><a href="javascript:void(0);">Show Blocked Users</a></li>
-                                    <li><a href="javascript:void(0);">Show all Users</a></li>
+                                    <li><a href="/users/create"><i class="material-icons" >add_circle</i> Create</a></li>
+                                    <li><a href="javascript:void(0);"><i class="material-icons" >done</i> Active</a></li>
+                                    <li><a href="javascript:void(0);"><i class="material-icons" >report</i> Blocked</a></li>
+                                    <li><a href="javascript:void(0);"><i class="material-icons" >group</i> All</a></li>
                                 </ul>
                             </li>
                         </ul>

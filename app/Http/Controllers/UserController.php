@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Rules\MatchOldPassword;
 use Illuminate\Support\Facades\Hash;
 use App\Essentials\UriEncode;
+use App\Events\MyEvent;
 
 class UserController extends Controller
 {
@@ -27,9 +28,9 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($encrypted = 0)
+    public function create($key = 0)
     {
-        $id = UriEncode::decrypt($encrypted);
+        $id = UriEncode::decrypt($key);
         $userModel = new User;
         if ($id > 0)
             $userModel = User::find($id);
@@ -73,6 +74,8 @@ class UserController extends Controller
                 }
                 $userModel->fill($data);
                 $userModel->save();
+
+                //event(new MyEvent('hello world'));
 
                 return response()->json(['message' => 'success']);
             }
@@ -163,31 +166,39 @@ class UserController extends Controller
         $draw   = $_POST['draw'];
         $offset = $_POST['start'];
         $limit  = $_POST['length'];
+        $keyword = trim($_POST['search']['value']);
 
-        $columns = array(
-            // datatable column index  => database column name
-            0 => 'inb_doc_no',
-            1 => 'inb_delivery_note_no',
-            2 => 'inb_ta_number',
-            3 => 'inb_bill_of_entry_no',
-            4 => 'inb_added_date',
-            5 => 'inb_delivery_note_posted',
-            6 => 'inb_doc_no',
-        );
+        //Custom Filter
+        $filter_type = $_POST['filter_type'];
+
+        $columns = [
+                        // datatable column index  => database column name
+                        0 => 'id',
+                        1 => 'name',
+                        2 => 'email',
+                        3 => 'name',
+                        4 => 'id'
+                    ];
 
         $filterColumn = $columns[$_POST['order'][0]['column']];
         $filterOrder  = $_POST['order'][0]['dir'];
-        $orderBy   = $filterColumn . " " . $filterOrder;
-        $condition = '1=1';
-        if (isset($_POST['search']['value']) && trim($_POST['search']['value']) != "") {
-            $searchString = trim($_POST['search']['value']);
-            $condition .= " AND (inb_doc_no LIKE '%" . $searchString . "%' OR inb_delivery_note_no LIKE '%" . $searchString . "%' OR inb_ta_number LIKE '%" . $searchString . "%' OR inb_bill_of_entry_no LIKE '%" . $searchString . "%')";
+
+        //Eloquent Result
+        $query = User::query();
+
+        if( $filter_type != '' ){
+
         }
 
-        $users = DB::table('users')->get();
-        $count = DB::table('users')->count();
+        if ( $keyword != "" ) {
+            $query->orWhere('name','LIKE', '%'.$keyword.'%');
+            $query->orWhere('email','LIKE', '%'.$keyword.'%');
+        }
 
-        $recordsTotal = $count;
+        //Result
+        $result = $query->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->get();
+
+        $recordsTotal = $result->count();
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
@@ -195,14 +206,15 @@ class UserController extends Controller
         $eachItemData = array();
 
 
-        foreach ($users as $eachItem) {
+        foreach ($result as $eachItem) {
             //Edit Button
             $actions = '<a title="Edit user details" href="/users/create/'. UriEncode::encrypt($eachItem->id) .'"><i class="material-icons" >create</i></a>';
             //Block Button
             $actions .= ' <a title="Block User" href="#" onclick="blockUser('.$eachItem->id.')"><i class="material-icons" >block</i></a>';
-            $eachItemData[] = array($eachItem->name, $eachItem->name, $eachItem->name, $eachItem->name, $eachItem->name, '<div class="text-center">'. $actions .'</div>');
+            $eachItemData[] = [ $eachItem->id, $eachItem->name, $eachItem->email, 'NA', '<div class="text-center">'. $actions .'</div>' ];
         }
         $data['data'] = $eachItemData;
-        echo json_encode($data);
+
+        return response()->json( $data );
     }
 }

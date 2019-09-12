@@ -26,9 +26,11 @@
                                 </a>
                                 <ul class="dropdown-menu pull-right">
                                     <li><a href="/users/create"><i class="material-icons" >add_circle</i> Create</a></li>
-                                    <li><a href="javascript:void(0);"><i class="material-icons" >done</i> Active</a></li>
-                                    <li><a href="javascript:void(0);"><i class="material-icons" >report</i> Blocked</a></li>
-                                    <li><a href="javascript:void(0);"><i class="material-icons" >group</i> All</a></li>
+                                    <li><a href="#" onclick="$('#showType').val('AC'); reload_datatable('#user_list');"><i class="material-icons" >done</i> Active</a></li>
+                                    <li><a href="#" onclick="$('#showType').val('BL'); reload_datatable('#user_list');"><i class="material-icons" >report</i> Blocked</a></li>
+                                    <li><a href="#" onclick="$('#showType').val('ALL'); reload_datatable('#user_list');"><i class="material-icons" >group</i> All</a></li>
+
+                                    <input type="hidden" id="showType" value="AC" />
                                 </ul>
                             </li>
                         </ul>
@@ -39,7 +41,6 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Username</th>
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Belongs to</th>
@@ -58,8 +59,7 @@
     <script>
         $(function () {
             $('#user_list').on("preXhr.dt", function (e, settings, data) {
-                data.from_date = 1;
-                data.to_date = 1;
+                data.filter_type = $('#showType').val();
                 return data;
             }).DataTable({
                 responsive: true,

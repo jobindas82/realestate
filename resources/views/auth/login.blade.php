@@ -26,7 +26,7 @@
                         @error('password')
                             <label id="password-error" class="error" for="password">{{ $message }}</label>
                         @enderror
-                    </div> 
+                    </div>
                     <div class="row">
                         <div class="col-xs-8 p-t-5">
                             <input class="filled-in chk-col-pink" type="checkbox" name="remember" id="rememberme" {{ old('remember') ? 'checked' : '' }}>

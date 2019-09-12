@@ -87,6 +87,25 @@
 
     <!-- Custom Js -->
     <script src="{{ asset('js/skin.js') }}"></script>
+
+    <!-- Pusher -->
+    <script src="https://js.pusher.com/5.0/pusher.min.js"></script>
+    <script>
+
+        // Enable pusher logging - don't include this in production
+        Pusher.logToConsole = true;
+
+        var pusher = new Pusher('320c8a9cd2bfcc60e682', {
+            cluster: 'ap2',
+            forceTLS: true
+        });
+
+        var channel = pusher.subscribe('my-channel');
+            channel.bind('my-event', function(data) {
+            alert(JSON.stringify(data));
+        });
+    </script>
+
 </head>
 
 <body class="{{ config('app.theme', 'theme-indigo') }}">
@@ -169,6 +188,11 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+
+        //Reload Datatable
+        function reload_datatable(table_id){
+                $(table_id).DataTable().ajax.reload();
+        }
     </script>
     <!-- END-->
 

@@ -30,7 +30,7 @@ Route::post('/users/getlist', 'UserController@userlist')->middleware('auth');
 //Create new user
 Route::get('/users/create', [ 'as' => 'users.create' , 'uses' => 'UserController@create' ])->middleware('auth');
 //Edit existing User
-Route::get('/users/create/{id}',[ 'as' => 'users.edit' , 'uses' => 'UserController@create' ])->middleware('auth');
+Route::get('/users/create/{key}',[ 'as' => 'users.edit' , 'uses' => 'UserController@create' ])->middleware('auth');
 //Save or Update User
 Route::post('/users/update',[ 'as' => 'users.update', 'uses' => 'UserController@update' ])->middleware('auth');
 //Save or Update User

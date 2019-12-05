@@ -11,8 +11,8 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/masters/construction/index">
-                            <i class="material-icons">settings</i> Construction types
+                        <a href="/masters/job/index">
+                            <i class="material-icons">settings</i> Job types
                         </a>
                     </li>
                     <li class="active">
@@ -24,7 +24,7 @@
                         <div>
                             <div class="tab-content">
                                 <div role="tabpanel" class="tab-pane fade in active" id="profile_settings">
-                                    {{ Form::open(['method' => 'post', 'class' => 'form-horizontal', 'id' => 'construction-type-general']) }}
+                                    {{ Form::open(['method' => 'post', 'class' => 'form-horizontal', 'id' => 'flat-type-general']) }}
                                         <div class="form-group">
                                             <label for="NameSurname" class="col-sm-2 control-label">Name</label>
                                             <div class="col-sm-10">
@@ -32,15 +32,7 @@
                                                     {{ Form::hidden('id', $model->id) }}
                                                     {{ Form::text('name', $model->name, [ 'class' => 'form-control']) }}
                                                 </div>
-                                                <label style="display:none" id="name-error" class="error" for="name"></label>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="tax_code" class="col-sm-2 control-label">Tax Percentage</label>
-                                            <div class="col-sm-4">
-                                                <div class="form-line">
-                                                    {{ Form::select('tax_code', \App\models\TaxCode::activeCodes((int) $model->tax_code), $model->tax_code, [ 'class' => 'form-control show-tick']) }}
-                                                </div>
+                                                <label style="dispaly:none" id="name-error" class="error" for="name"></label>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -61,7 +53,7 @@
 
     <script>
         $( document ).ready( function() {
-            $( '#construction-type-general' ).on( 'submit', function(e) {
+            $( '#flat-type-general' ).on( 'submit', function(e) {
                 //Hide Error Fields
                 $('.error').hide();
                 e.preventDefault();
@@ -69,18 +61,18 @@
 
                 $.ajax({
                     type: "POST",
-                    url: '/masters/construction/save',
+                    url: '/masters/job/save',
                     data: $(this).serialize(),
                     success: function( response ) {
                         if( response.message == 'success' ){
                             $('.page-loader-wrapper').fadeOut();
                             Swal.fire(
                                 'SUCCESS',
-                                'Construction type saved!',
+                                'Job type saved!',
                                 'success'
                             ).then(function () {
                                 // when click ok then redirect back
-                                location.href = "/masters/construction/index";
+                                location.href = "/masters/job/index";
                             });
                         }else{
                             $('.page-loader-wrapper').fadeOut();

@@ -39,7 +39,7 @@
                                     <label for="tax_code" class="col-sm-2 control-label">Country</label>
                                     <div class="col-sm-5">
                                         <div class="form-line">
-                                            {{ Form::select('country_id', \App\Countries::activeTypes((int) $model->country_id), $model->country_id, [ 'class' => 'form-control show-tick']) }}
+                                            {{ Form::select('country_id', \App\models\Countries::activeTypes((int) $model->country_id), $model->country_id, [ 'class' => 'form-control show-tick']) }}
                                         </div>
                                     </div>
                                 </div>

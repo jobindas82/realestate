@@ -51,6 +51,13 @@ Route::post('/masters/location/getlist', 'MasterController@location_list')->midd
 Route::get('/masters/location/create/{key}',[ 'as' => 'masters.location.create' , 'uses' => 'MasterController@location_create' ])->middleware('auth');
 Route::post('/masters/location/save', 'MasterController@location_save')->middleware('auth');
 
+//Location
+Route::get('/masters/job/index', [ 'as' => 'masters.job.index' , 'uses' => 'MasterController@job_type_index' ])->middleware('auth');
+Route::get('/masters/job/create', [ 'as' => 'masters.job.create' , 'uses' => 'MasterController@job_type_create' ])->middleware('auth');
+Route::post('/masters/job/getlist', 'MasterController@job_type_list')->middleware('auth');
+Route::get('/masters/job/create/{key}',[ 'as' => 'masters.job.create' , 'uses' => 'MasterController@job_type_create' ])->middleware('auth');
+Route::post('/masters/job/save', 'MasterController@job_type_save')->middleware('auth');
+
 
 /**
  * User Master Routes

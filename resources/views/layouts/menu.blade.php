@@ -122,7 +122,8 @@
                             Route::is('masters.country.create') ||  
                             Route::is('masters.location.index') ||  
                             Route::is('masters.location.create') ||  
-                            Route::is('masters.maintenance_type_index') ||  
+                            Route::is('masters.job.index') ||  
+                            Route::is('masters.job.create') ||  
                             Route::is('masters.tax_code_index') ||  
                             Route::is('masters.document_type_index')  
                             ? 'active' : '' 
@@ -152,9 +153,9 @@
                         <span>Location</span>
                     </a>
                 </li>
-                <li class="{{ Route::is('masters.maintenance_type_index') ? 'active' : '' }}">
-                    <a href="/users/index">
-                        <span>Maintenance Type</span>
+                <li class="{{ Route::is('masters.job.index') ||  Route::is('masters.job.create')  ? 'active' : '' }}">
+                    <a href="/masters/job/index">
+                        <span>Job Type</span>
                     </a>
                 </li>
                 <li class="{{ Route::is('masters.tax_code_index') ? 'active' : '' }}">

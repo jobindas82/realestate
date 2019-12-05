@@ -1,18 +1,19 @@
 <?php
 
-namespace App;
+namespace App\models;
+
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class TaxCode extends Model
+class Location extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'tax_code';
+    protected $table = 'locations';
 
     /**
      * The attributes that are mass assignable.
@@ -20,7 +21,7 @@ class TaxCode extends Model
      * @var array
      */
     protected $fillable = [
-        'code', 'is_active', 'percentage'
+        'name', 'country_id', 'is_active'
     ];
 
     protected static function boot()
@@ -31,7 +32,12 @@ class TaxCode extends Model
         });
     }
 
-    public static function activeCodes($id = 0)
+    public function country()
+    {
+        return $this->belongsTo(Countries::class, 'country_id');
+    }
+
+    public static function activeTypes($id = 0)
     {
         $query = self::query()->where('is_active', 'Y');
         if ($id > 0)
@@ -39,7 +45,7 @@ class TaxCode extends Model
         $model = $query->get();
         $response = [];
         foreach ($model as $each) {
-            $response[$each->id] = $each->code;
+            $response[$each->id] = $each->name;
         }
         return $response;
     }

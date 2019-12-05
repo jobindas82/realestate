@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
-use App\FlatTypes;
-use App\ConstructionTypes;
-use App\Countries;
-use App\Location;
+use App\models\FlatTypes;
+use App\models\ConstructionTypes;
+use App\models\Countries;
+use App\models\Location;
 use Illuminate\Http\Request;
 use App\Essentials\UriEncode;
+use App\models\JobTypes;
 
 class MasterController extends Controller
 {
@@ -356,6 +356,93 @@ class MasterController extends Controller
             $model = new Location();
             if ($data['id'] > 0) {
                 $model = Location::find($data['id']);
+            }
+            $model->fill($data);
+            $model->save();
+
+            return response()->json(['message' => 'success']);
+        }
+    }
+
+    public function job_type_index()
+    {
+        return view('masters.job_type.index');
+    }
+
+    public function job_type_list()
+    {
+
+        $draw   = $_POST['draw'];
+        $offset = $_POST['start'];
+        $limit  = $_POST['length'];
+        $keyword = trim($_POST['search']['value']);
+
+        $columns = [
+            // datatable column index  => database column name
+            0 => 'id',
+            1 => 'name',
+            2 => 'id'
+        ];
+
+        $filterColumn = $columns[$_POST['order'][0]['column']];
+        $filterOrder  = $_POST['order'][0]['dir'];
+
+        //Eloquent Result
+        $query = JobTypes::query();
+
+        if ($keyword != "") {
+            $query->orWhere('name', 'LIKE', '%' . $keyword . '%');
+        }
+
+        //Result
+        $result = $query->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->get();
+
+        $recordsTotal = $result->count();
+        $recordsFiltered = $recordsTotal;
+        $data['draw'] = $draw;
+        $data['recordsTotal'] = $recordsTotal;
+        $data['recordsFiltered'] = $recordsFiltered;
+        $eachItemData = array();
+
+
+        foreach ($result as $eachItem) {
+            //Edit Button
+            $actions = '<a title="Edit details" href="/masters/job/create/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
+            $eachItemData[] = [$eachItem->id, $eachItem->name, '<div class="text-center">' . $actions . '</div>'];
+        }
+        $data['data'] = $eachItemData;
+
+        return response()->json($data);
+    }
+
+    
+    public function job_type_create($key = 0)
+    {
+        $id = UriEncode::decrypt($key);
+        $model = new JobTypes();
+        if ($id > 0)
+            $model = JobTypes::find($id);
+        $view = 'masters.job_type.create';
+        return view($view, ['model' => $model]);
+    }
+
+    public function job_type_save(Request $request)
+    {
+        //Input Data
+        $data = $request->all();
+
+        //Validation of Request
+        $validator = \Validator::make($data, [
+            'name' => ['required', \Illuminate\Validation\Rule::unique('job_types')->ignore((int) $data['id']), 'max:255']
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), 200);
+        } else {
+
+            $model = new JobTypes();
+            if ($data['id'] > 0) {
+                $model = JobTypes::find($data['id']);
             }
             $model->fill($data);
             $model->save();

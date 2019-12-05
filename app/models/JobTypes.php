@@ -1,18 +1,19 @@
 <?php
 
-namespace App;
+namespace App\models;
+
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class Countries extends Model
+class JobTypes extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'countries';
+    protected $table = 'job_types';
 
     /**
      * The attributes that are mass assignable.
@@ -20,7 +21,7 @@ class Countries extends Model
      * @var array
      */
     protected $fillable = [
-        'code', 'name', 'is_active'
+        'name', 'is_active'
     ];
 
     protected static function boot()

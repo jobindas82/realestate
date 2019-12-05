@@ -1,18 +1,18 @@
 <?php
 
-namespace App;
+namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class Location extends Model
+class FlatTypes extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'locations';
+    protected $table = 'flat_types';
 
     /**
      * The attributes that are mass assignable.
@@ -20,7 +20,7 @@ class Location extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'country_id', 'is_active'
+        'name', 'is_active'
     ];
 
     protected static function boot()
@@ -29,11 +29,6 @@ class Location extends Model
         static::saving(function ($model) {
             $model->created_by =  Auth::user()->id;
         });
-    }
-
-    public function country()
-    {
-        return $this->belongsTo(Countries::class, 'country_id');
     }
 
     public static function activeTypes($id = 0)

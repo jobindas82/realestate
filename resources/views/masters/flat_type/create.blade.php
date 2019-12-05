@@ -16,7 +16,7 @@
                         </a>
                     </li>
                     <li class="active">
-                        <i class="material-icons">add_circle</i> New Type
+                        <i class="material-icons">add_circle</i> Add/Edit Type
                     </li>
                 </ol>
                 <div class="card">

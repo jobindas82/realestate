@@ -11,12 +11,12 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/masters/flat/type">
-                            <i class="material-icons">settings</i> Flat types
+                        <a href="/masters/country/index">
+                            <i class="material-icons">settings</i> Countries
                         </a>
                     </li>
                     <li class="active">
-                        <i class="material-icons">add_circle</i> New Type
+                        <i class="material-icons">add_circle</i> New Country
                     </li>
                 </ol>
                 <div class="card">
@@ -24,15 +24,24 @@
                         <div>
                             <div class="tab-content">
                                 <div role="tabpanel" class="tab-pane fade in active" id="profile_settings">
-                                    {{ Form::open(['method' => 'post', 'class' => 'form-horizontal', 'id' => 'flat-type-general']) }}
-                                        <div class="form-group">
-                                            <label for="NameSurname" class="col-sm-2 control-label">Name</label>
-                                            <div class="col-sm-10">
+                                    {{ Form::open(['method' => 'post', 'class' => 'form-horizontal', 'id' => 'general-form']) }}
+                                    <div class="form-group">
+                                            <label for="code" class="col-sm-2 control-label">Code</label>
+                                            <div class="col-sm-5">
                                                 <div class="form-line">
                                                     {{ Form::hidden('id', $model->id) }}
-                                                    {{ Form::text('name', $model->name, [ 'class' => 'form-control']) }}
+                                                    {{ Form::text('code', $model->code, [ 'class' => 'form-control', 'required' => true]) }}
                                                 </div>
-                                                <label style="dispaly:none" id="name-error" class="error" for="name"></label>
+                                                <label style="display:none" id="code-error" class="error" for="code"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="NameSurname" class="col-sm-2 control-label">Name</label>
+                                            <div class="col-sm-5">
+                                                <div class="form-line">
+                                                    {{ Form::text('name', $model->name, [ 'class' => 'form-control' , 'required' => true]) }}
+                                                </div>
+                                                <label style="display:none" id="name-error" class="error" for="name"></label>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -53,7 +62,7 @@
 
     <script>
         $( document ).ready( function() {
-            $( '#flat-type-general' ).on( 'submit', function(e) {
+            $( '#general-form' ).on( 'submit', function(e) {
                 //Hide Error Fields
                 $('.error').hide();
                 e.preventDefault();
@@ -61,18 +70,18 @@
 
                 $.ajax({
                     type: "POST",
-                    url: '/masters/flat/save',
+                    url: '/masters/country/save',
                     data: $(this).serialize(),
                     success: function( response ) {
                         if( response.message == 'success' ){
                             $('.page-loader-wrapper').fadeOut();
                             Swal.fire(
                                 'SUCCESS',
-                                'Flat type saved!',
+                                'Country saved!',
                                 'success'
                             ).then(function () {
                                 // when click ok then redirect back
-                                location.href = "/masters/flat/type";
+                                location.href = "/masters/country/index";
                             });
                         }else{
                             $('.page-loader-wrapper').fadeOut();

@@ -5,14 +5,14 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class ConstructionTypes extends Model
+class Countries extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'construction_type';
+    protected $table = 'countries';
 
     /**
      * The attributes that are mass assignable.
@@ -20,7 +20,7 @@ class ConstructionTypes extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'is_active', 'tax_code'
+        'code', 'name', 'is_active'
     ];
 
     protected static function boot()
@@ -31,12 +31,7 @@ class ConstructionTypes extends Model
         });
     }
 
-    public function taxcode()
-    {
-        return $this->belongsTo(TaxCode::class, 'tax_code');
-    }
-
-    public static function activeConstruction($id = 0)
+    public static function activeTypes($id = 0)
     {
         $query = self::query()->where('is_active', 'Y');
         if ($id > 0)

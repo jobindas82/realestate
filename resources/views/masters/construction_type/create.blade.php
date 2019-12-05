@@ -11,7 +11,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/masters/construction/type">
+                        <a href="/masters/construction/index">
                             <i class="material-icons">settings</i> Construction types
                         </a>
                     </li>
@@ -80,7 +80,7 @@
                                 'success'
                             ).then(function () {
                                 // when click ok then redirect back
-                                location.href = "/masters/construction/type";
+                                location.href = "/masters/construction/index";
                             });
                         }else{
                             $('.page-loader-wrapper').fadeOut();

@@ -114,12 +114,14 @@
             </ul>
         </li>
         <li class="{{ 
-                            Route::is('masters.flat_type_index') ||  
-                            Route::is('masters.flat_type_create') ||    
-                            Route::is('masters.construction_type_index') ||  
-                            Route::is('masters.construction_type_create') ||    
-                            Route::is('masters.country_index') ||  
-                            Route::is('masters.location_index') ||  
+                            Route::is('masters.flat_type.index') ||  
+                            Route::is('masters.flat_type.create') ||    
+                            Route::is('masters.construction_type.index') ||  
+                            Route::is('masters.construction_type.create') ||    
+                            Route::is('masters.country.index') ||  
+                            Route::is('masters.country.create') ||  
+                            Route::is('masters.location.index') ||  
+                            Route::is('masters.location.create') ||  
                             Route::is('masters.maintenance_type_index') ||  
                             Route::is('masters.tax_code_index') ||  
                             Route::is('masters.document_type_index')  
@@ -130,23 +132,23 @@
                 <span>Masters</span>
             </a>
             <ul class="ml-menu">
-                <li class="{{ Route::is('masters.flat_type_index') || Route::is('masters.flat_type_create') ? 'active' : '' }}">
-                    <a href="/masters/flat/type">
+                <li class="{{ Route::is('masters.flat_type.index') || Route::is('masters.flat_type.create') ? 'active' : '' }}">
+                    <a href="/masters/flat/index">
                         <span>Flat Type</span>
                     </a>
                 </li>
-                <li class="{{ Route::is('masters.construction_type_index') || Route::is('masters.construction_type_create') ? 'active' : '' }}">
-                    <a href="/masters/construction/type">
+                <li class="{{ Route::is('masters.construction_type.index') || Route::is('masters.construction_type.create') ? 'active' : '' }}">
+                    <a href="/masters/construction/index">
                         <span>Construction Type</span>
                     </a>
                 </li>
-                <li class="{{ Route::is('masters.country_index') ? 'active' : '' }}">
-                    <a href="/users/index">
+                <li class="{{ Route::is('masters.country.index') || Route::is('masters.country.create')? 'active' : '' }}">
+                    <a href="/masters/country/index">
                         <span>Country</span>
                     </a>
                 </li>
-                <li class="{{ Route::is('masters.location_index') ? 'active' : '' }}">
-                    <a href="/users/index">
+                <li class="{{ Route::is('masters.location.index') || Route::is('masters.location.create') ? 'active' : '' }}">
+                    <a href="/masters/location/index">
                         <span>Location</span>
                     </a>
                 </li>

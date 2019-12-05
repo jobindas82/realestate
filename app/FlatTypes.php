@@ -30,4 +30,17 @@ class FlatTypes extends Model
             $model->created_by =  Auth::user()->id;
         });
     }
+
+    public static function activeTypes($id = 0)
+    {
+        $query = self::query()->where('is_active', 'Y');
+        if ($id > 0)
+            $query->orWhere('id', $id);
+        $model = $query->get();
+        $response = [];
+        foreach ($model as $each) {
+            $response[$each->id] = $each->name;
+        }
+        return $response;
+    }
 }

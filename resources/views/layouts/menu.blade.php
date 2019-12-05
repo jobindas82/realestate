@@ -5,7 +5,7 @@
         <li class="header">Home</li>
         <li class="{{ Request::path() == '/' ? 'active' : '' }}">
             <a href="/">
-                <i class="material-icons">home</i>
+                <i class="material-icons">dashboard</i>
                 <span>Dashboard</span>
             </a>
         </li>
@@ -15,13 +15,13 @@
         <li class="header">Contracts & Accounting</li>
         <li class="{{ Route::is('leasing.index') ? 'active' : '' }}">
             <a href="/">
-                <i class="material-icons">home</i>
+                <i class="material-icons">folder</i>
                 <span>Leasing & Contracts</span>
             </a>
         </li>
         <li class="{{ Route::is('purchase.index') ? 'active' : '' }}">
             <a href="/">
-                <i class="material-icons">home</i>
+                <i class="material-icons">history</i>
                 <span>Purchase</span>
             </a>
         </li>
@@ -32,7 +32,7 @@
                             ? 'active' : '' 
                         }}">
             <a href="javascript:void(0);" class="menu-toggle">
-                <i class="material-icons">group</i>
+                <i class="material-icons">euro_symbol</i>
                 <span>Financial & Banking</span>
             </a>
             <ul class="ml-menu">
@@ -60,7 +60,7 @@
                             ? 'active' : '' 
                         }}">
             <a href="javascript:void(0);" class="menu-toggle">
-                <i class="material-icons">group</i>
+                <i class="material-icons">view_list</i>
                 <span>Ledgers & Groups</span>
             </a>
             <ul class="ml-menu">
@@ -87,7 +87,7 @@
         <li class="header">Tenants & Properties</li>
         <li class="{{ Route::is('tenant.index') ? 'active' : '' }}">
             <a href="/">
-                <i class="material-icons">home</i>
+                <i class="material-icons">record_voice_over</i>
                 <span>Tenants</span>
             </a>
         </li>
@@ -97,7 +97,7 @@
                             ? 'active' : '' 
                         }}">
             <a href="javascript:void(0);" class="menu-toggle">
-                <i class="material-icons">group</i>
+                <i class="material-icons">home</i>
                 <span>Properties</span>
             </a>
             <ul class="ml-menu">
@@ -115,7 +115,9 @@
         </li>
         <li class="{{ 
                             Route::is('masters.flat_type_index') ||  
+                            Route::is('masters.flat_type_create') ||    
                             Route::is('masters.construction_type_index') ||  
+                            Route::is('masters.construction_type_create') ||    
                             Route::is('masters.country_index') ||  
                             Route::is('masters.location_index') ||  
                             Route::is('masters.maintenance_type_index') ||  
@@ -124,17 +126,17 @@
                             ? 'active' : '' 
                         }}">
             <a href="javascript:void(0);" class="menu-toggle">
-                <i class="material-icons">group</i>
+                <i class="material-icons">settings</i>
                 <span>Masters</span>
             </a>
             <ul class="ml-menu">
-                <li class="{{ Route::is('masters.flat_type_index') ? 'active' : '' }}">
-                    <a href="/users/index">
+                <li class="{{ Route::is('masters.flat_type_index') || Route::is('masters.flat_type_create') ? 'active' : '' }}">
+                    <a href="/masters/flat/type">
                         <span>Flat Type</span>
                     </a>
                 </li>
-                <li class="{{ Route::is('masters.construction_type_index') ? 'active' : '' }}">
-                    <a href="/users/index">
+                <li class="{{ Route::is('masters.construction_type_index') || Route::is('masters.construction_type_create') ? 'active' : '' }}">
+                    <a href="/masters/construction/type">
                         <span>Construction Type</span>
                     </a>
                 </li>
@@ -171,13 +173,13 @@
         <li class="header">Facility Management</li>
         <li class="{{ Route::is('fm.tickets') ? 'active' : '' }}">
             <a href="/">
-                <i class="material-icons">home</i>
+                <i class="material-icons">subject</i>
                 <span>Tickets</span>
             </a>
         </li>
         <li class="{{ Route::is('fm.jobs') ? 'active' : '' }}">
             <a href="/">
-                <i class="material-icons">home</i>
+                <i class="material-icons">build</i>
                 <span>Jobs</span>
             </a>
         </li>

@@ -19,6 +19,24 @@ Auth::routes();
 Route::get('/', 'HomeController@index')->middleware('auth');
 Route::get('/home', 'HomeController@index')->name('home')->middleware('auth');
 
+/**
+ * Master Routes
+ */
+
+//Flat
+Route::get('/masters/flat/type', [ 'as' => 'masters.flat_type_index' , 'uses' => 'MasterController@flat_type_index' ])->middleware('auth');
+Route::get('/masters/flat/create', [ 'as' => 'masters.flat_type_create' , 'uses' => 'MasterController@flat_type_create' ])->middleware('auth');
+Route::post('/masters/flat/getlist', 'MasterController@flat_type_list')->middleware('auth');
+Route::get('/masters/flat/create/{key}',[ 'as' => 'masters.flat_type_create' , 'uses' => 'MasterController@flat_type_create' ])->middleware('auth');
+Route::post('/masters/flat/save', 'MasterController@flat_type_save')->middleware('auth');
+
+//Construction Type
+Route::get('/masters/construction/type', [ 'as' => 'masters.construction_type_index' , 'uses' => 'MasterController@construction_type_index' ])->middleware('auth');
+Route::get('/masters/construction/create', [ 'as' => 'masters.construction_type_create' , 'uses' => 'MasterController@construction_type_create' ])->middleware('auth');
+Route::post('/masters/construction/getlist', 'MasterController@construction_type_list')->middleware('auth');
+Route::get('/masters/construction/create/{key}',[ 'as' => 'masters.construction_type_create' , 'uses' => 'MasterController@construction_type_create' ])->middleware('auth');
+Route::post('/masters/construction/save', 'MasterController@construction_type_save')->middleware('auth');
+
 
 /**
  * User Master Routes

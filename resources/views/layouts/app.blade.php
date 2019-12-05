@@ -37,7 +37,10 @@
     <link href="{{ asset('css/themes/all-themes.css') }}" rel="stylesheet" />
 
      <!-- Sweetalert Css -->
-     <link href="{{ asset('plugins/sweetalert/sweetalert.css') }}" rel="stylesheet" />
+    <link href="{{ asset('plugins/sweetalert/sweetalert.css') }}" rel="stylesheet" />
+
+    <!-- Bootstrap Select Css -->
+    <link href="{{ asset('plugins/bootstrap-select/css/bootstrap-select.css') }}" rel="stylesheet" />
 
     <!-- Jquery Core Js -->
     <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>

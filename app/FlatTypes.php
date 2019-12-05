@@ -5,14 +5,14 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class Ledgers extends Model
+class FlatTypes extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'ledgers';
+    protected $table = 'flat_types';
 
     /**
      * The attributes that are mass assignable.
@@ -20,6 +20,14 @@ class Ledgers extends Model
      * @var array
      */
     protected $fillable = [
-        'parent_id', 'name', 'is_active',
+        'name', 'is_active'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::saving(function ($model) {
+            $model->created_by =  Auth::user()->id;
+        });
+    }
 }

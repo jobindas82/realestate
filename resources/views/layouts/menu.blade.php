@@ -93,7 +93,9 @@
         </li>
         <li class="{{ 
                             Route::is('building.index') ||  
-                            Route::is('flat.index')
+                            Route::is('building.create') ||  
+                            Route::is('flat.index') ||
+                            Route::is('flat.create')
                             ? 'active' : '' 
                         }}">
             <a href="javascript:void(0);" class="menu-toggle">
@@ -101,12 +103,12 @@
                 <span>Properties</span>
             </a>
             <ul class="ml-menu">
-                <li class="{{ Route::is('building.index') ? 'active' : '' }}">
+                <li class="{{ Route::is('building.index') || Route::is('building.create') ? 'active' : '' }}">
                     <a href="/users/index">
                         <span>Buildings</span>
                     </a>
                 </li>
-                <li class="{{ Route::is('flat.index') ? 'active' : '' }}">
+                <li class="{{ Route::is('flat.index') || Route::is('flat.create') ? 'active' : '' }}">
                     <a href="/users/index">
                         <span>Flats</span>
                     </a>
@@ -124,7 +126,8 @@
                             Route::is('masters.location.create') ||  
                             Route::is('masters.job.index') ||  
                             Route::is('masters.job.create') ||  
-                            Route::is('masters.tax_code_index') ||  
+                            Route::is('masters.tax.index') ||  
+                            Route::is('masters.tax.create') ||  
                             Route::is('masters.document_type_index')  
                             ? 'active' : '' 
                         }}">
@@ -158,16 +161,16 @@
                         <span>Job Type</span>
                     </a>
                 </li>
-                <li class="{{ Route::is('masters.tax_code_index') ? 'active' : '' }}">
-                    <a href="/users/index">
+                <li class="{{ Route::is('masters.tax.index') ||  Route::is('masters.tax.create') ? 'active' : '' }}">
+                    <a href="/masters/tax/index">
                         <span>Tax Code</span>
                     </a>
                 </li>
-                <li class="{{ Route::is('masters.document_type_index') ? 'active' : '' }}">
+                <!-- <li class="{{ Route::is('masters.document_type_index') ? 'active' : '' }}">
                     <a href="/users/index">
                         <span>Document Type</span>
                     </a>
-                </li>
+                </li> -->
             </ul>
         </li>
         <!-- End -->

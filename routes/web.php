@@ -20,6 +20,18 @@ Route::get('/', 'HomeController@index')->middleware('auth');
 Route::get('/home', 'HomeController@index')->name('home')->middleware('auth');
 
 /**
+ * Properties Route
+ */
+//Building
+Route::get('/building/index', [ 'as' => 'building.index' , 'uses' => 'BuildingController@index' ])->middleware('auth');
+Route::get('/building/create', [ 'as' => 'building.create' , 'uses' => 'BuildingController@create' ])->middleware('auth');
+Route::post('/building/list', 'BuildingController@list')->middleware('auth');
+Route::get('/building/create/{key}',[ 'as' => 'building.create' , 'uses' => 'BuildingController@create' ])->middleware('auth');
+Route::post('/building/save', 'BuildingController@save')->middleware('auth');
+
+ //properties routes end
+
+/**
  * Master Routes
  */
 
@@ -51,13 +63,21 @@ Route::post('/masters/location/getlist', 'MasterController@location_list')->midd
 Route::get('/masters/location/create/{key}',[ 'as' => 'masters.location.create' , 'uses' => 'MasterController@location_create' ])->middleware('auth');
 Route::post('/masters/location/save', 'MasterController@location_save')->middleware('auth');
 
-//Location
+//Job Type
 Route::get('/masters/job/index', [ 'as' => 'masters.job.index' , 'uses' => 'MasterController@job_type_index' ])->middleware('auth');
 Route::get('/masters/job/create', [ 'as' => 'masters.job.create' , 'uses' => 'MasterController@job_type_create' ])->middleware('auth');
 Route::post('/masters/job/getlist', 'MasterController@job_type_list')->middleware('auth');
 Route::get('/masters/job/create/{key}',[ 'as' => 'masters.job.create' , 'uses' => 'MasterController@job_type_create' ])->middleware('auth');
 Route::post('/masters/job/save', 'MasterController@job_type_save')->middleware('auth');
 
+//Tax Code
+Route::get('/masters/tax/index', [ 'as' => 'masters.tax.index' , 'uses' => 'MasterController@tax_code_index' ])->middleware('auth');
+Route::get('/masters/tax/create', [ 'as' => 'masters.tax.create' , 'uses' => 'MasterController@tax_code_create' ])->middleware('auth');
+Route::post('/masters/tax/getlist', 'MasterController@tax_code_list')->middleware('auth');
+Route::get('/masters/tax/create/{key}',[ 'as' => 'masters.tax.create' , 'uses' => 'MasterController@tax_code_create' ])->middleware('auth');
+Route::post('/masters/tax/save', 'MasterController@tax_code_save')->middleware('auth');
+
+//Masters End
 
 /**
  * User Master Routes

@@ -6,14 +6,20 @@ use App\models\FlatTypes;
 use App\models\ConstructionTypes;
 use App\models\Countries;
 use App\models\Location;
+use App\models\TaxCode;
 use Illuminate\Http\Request;
 use App\Essentials\UriEncode;
 use App\models\JobTypes;
 
+
+// use Illuminate\Support\Facades\Config;
+// use Illuminate\Support\Facades\DB;
+// Config::set('database.connections.mysql.database', 'laravelapp');
+// DB::purge('mysql');
+// DB::reconnect('mysql');
+
 class MasterController extends Controller
 {
-
-
     public function flat_type_index()
     {
         return view('masters.flat_type.index');
@@ -30,8 +36,9 @@ class MasterController extends Controller
         $columns = [
             // datatable column index  => database column name
             0 => 'id',
-            1 => 'name',
-            2 => 'id'
+            1 => 'code',
+            2 => 'percentage',
+            3 => 'id'
         ];
 
         $filterColumn = $columns[$_POST['order'][0]['column']];
@@ -52,7 +59,7 @@ class MasterController extends Controller
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
         $data['recordsFiltered'] = $recordsFiltered;
-        $eachItemData = array();
+        $eachItemData = [];
 
 
         foreach ($result as $eachItem) {
@@ -140,7 +147,7 @@ class MasterController extends Controller
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
         $data['recordsFiltered'] = $recordsFiltered;
-        $eachItemData = array();
+        $eachItemData = [];
 
 
         foreach ($result as $eachItem) {
@@ -228,7 +235,7 @@ class MasterController extends Controller
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
         $data['recordsFiltered'] = $recordsFiltered;
-        $eachItemData = array();
+        $eachItemData = [];
 
 
         foreach ($result as $eachItem) {
@@ -316,7 +323,7 @@ class MasterController extends Controller
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
         $data['recordsFiltered'] = $recordsFiltered;
-        $eachItemData = array();
+        $eachItemData = [];
 
         foreach ($result as $eachItem) {
             //Edit Button
@@ -372,6 +379,13 @@ class MasterController extends Controller
     public function job_type_list()
     {
 
+        Config::set("database.connections.mysql", [
+            "host" => "localhost",
+            "database" => "nodeapp",
+            "username" => "root",
+            "password" => "..."
+        ]);
+
         $draw   = $_POST['draw'];
         $offset = $_POST['start'];
         $limit  = $_POST['length'];
@@ -402,7 +416,7 @@ class MasterController extends Controller
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
         $data['recordsFiltered'] = $recordsFiltered;
-        $eachItemData = array();
+        $eachItemData = [];
 
 
         foreach ($result as $eachItem) {
@@ -415,7 +429,7 @@ class MasterController extends Controller
         return response()->json($data);
     }
 
-    
+
     public function job_type_create($key = 0)
     {
         $id = UriEncode::decrypt($key);
@@ -443,6 +457,97 @@ class MasterController extends Controller
             $model = new JobTypes();
             if ($data['id'] > 0) {
                 $model = JobTypes::find($data['id']);
+            }
+            $model->fill($data);
+            $model->save();
+
+            return response()->json(['message' => 'success']);
+        }
+    }
+
+    public function tax_code_index()
+    {
+        return view('masters.tax_code.index');
+    }
+
+    public function tax_code_list()
+    {
+
+        $draw   = $_POST['draw'];
+        $offset = $_POST['start'];
+        $limit  = $_POST['length'];
+        $keyword = trim($_POST['search']['value']);
+
+        $columns = [
+            // datatable column index  => database column name
+            0 => 'id',
+            1 => 'code',
+            2 => 'percentage',
+            3 => 'id'
+
+        ];
+
+        $filterColumn = $columns[$_POST['order'][0]['column']];
+        $filterOrder  = $_POST['order'][0]['dir'];
+
+        //Eloquent Result
+        $query = TaxCode::query();
+
+        if ($keyword != "") {
+            $query->orWhere('code', 'LIKE', '%' . $keyword . '%')->orWhere('percentage', 'LIKE', '%' . $keyword . '%');
+        }
+
+        //Result
+        $result = $query->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->get();
+
+        $recordsTotal = $result->count();
+        $recordsFiltered = $recordsTotal;
+        $data['draw'] = $draw;
+        $data['recordsTotal'] = $recordsTotal;
+        $data['recordsFiltered'] = $recordsFiltered;
+        $eachItemData = [];
+
+
+        foreach ($result as $eachItem) {
+            $percentage = (float) $eachItem->percentage;
+            //Edit Button
+            $actions = '<a title="Edit details" href="/masters/tax/create/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
+            $eachItemData[] = [$eachItem->id, $eachItem->code, $percentage . '%', '<div class="text-center">' . $actions . '</div>'];
+        }
+        $data['data'] = $eachItemData;
+
+        return response()->json($data);
+    }
+
+
+    public function tax_code_create($key = 0)
+    {
+        $id = UriEncode::decrypt($key);
+        $model = new TaxCode();
+        if ($id > 0)
+            $model = TaxCode::find($id);
+        $view = 'masters.tax_code.create';
+        return view($view, ['model' => $model]);
+    }
+
+    public function tax_code_save(Request $request)
+    {
+        //Input Data
+        $data = $request->all();
+
+        //Validation of Request
+        $validator = \Validator::make($data, [
+            'code' => ['required', \Illuminate\Validation\Rule::unique('tax_code')->ignore((int) $data['id']), 'max:255'],
+            'percentage' => ['required', 'numeric']
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), 200);
+        } else {
+
+            $model = new TaxCode();
+            if ($data['id'] > 0) {
+                $model = TaxCode::find($data['id']);
             }
             $model->fill($data);
             $model->save();

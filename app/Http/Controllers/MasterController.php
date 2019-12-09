@@ -379,13 +379,6 @@ class MasterController extends Controller
     public function job_type_list()
     {
 
-        Config::set("database.connections.mysql", [
-            "host" => "localhost",
-            "database" => "nodeapp",
-            "username" => "root",
-            "password" => "..."
-        ]);
-
         $draw   = $_POST['draw'];
         $offset = $_POST['start'];
         $limit  = $_POST['length'];
@@ -554,5 +547,12 @@ class MasterController extends Controller
 
             return response()->json(['message' => 'success']);
         }
+    }
+
+    public function locations($country_id = 0){
+
+     $userData['data'][] = ['id' => 1, 'name' => 'Jobin'];
+
+     echo json_encode($userData);
     }
 }

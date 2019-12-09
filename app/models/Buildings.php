@@ -2,18 +2,18 @@
 
 namespace App\models;
 
-
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use App\Essentials\UriEncode;
 
-class Location extends Model
+class Buildings extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'locations';
+    protected $table = 'buildings';
 
     /**
      * The attributes that are mass assignable.
@@ -21,7 +21,9 @@ class Location extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'country_id', 'is_active'
+        'name', 'ownership', 'owner_name', 'landlord_name', 'purchase_date',
+        'depreciation_percentage', 'floor_count', 'address', 'country_id', 'location_id',
+        'is_available'
     ];
 
     protected static function boot()
@@ -37,12 +39,16 @@ class Location extends Model
         return $this->belongsTo(Countries::class, 'country_id');
     }
 
-    public static function activeLocations($country_id=0, $id = 0)
+    public function location()
     {
-        $query = self::query()->where('is_active', 'Y')->where('country_id', $country_id);
-        if( $id > 0)
-            $query->orWhere('id', $id);
-        
-        return $query->pluck('name', 'id')->prepend('None');
+        return $this->belongsTo(Location::class, 'location_id');
+    }
+
+    public function encoded_key(){
+        return UriEncode::encrypt((int) $this->id);
+    }
+
+    public function formated_purchase_date(){
+        return $this->exists  ? date('d/m/Y', strtotime($this->purchase_date)) : date('d/m/Y');
     }
 }

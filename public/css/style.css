@@ -6693,6 +6693,7 @@ section.content {
     -o-transition: 0.2s;
     -webkit-transition: 0.2s;
     transition: 0.2s;
+    z-index : 2;
 }
 .form-group .form-line.error:after {
     border-bottom: 2px solid #f44336;

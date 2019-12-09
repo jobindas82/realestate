@@ -93,9 +93,7 @@
         </li>
         <li class="{{ 
                             Route::is('building.index') ||  
-                            Route::is('building.create') ||  
-                            Route::is('flat.index') ||
-                            Route::is('flat.create')
+                            Route::is('building.create') 
                             ? 'active' : '' 
                         }}">
             <a href="javascript:void(0);" class="menu-toggle">
@@ -104,13 +102,8 @@
             </a>
             <ul class="ml-menu">
                 <li class="{{ Route::is('building.index') || Route::is('building.create') ? 'active' : '' }}">
-                    <a href="/users/index">
+                    <a href="/building/index">
                         <span>Buildings</span>
-                    </a>
-                </li>
-                <li class="{{ Route::is('flat.index') || Route::is('flat.create') ? 'active' : '' }}">
-                    <a href="/users/index">
-                        <span>Flats</span>
                     </a>
                 </li>
             </ul>

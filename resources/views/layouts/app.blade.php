@@ -42,6 +42,9 @@
     <!-- Bootstrap Select Css -->
     <link href="{{ asset('plugins/bootstrap-select/css/bootstrap-select.css') }}" rel="stylesheet" />
 
+    <!-- Bootstrap DatePicker Css -->
+    <link href="{{ asset('plugins/bootstrap-datepicker/css/bootstrap-datepicker.css') }}" rel="stylesheet" />
+
     <!-- Jquery Core Js -->
     <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
 
@@ -91,9 +94,12 @@
     <!-- Custom Js -->
     <script src="{{ asset('js/skin.js') }}"></script>
 
+    <!-- Bootstrap Datepicker Plugin Js -->
+    <script src="{{ asset('plugins/bootstrap-datepicker/js/bootstrap-datepicker.js') }}"></script>
+
     <!-- Pusher -->
-    <script src="https://js.pusher.com/5.0/pusher.min.js"></script>
-    <script>
+    <!-- <script src="https://js.pusher.com/5.0/pusher.min.js"></script> -->
+    <!-- <script>
 
         // Enable pusher logging - don't include this in production
         Pusher.logToConsole = true;
@@ -107,7 +113,7 @@
             channel.bind('my-event', function(data) {
             alert(JSON.stringify(data));
         });
-    </script>
+    </script> -->
 
 </head>
 

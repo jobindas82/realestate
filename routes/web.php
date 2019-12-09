@@ -79,6 +79,14 @@ Route::post('/masters/tax/save', 'MasterController@tax_code_save')->middleware('
 
 //Masters End
 
+
+/**
+ * dependent data
+ */
+Route::get('/masters/locations/{country_id}', [ 'as' => 'masters.locations' , 'uses' => 'MasterController@locations' ])->middleware('auth');
+ //End
+
+
 /**
  * User Master Routes
  */

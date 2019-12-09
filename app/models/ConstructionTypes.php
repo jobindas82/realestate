@@ -39,13 +39,9 @@ class ConstructionTypes extends Model
     public static function activeConstruction($id = 0)
     {
         $query = self::query()->where('is_active', 'Y');
-        if ($id > 0)
+        if( $id > 0)
             $query->orWhere('id', $id);
-        $model = $query->get();
-        $response = [];
-        foreach ($model as $each) {
-            $response[$each->id] = $each->name;
-        }
-        return $response;
+        
+        return $query->pluck('name', 'id')->prepend('None');
     }
 }

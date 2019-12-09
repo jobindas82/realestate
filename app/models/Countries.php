@@ -31,16 +31,14 @@ class Countries extends Model
         });
     }
 
-    public static function activeTypes($id = 0)
+    public static function activeTypes($id = 0, $prepend = false)
     {
         $query = self::query()->where('is_active', 'Y');
-        if ($id > 0)
+        if( $id > 0)
             $query->orWhere('id', $id);
-        $model = $query->get();
-        $response = [];
-        foreach ($model as $each) {
-            $response[$each->id] = $each->name;
-        }
+        $response = $query->pluck('name', 'id');
+        if( $prepend )
+            $response = $response->prepend('None');
         return $response;
     }
 }

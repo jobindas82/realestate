@@ -38,7 +38,7 @@ class Countries extends Model
             $query->orWhere('id', $id);
         $response = $query->pluck('name', 'id');
         if( $prepend )
-            $response = $response->prepend('None');
+            $response = $response->prepend('None', 0);
         return $response;
     }
 }

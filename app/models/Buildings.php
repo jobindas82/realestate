@@ -49,6 +49,6 @@ class Buildings extends Model
     }
 
     public function formated_purchase_date(){
-        return $this->exists  ? date('d/m/Y', strtotime($this->purchase_date)) : date('d/m/Y');
+        return $this->exists  ? date('d/m/Y', strtotime($this->purchase_date)) : '';
     }
 }

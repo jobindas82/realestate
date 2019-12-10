@@ -42,8 +42,8 @@
                     <li><span class="font-bold col-teal">Ownership</span> : @if( $each->ownership == 'O') Owned @else Leased @endif</li>
                     <li><span class="font-bold col-teal">Owner</span> : {{ $each->owner_name }}</li>
                     <li><span class="font-bold col-teal">Floors</span> : {{ $each->floor_count }}</li>
-                    <li><span class="font-bold col-teal">Location</span> : {{ $each->location->name }}</li>
-                    <li><span class="font-bold col-teal">Country</span> : {{ $each->country->name }}</li>
+                    <li><span class="font-bold col-teal">Location</span> : @if ( isset($each->location->name) ) {{ $each->location->name }} @endif</li>
+                    <li><span class="font-bold col-teal">Country</span> : @if ( isset($each->country->name) ) {{ $each->country->name }} @endif</li>
                 </ul>
                 <br>
                 <a href="javascript(0);"><i class="material-icons">settings</i> All Flats</a><br>

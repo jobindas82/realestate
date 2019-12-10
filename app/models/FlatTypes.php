@@ -37,6 +37,6 @@ class FlatTypes extends Model
         if( $id > 0)
             $query->orWhere('id', $id);
         
-        return $query->pluck('name', 'id')->prepend('None');
+        return $query->pluck('name', 'id')->prepend('None', 0);
     }
 }

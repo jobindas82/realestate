@@ -97,6 +97,9 @@
     <!-- Bootstrap Datepicker Plugin Js -->
     <script src="{{ asset('plugins/bootstrap-datepicker/js/bootstrap-datepicker.js') }}"></script>
 
+    <!-- Autosize Plugin Js -->
+    <script src="{{ asset('plugins/autosize/autosize.js') }}"></script>
+
     <!-- Pusher -->
     <!-- <script src="https://js.pusher.com/5.0/pusher.min.js"></script> -->
     <!-- <script>

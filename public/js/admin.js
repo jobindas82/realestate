@@ -533,12 +533,14 @@ $(function() {
         $(".page-loader-wrapper").fadeOut();
     }, 50);
 
-        //Bootstrap datepicker plugin
-        $('#datepicker_container input').datepicker({
-            autoclose: true,
-            container: '#datepicker_container',
-            format: 'dd/mm/yyyy',
-        });
-    
+    //Bootstrap datepicker plugin
+    $("#datepicker_container input").datepicker({
+        autoclose: true,
+        container: "#datepicker_container",
+        format: "dd/mm/yyyy"
+    });
+
+    //Textarea auto growth
+    autosize($("textarea.auto-growth"));
 });
 

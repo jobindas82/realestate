@@ -7,9 +7,13 @@ use App\models\ConstructionTypes;
 use App\models\Countries;
 use App\models\Location;
 use App\models\TaxCode;
+use App\models\JobTypes;
+
 use Illuminate\Http\Request;
 use App\Essentials\UriEncode;
-use App\models\JobTypes;
+
+
+use Collective\Html\FormFacade as Form;
 
 
 // use Illuminate\Support\Facades\Config;
@@ -550,9 +554,6 @@ class MasterController extends Controller
     }
 
     public function locations($country_id = 0){
-
-     $userData['data'][] = ['id' => 1, 'name' => 'Jobin'];
-
-     echo json_encode($userData);
+        echo Form::select('location_id', \App\models\Location::activeLocations($country_id, 0), 0, [ 'class' => 'form-control show-tick']);
     }
 }

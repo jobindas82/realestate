@@ -25,11 +25,15 @@ Route::get('/home', 'HomeController@index')->name('home')->middleware('auth');
 //Building
 Route::get('/building/index', [ 'as' => 'building.index' , 'uses' => 'BuildingController@index' ])->middleware('auth');
 Route::get('/building/create', [ 'as' => 'building.create' , 'uses' => 'BuildingController@create' ])->middleware('auth');
-Route::post('/building/list', 'BuildingController@list')->middleware('auth');
 Route::get('/building/create/{key}',[ 'as' => 'building.create' , 'uses' => 'BuildingController@create' ])->middleware('auth');
-Route::post('/building/save', 'BuildingController@save')->middleware('auth');
+Route::post('/building/save/basic', 'BuildingController@save_basics')->middleware('auth');
+Route::post('/building/save/depreciation', 'BuildingController@save_depreciation')->middleware('auth');
+Route::post('/building/get_documents', 'BuildingController@get_documents')->middleware('auth');
 
  //properties routes end
+
+ //FIle Handler
+ Route::get('/document/building', [ 'as' => 'file.create' , 'uses' => 'DocumentController@building' ])->middleware('auth');
 
 /**
  * Master Routes

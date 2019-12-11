@@ -64,6 +64,6 @@ class Documents extends Model
 
     public function formated_expiry_date()
     {
-        return $this->expiry_date != NULL && $this->expiry_date != '0000-00-00' ? date('d/m/Y', strtotime($this->expiry_date)) : 'Not Available';
+        return $this->expiry_date != NULL && $this->expiry_date != '0000-00-00' ? date('d/m/Y', strtotime($this->expiry_date)) :  NULL;
     }
 }

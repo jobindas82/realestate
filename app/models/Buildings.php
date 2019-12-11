@@ -51,4 +51,8 @@ class Buildings extends Model
     public function formated_purchase_date(){
         return $this->exists  ? date('d/m/Y', strtotime($this->purchase_date)) : '';
     }
+
+    public function flats_available(){
+        return \App\models\Flats::query()->where('building_id', $this->id)->where('is_available', 1)->count();
+    }
 }

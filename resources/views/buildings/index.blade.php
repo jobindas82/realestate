@@ -5,14 +5,14 @@
     @foreach ( \App\models\Buildings::all()->sortBy('is_available') as $i => $each )
     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
         <div class="card">
-            <div class="header @if ($each->is_available == 1) bg-light-green @elseif ($each->is_available == 2) bg-amber @else bg-red @endif">
+            <div id="building_header_{{ $each->id }}" class="header @if ($each->is_available == 1) bg-light-green @elseif ($each->is_available == 2) bg-amber @else bg-red @endif">
                 <h2>
                     <b>{{ $each->name }}<b> <small> {{{ $each->address }}}</small>
                 </h2>
                 <ul class="header-dropdown m-r--5">
                     <li>
                                     <a href="javascript:void(0);" data-toggle="cardloading" data-loading-effect="timer" data-loading-color="lightBlue">
-                                        <span class="badge">{{ $i }} Flats Available</span>
+                                        <span class="badge">{{ $each->flats_available() }} Flats Available</span>
                                     </a>
                                 </li>
                     <li class="dropdown">
@@ -23,7 +23,7 @@
                             <li><a href="/building/create">Create</a></li>
                             <li><a href="/building/create/{{ $each->encoded_key() }}">Edit</a></li>
                             <li><a href="javascript:void(0);">Add Flats</a></li>
-                            <li><a href="javascript:void(0);">Add Documents</a></li>
+                            <li><a href="#" onclick="window.open('/document/building/?_ref=__index_building&__uuid={{ $each->encoded_key() }}', '_blank');">Add Documents</a></li>
                             @if( $each->is_available == 1 )
                                 <li><a href="javascript:void(0);">Block</a></li>
                                 <li><a href="javascript:void(0);">Under Maintenance</a></li>

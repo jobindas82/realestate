@@ -29,12 +29,20 @@ Route::get('/building/create/{key}',[ 'as' => 'building.create' , 'uses' => 'Bui
 Route::post('/building/save/basic', 'BuildingController@save_basics')->middleware('auth');
 Route::post('/building/save/depreciation', 'BuildingController@save_depreciation')->middleware('auth');
 Route::post('/building/get_documents', 'BuildingController@get_documents')->middleware('auth');
+Route::post('/building/update_document', 'BuildingController@update_document')->middleware('auth');
+
+//Flats
+Route::post('/building/flat/list', 'BuildingController@flat_list')->middleware('auth');
+
 
  //properties routes end
 
  //FIle Handler
- Route::get('/document/building', [ 'as' => 'file.create' , 'uses' => 'DocumentController@building' ])->middleware('auth');
-
+ Route::get('/document/building', [ 'as' => 'document.create' , 'uses' => 'DocumentController@building' ])->middleware('auth');
+ Route::post('/document/upload', 'DocumentController@upload')->middleware('auth');
+ Route::post('/document/remove', 'DocumentController@destroy')->middleware('auth');
+ Route::post('/document/remove_with_ref', 'DocumentController@destroy_with_id')->middleware('auth');
+ Route::get('/document/download', [ 'as' => 'document.download' , 'uses' => 'DocumentController@download' ])->middleware('auth');
 /**
  * Master Routes
  */

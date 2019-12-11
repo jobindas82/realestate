@@ -534,9 +534,8 @@ $(function() {
     }, 50);
 
     //Bootstrap datepicker plugin
-    $("#datepicker_container input").datepicker({
+    $(".datepicker").datepicker({
         autoclose: true,
-        container: "#datepicker_container",
         format: "dd/mm/yyyy"
     });
 
@@ -544,3 +543,11 @@ $(function() {
     autosize($("textarea.auto-growth"));
 });
 
+
+$(document).ajaxComplete(function () {
+    $(".datepicker").datepicker({
+        autoclose: true,
+        format: "dd/mm/yyyy"
+    });
+
+});

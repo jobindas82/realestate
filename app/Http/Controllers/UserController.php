@@ -172,13 +172,13 @@ class UserController extends Controller
         $filter_type = $_POST['filter_type'];
 
         $columns = [
-                        // datatable column index  => database column name
-                        0 => 'id',
-                        1 => 'name',
-                        2 => 'email',
-                        3 => 'name',
-                        4 => 'id'
-                    ];
+            // datatable column index  => database column name
+            0 => 'id',
+            1 => 'name',
+            2 => 'email',
+            3 => 'name',
+            4 => 'id'
+        ];
 
         $filterColumn = $columns[$_POST['order'][0]['column']];
         $filterOrder  = $_POST['order'][0]['dir'];
@@ -186,13 +186,11 @@ class UserController extends Controller
         //Eloquent Result
         $query = User::query();
 
-        if( $filter_type != '' ){
+        if ($filter_type != '') { }
 
-        }
-
-        if ( $keyword != "" ) {
-            $query->orWhere('name','LIKE', '%'.$keyword.'%');
-            $query->orWhere('email','LIKE', '%'.$keyword.'%');
+        if ($keyword != "") {
+            $query->orWhere('name', 'LIKE', '%' . $keyword . '%');
+            $query->orWhere('email', 'LIKE', '%' . $keyword . '%');
         }
 
         //Result
@@ -208,13 +206,13 @@ class UserController extends Controller
 
         foreach ($result as $eachItem) {
             //Edit Button
-            $actions = '<a title="Edit user details" href="/users/create/'. UriEncode::encrypt($eachItem->id) .'"><i class="material-icons" >create</i></a>';
+            $actions = '<a title="Edit user details" href="/users/create/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
             //Block Button
-            $actions .= ' <a title="Block User" href="#" onclick="blockUser('.$eachItem->id.')"><i class="material-icons" >block</i></a>';
-            $eachItemData[] = [ $eachItem->id, $eachItem->name, $eachItem->email, 'NA', '<div class="text-center">'. $actions .'</div>' ];
+            $actions .= ' <a title="Block User" href="#" onclick="blockUser(' . $eachItem->id . ')"><i class="material-icons" >block</i></a>';
+            $eachItemData[] = [$eachItem->id, $eachItem->name, $eachItem->email, 'NA', '<div class="text-center">' . $actions . '</div>'];
         }
         $data['data'] = $eachItemData;
 
-        return response()->json( $data );
+        return response()->json($data);
     }
 }

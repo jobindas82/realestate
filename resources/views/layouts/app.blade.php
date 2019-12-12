@@ -30,14 +30,23 @@
     <!-- Morris Chart Css-->
     <link href="{{ asset('plugins/morrisjs/morris.css') }}" rel="stylesheet" />
 
+    <!-- Dropzone Css -->
+    <link href="{{ asset('plugins/dropzone/dropzone.css') }}" rel="stylesheet">
+
     <!-- Custom Css -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
 
     <!-- AdminBSB Themes. You can choose a theme from css/themes instead of get all themes -->
     <link href="{{ asset('css/themes/all-themes.css') }}" rel="stylesheet" />
 
-     <!-- Sweetalert Css -->
-     <link href="{{ asset('plugins/sweetalert/sweetalert.css') }}" rel="stylesheet" />
+    <!-- Sweetalert Css -->
+    <link href="{{ asset('plugins/sweetalert/sweetalert.css') }}" rel="stylesheet" />
+
+    <!-- Bootstrap Select Css -->
+    <link href="{{ asset('plugins/bootstrap-select/css/bootstrap-select.css') }}" rel="stylesheet" />
+
+    <!-- Bootstrap DatePicker Css -->
+    <link href="{{ asset('plugins/bootstrap-datepicker/css/bootstrap-datepicker.css') }}" rel="stylesheet" />
 
     <!-- Jquery Core Js -->
     <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
@@ -88,9 +97,18 @@
     <!-- Custom Js -->
     <script src="{{ asset('js/skin.js') }}"></script>
 
+    <!-- Bootstrap Datepicker Plugin Js -->
+    <script src="{{ asset('plugins/bootstrap-datepicker/js/bootstrap-datepicker.js') }}"></script>
+
+    <!-- Autosize Plugin Js -->
+    <script src="{{ asset('plugins/autosize/autosize.js') }}"></script>
+
+    <!-- Dropzone Plugin Js -->
+    <script src="{{ asset('plugins/dropzone/dropzone.js') }}"></script>
+
     <!-- Pusher -->
-    <script src="https://js.pusher.com/5.0/pusher.min.js"></script>
-    <script>
+    <!-- <script src="https://js.pusher.com/5.0/pusher.min.js"></script> -->
+    <!-- <script>
 
         // Enable pusher logging - don't include this in production
         Pusher.logToConsole = true;
@@ -104,14 +122,14 @@
             channel.bind('my-event', function(data) {
             alert(JSON.stringify(data));
         });
-    </script>
+    </script> -->
 
 </head>
 
 <body class="{{ config('app.theme', 'theme-indigo') }}">
 
     <!-- Page Loader -->
-        @include('layouts.loader')
+    @include('layouts.loader')
     <!-- #END# Page Loader -->
 
     <!-- Overlay For Sidebars -->
@@ -119,7 +137,7 @@
     <!-- #END# Overlay For Sidebars -->
 
     <!-- Top Bar -->
-        @include('layouts.topbar')
+    @include('layouts.topbar')
     <!-- #Top Bar -->
 
     <section>
@@ -145,7 +163,7 @@
                             <li>
                                 <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="material-icons">input</i>{{ __('Logout') }}</a>
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                        @csrf
+                                    @csrf
                                 </form>
                             </li>
                         </ul>
@@ -155,7 +173,7 @@
             <!-- #User Info -->
 
             <!-- Menu -->
-                @include('layouts.menu')
+            @include('layouts.menu')
             <!-- #Menu -->
 
             <!-- Footer -->
@@ -172,7 +190,7 @@
         <!-- #END# Left Sidebar -->
 
         <!-- Right Sidebar -->
-            @include('layouts.rightbar')
+        @include('layouts.rightbar')
         <!-- #END# Right Sidebar -->
 
     </section>
@@ -190,8 +208,8 @@
         });
 
         //Reload Datatable
-        function reload_datatable(table_id){
-                $(table_id).DataTable().ajax.reload();
+        function reload_datatable(table_id) {
+            $(table_id).DataTable().ajax.reload();
         }
     </script>
     <!-- END-->

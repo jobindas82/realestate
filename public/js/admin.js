@@ -541,6 +541,14 @@ $(function() {
 
     //Textarea auto growth
     autosize($("textarea.auto-growth"));
+
+        //Tooltip
+    $('[data-toggle="tooltip"]').tooltip({
+        container: 'body'
+    });
+
+    //Popover
+    $('[data-toggle="popover"]').popover();
 });
 
 

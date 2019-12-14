@@ -44,15 +44,32 @@ class Buildings extends Model
         return $this->belongsTo(Location::class, 'location_id');
     }
 
-    public function encoded_key(){
+    public function encoded_key()
+    {
         return UriEncode::encrypt((int) $this->id);
     }
 
-    public function formated_purchase_date(){
+    public function formated_purchase_date()
+    {
         return $this->exists  ? date('d/m/Y', strtotime($this->purchase_date)) : '';
     }
 
-    public function flats_available(){
+    public function flats_available()
+    {
         return \App\models\Flats::query()->where('building_id', $this->id)->where('is_available', 1)->count();
+    }
+
+    public static function allBuildings()
+    {
+        return self::query()->pluck('name', 'id')->prepend('None', 0);
+    }
+
+    public static function activeBuildings($id = 0)
+    {
+        $query = self::query()->where('is_available', 1);
+        if ($id > 0)
+            $query->orWhere('id', $id);
+
+        return $query->pluck('name', 'id')->prepend('None', 0);
     }
 }

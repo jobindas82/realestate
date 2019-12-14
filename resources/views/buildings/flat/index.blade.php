@@ -15,7 +15,9 @@
                         <i class="material-icons">more_vert</i>
                     </a>
                     <ul class="dropdown-menu pull-right">
-                        <li><a href="#" onclick="window.open('/building/flat/?_ref={{ $model->encoded_key() }}', '_blank');"><i class="material-icons">add_circle</i> Add</a></li>
+                        <input type="hidden" name="flat_building_id" id="flat_building_id" value="{{ $model->id }}">
+                        <input type="hidden" name="flat_key" id="flat_key" value="{{ $model->encoded_key() }}">
+                        <li><a href="#" onclick="goto_flat()"><i class="material-icons">add_circle</i> Add</a></li>
                     </ul>
                 </li>
             </ul>
@@ -44,7 +46,7 @@
 <script>
     $(document).ready(function() {
         var table = $('#building_flat_list').on("preXhr.dt", function(e, settings, data) {
-            data.parent = $('#building_id').val();
+            data.parent = $('#flat_building_id').val();
             return data;
         }).DataTable({
             responsive: true,
@@ -67,4 +69,42 @@
         });
 
     });
+
+    function goto_flat(){
+        var flat_key = $('#flat_key').val();
+        window.open('/building/flat/?_ref=' + flat_key, '_blank');
+    }
+
+    function block_flat(flat_id, status){
+        var msg = status == 3 ? 'Block this Flat?' : 'Unblock this Flat?';
+        Swal.fire({
+            title: 'Are you sure?',
+            text: msg,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Block'
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    type: "POST",
+                    url: '/building/flat/status',
+                    data: {
+                        _ref: flat_id,
+                        status : status
+                    },
+                    success: function(response) {
+                        $('.page-loader-wrapper').fadeOut();
+                        Swal.fire(
+                            'Updated!',
+                            'Flat Status updated!',
+                            'success'
+                        );
+                        reload_datatable('#building_flat_list');
+                    }
+                });
+            }
+        });
+    }
 </script>

@@ -58,6 +58,6 @@ class Flats extends Model
         else if( $this->is_available == 2 )
             return 'Occupied';
         else
-            return 'Maintenance';
+            return 'Blocked';
     }
 }

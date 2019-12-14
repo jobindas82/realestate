@@ -32,13 +32,15 @@ Route::post('/building/get_documents', 'BuildingController@get_documents')->midd
 Route::post('/building/update_document', 'BuildingController@update_document')->middleware('auth');
 
 //Flats
+Route::get('/building/flat', [ 'as' => 'building.flat.create' , 'uses' => 'BuildingController@flat_create' ])->middleware('auth');
 Route::post('/building/flat/list', 'BuildingController@flat_list')->middleware('auth');
-
+Route::post('/building/flat/save', 'BuildingController@flat_save')->middleware('auth');
+Route::post('/building/flat/status', 'BuildingController@flat_status')->middleware('auth');
 
  //properties routes end
 
  //FIle Handler
- Route::get('/document/building', [ 'as' => 'document.create' , 'uses' => 'DocumentController@building' ])->middleware('auth');
+ Route::get('/document/create', [ 'as' => 'document.create' , 'uses' => 'DocumentController@create' ])->middleware('auth');
  Route::post('/document/upload', 'DocumentController@upload')->middleware('auth');
  Route::post('/document/remove', 'DocumentController@destroy')->middleware('auth');
  Route::post('/document/remove_with_ref', 'DocumentController@destroy_with_id')->middleware('auth');

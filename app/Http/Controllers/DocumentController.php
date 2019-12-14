@@ -27,22 +27,37 @@ class DocumentController extends Controller
     }
 
 
-    public function building()
+    public function create()
     {
         $queryPrams = Input::all();
-
         $parent_id = isset($queryPrams['__uuid']) ? UriEncode::decrypt($queryPrams['__uuid']) : 0;
+        $from = isset($queryPrams['__from']) ? (int) $queryPrams['__from'] : 0;
 
-        $from = 1;
+        $models = [
+            1 => new \App\models\Buildings(),
+            2 => new \App\models\Flats(),
+        ];
 
-        if ((int) $parent_id > 0) {
-            $buildingModel = \App\models\Buildings::where('id', $parent_id)->first();
-            if (!isset($buildingModel))
-                abort(403, 'Unauthorized action.');
-        } else
+        if (!in_array($from, [1, 2]))
             abort(403, 'Unauthorized action.');
 
-        return view('document.building', ['from' => $from, 'parent' => $parent_id, 'title' => 'Upload Documents for Building ' . $buildingModel->name]);
+        if ((int) $parent_id > 0) {
+            $model = $models[$from]::where('id', $parent_id)->first();
+
+            if (!isset($model))
+                abort(403, 'Unauthorized action.');
+
+            $labels = [
+                1 => 'Building ' . $model->name,
+                2 => 'Flat ' . $model->name
+            ];
+
+            $label = $labels[$from];
+        } else {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('document.create', ['from' => $from, 'parent' => $parent_id, 'title' => 'Upload Documents for ' . $label]);
     }
 
     /**
@@ -159,7 +174,7 @@ class DocumentController extends Controller
         if (!isset($documentModel->id))
             abort(500, 'Not Found.');
 
-        $file = public_path() . '/uploads/'. $documentModel->filename;
+        $file = public_path() . '/uploads/' . $documentModel->filename;
 
         return response()->download($file, $documentModel->original_name);
     }

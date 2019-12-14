@@ -137,6 +137,10 @@
 
                         $('#building_id').val(response.building_id);
                         $('#dep_building_id').val(response.building_id);
+                        $('#flat_building_id').val(response.building_id);
+                        $('#doc_parent_id').val(response.building_id);
+                        $('#flat_key').val(response.building_id_encrypted);
+                        $('#parent_key').val(response.building_id_encrypted);
 
                         $('.page-loader-wrapper').fadeOut();
                         Swal.fire(

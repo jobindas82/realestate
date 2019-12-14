@@ -7,6 +7,7 @@ use App\models\Buildings;
 use App\models\Documents;
 use App\models\Flats;
 
+use Illuminate\Support\Facades\Input;
 use Illuminate\Http\Request;
 use App\Essentials\UriEncode;
 
@@ -39,7 +40,7 @@ class BuildingController extends Controller
         if ($id > 0)
             $model = Buildings::find($id);
         $view = 'buildings.create';
-        return view($view, ['model' => $model, 'hiddenRow' => 1]);
+        return view($view, ['model' => $model, 'hiddenRow' => 1, 'from' => 1]);
     }
 
     public function save_basics(Request $request)
@@ -64,7 +65,7 @@ class BuildingController extends Controller
             $model->fill($data);
             $model->save();
 
-            return response()->json(['building_id' => $model->id, 'message' => 'success']);
+            return response()->json(['building_id' => $model->id, 'building_id_encrypted' => $model->encoded_key(), 'message' => 'success']);
         }
     }
 
@@ -111,6 +112,7 @@ class BuildingController extends Controller
         $keyword = trim($_POST['search']['value']);
 
         $parent  = (int) $_POST['parent'];
+        $from  = (int) $_POST['from'];
 
         $columns = [
             // datatable column index  => database column name
@@ -124,12 +126,14 @@ class BuildingController extends Controller
         $filterOrder  = $_POST['order'][0]['dir'];
 
         //Eloquent Result
-        $query = Documents::query()->where('from', 1)->where('parent_id', $parent);
+        $query = Documents::query()->where('from', $from)->where('parent_id', $parent);
 
         if ($keyword != "") {
-            $query->where('title', 'LIKE', '%' . $keyword . '%')->orWhere('expiry_date', 'LIKE', '%' . $keyword . '%');
+            $query->where(function ($q) use ($keyword) {
+                $q->orWhere('title', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('original_name', 'LIKE', '%' . $keyword . '%');
+            });
         }
-
         //Result
         $result = $query->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->get();
 
@@ -192,31 +196,40 @@ class BuildingController extends Controller
 
         $columns = [
             // datatable column index  => database column name
-            0 => 'id',
-            1 => 'name',
-            2 => 'id',
-            3 => 'id'
+            0 => 'flats.id',
+            1 => 'buildings.name',
+            2 => 'flats.name',
+            3 => 'flats.square_feet',
+            4 => 'construction_type.name',
+            5 => 'flat_types.name',
+            6 => 'flats.is_available',
+            7 => 'flats.id',
         ];
 
         $filterColumn = $columns[$_POST['order'][0]['column']];
         $filterOrder  = $_POST['order'][0]['dir'];
 
         //Eloquent Result
-        $query = Flats::query();
+        $query = Flats::query()
+            ->leftJoin('buildings', 'flats.building_id', 'buildings.id')
+            ->leftJoin('flat_types', 'flats.flat_type_id', 'flat_types.id')
+            ->leftJoin('construction_type', 'flats.construction_type_id', 'construction_type.id');
 
-        if( $building_id > 0 )
-            $query->where('building_id', $building_id);
+        //if ($building_id > 0)
+        $query->where('flats.building_id', $building_id);
 
         if ($keyword != "") {
-            $query->where('name', 'LIKE', '%' . $keyword . '%')
-                    ->orWhere('premise_id', 'LIKE', '%' . $keyword . '%')
-                    ->orWhere('owner_name', 'LIKE', '%' . $keyword . '%')
-                    ->orWhere('landlord_name', 'LIKE', '%' . $keyword . '%')
-                    ->orWhere('plot_no', 'LIKE', '%' . $keyword . '%');
+            $query->where('flats.name', 'LIKE', '%' . $keyword . '%')
+                ->orWhere('flats.premise_id', 'LIKE', '%' . $keyword . '%')
+                ->orWhere('flats.owner_name', 'LIKE', '%' . $keyword . '%')
+                ->orWhere('flats.landlord_name', 'LIKE', '%' . $keyword . '%')
+                ->orWhere('flats.plot_no', 'LIKE', '%' . $keyword . '%')
+                ->orWhere('construction_type.name', 'LIKE', '%' . $keyword . '%')
+                ->orWhere('flat_types.name', 'LIKE', '%' . $keyword . '%');
         }
 
         //Result
-        $result = $query->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->get();
+        $result = $query->select('flats.id AS id', 'buildings.name AS building_name', 'flats.name AS flat_name', 'flats.square_feet', 'construction_type.name AS construction_name', 'flat_types.name AS flat_type_name', 'flats.is_available')->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->get();
 
         $recordsTotal = $result->count();
         $recordsFiltered = $recordsTotal;
@@ -228,11 +241,101 @@ class BuildingController extends Controller
         foreach ($result as $i => $eachItem) {
             $no = $i + $offset + 1;
             //Edit Button
-            $actions = '<a title="Edit" href="/masters/location/create/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
-            $eachItemData[] = [$no, $eachItem->building->name, $eachItem->name, $eachItem->square_feet, $eachItem->construction->name, $eachItem->flat_type->name,  $eachItem->occupancy(), '<div class="text-center">' . $actions . '</div>'];
+            $actions = '<a title="Edit" href="#" onclick="window.open(\'/building/flat/?_key=' . UriEncode::encrypt($eachItem->id) . '\', \'_blank\')"><i class="material-icons" >create</i></a>';
+            $actions .= ' <a title="Add Document" href="#" onclick="window.open(\'/document/create/?__from=2&__uuid=' . UriEncode::encrypt($eachItem->id) . '\', \'_blank\')"><i class="material-icons" >attach_file</i></a>';
+
+            if ($eachItem->is_available == 1) {
+                $actions .= ' <a title="Block" href="#" onclick="block_flat(' . $eachItem->id . ', 3);"><i class="material-icons" >block</i></a>';
+            }
+            if ($eachItem->is_available == 3) {
+                $actions .= ' <a title="Unblock" href="#" onclick="block_flat(' . $eachItem->id . ', 1);"><i class="material-icons" >clear</i></a>';
+            }
+            $eachItemData[] = [$no, $eachItem->building_name, $eachItem->flat_name, $eachItem->square_feet, $eachItem->construction_name, $eachItem->flat_type_name,  $eachItem->occupancy(), '<div class="text-center">' . $actions . '</div>'];
         }
         $data['data'] = $eachItemData;
 
         return response()->json($data);
+    }
+
+    public function flat_create()
+    {
+
+        $building_reference = Input::get('_ref');
+        $key = Input::get('_key');
+
+        $flat_id = UriEncode::decrypt($key);
+        $building_id = UriEncode::decrypt($building_reference);
+
+        $model = new Flats();
+        $modelBuilding = new Buildings();
+
+        if ($flat_id > 0) {
+            $model = Flats::find($flat_id);
+            $building_id = (int) $model->building_id;
+        }
+
+        if ($building_id > 0)
+            $modelBuilding = Buildings::find($building_id);
+
+        $view = 'buildings.flat.create';
+        return view($view, ['model' => $model, 'modelBuilding' => $modelBuilding, 'building_id' => $building_id, 'from' => 2]);
+    }
+
+    public function flat_save(Request $request)
+    {
+        //Input Data
+        $data = $request->all();
+
+        //Validation of Request
+        $Message = [
+            'name.unique_with' => 'Flat already added!',
+            'flat_type_id.gt' => 'Choose a Flat Type',
+            'construction_type_id.gt' => 'Choose a Construction Type'
+        ];
+
+        $validator = \Validator::make($data, [
+            'name' => ['required', 'max:255', 'unique_with:flats,building_id,' . $request->id],
+            'building_id' => ['required', 'integer', 'gt:0'],
+            'construction_type_id' => ['required', 'integer', 'gt:0'],
+            'flat_type_id' => ['required', 'integer', 'gt:0'],
+            'premise_id' => ['required', \Illuminate\Validation\Rule::unique('flats')->ignore((int) $data['id']), 'max:255']
+        ], $Message);
+
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), 200);
+        } else {
+
+            $model = new Flats();
+            if ($data['id'] > 0) {
+                $model = Flats::find($data['id']);
+            }
+            $model->fill($data);
+            $model->save();
+
+            return response()->json(['flat_id' => $model->id, 'flat_id_encoded' => $model->encoded_key(), 'message' => 'success']);
+        }
+    }
+
+    public function flat_status(Request $request)
+    {
+        //Input Data
+        $data = $request->all();
+
+        if ($data['_ref'] > 0) {
+            $availableType = 0;
+            if ($data['status'] == 3) {
+                $availableType = 1;
+            }
+            if ($data['status'] == 1) {
+                $availableType = 3;
+            }
+            $model = Flats::find($data['_ref']);
+            if ($model->id > 0 && $model->is_available == $availableType) {
+                $model->is_available = $data['status'];
+                $model->save();
+            }
+        }
+
+        return response()->json(['message' => 'success']);
     }
 }

@@ -15,28 +15,28 @@
                         <i class="material-icons">settings</i> Buildings
                     </a>
                 </li>
+                @if( isset($modelBuilding->id) && $modelBuilding->id > 0 )
+                <li>
+                    <a href="/building/create/{{ $modelBuilding->encoded_key() }}">
+                        <i class="material-icons">home</i> {{ $modelBuilding->name }}
+                    </a>
+                </li>
+                @endif
                 <li class="active">
-                    <i class="material-icons">add_circle</i> Create
+                    <i class="material-icons">add_circle</i> Flat
                 </li>
             </ol>
         </div>
     </div>
 
-    @include('buildings.basic')
-
-    @include('buildings.depreciation')
-
-    <!-- Table -->
-    <div class="row clearfix">
-        @include('buildings.flat.index')
-    </div>
-    <!-- end -->
+    @include('buildings.flat.basic')
 
     <!-- Table -->
     <div class="row clearfix">
         @include('buildings.documents')
     </div>
     <!-- end -->
+
 </div>
 
 @endsection

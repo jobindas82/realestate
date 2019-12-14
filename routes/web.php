@@ -29,6 +29,7 @@ Route::get('/building/create/{key}',[ 'as' => 'building.create' , 'uses' => 'Bui
 Route::post('/building/save/basic', 'BuildingController@save_basics')->middleware('auth');
 Route::post('/building/save/depreciation', 'BuildingController@save_depreciation')->middleware('auth');
 Route::post('/building/get_documents', 'BuildingController@get_documents')->middleware('auth');
+Route::post('/building/status', 'BuildingController@update_status')->middleware('auth');
 Route::post('/building/update_document', 'BuildingController@update_document')->middleware('auth');
 
 //Flats
@@ -36,6 +37,7 @@ Route::get('/building/flat', [ 'as' => 'building.flat.create' , 'uses' => 'Build
 Route::post('/building/flat/list', 'BuildingController@flat_list')->middleware('auth');
 Route::post('/building/flat/save', 'BuildingController@flat_save')->middleware('auth');
 Route::post('/building/flat/status', 'BuildingController@flat_status')->middleware('auth');
+Route::get('/building/flat/all/{key}', [ 'as' => 'building.flat.all' , 'uses' => 'BuildingController@flat_all' ])->middleware('auth');
 
  //properties routes end
 

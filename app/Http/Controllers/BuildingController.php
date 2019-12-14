@@ -103,6 +103,67 @@ class BuildingController extends Controller
         }
     }
 
+    public function update_status(Request $request)
+    {
+        //Input Data
+        $data = $request->all();
+
+        if ($data['_ref'] > 0) {
+            $model = Buildings::find($data['_ref']);
+            if ($model->id > 0) {
+                $model->is_available = $data['status'];
+                $model->save();
+
+                $headerClass = 'bg-light-green';
+                if ($model->is_available == 2)
+                    $headerClass = 'bg-amber';
+                if ($model->is_available == 3)
+                    $headerClass = 'bg-red';
+
+                $address = $model->address;
+                $count = $model->flats_available();
+                $key = $model->encoded_key();
+                $name = $model->name;
+
+                $content = '<div class="header ' . $headerClass . '">
+                            <h2>
+                                <b>' . $name . '<b> <small> ' . $address . ' </small>
+                            </h2>
+                            <ul class="header-dropdown m-r--5">
+                                <li>
+                                    <a href="javascript:void(0);" data-toggle="cardloading" data-loading-effect="timer" data-loading-color="lightBlue">
+                                        <span class="badge">' . $count . ' Flats Available</span>
+                                    </a>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                        <i class="material-icons">more_vert</i>
+                                    </a>
+                                    <ul class="dropdown-menu pull-right">
+                                        <li><a href="/building/create">Create</a></li>
+                                        <li><a href="/building/create/' . $key . '">Edit</a></li>
+                                        <li><a href="#" onclick="window.open(\'/building/flat/?_ref=' . $key . '\', \'_blank\');">Add Flat</a></li>
+                                        <li><a href="#" onclick="window.open(\'/document/create/?__uuid=' . $key . '&__from=1\', \'_blank\');">Add Documents</a></li>';
+                if ($model->is_available == 1) {
+                    $content .= '<li><a href="#" onclick="building_status(' . $model->id . ', 3);">Block</a></li>
+                                                         <li><a href="#" onclick="building_status(' . $model->id . ', 2);">Under Maintenance</a></li>';
+                } else if ($model->is_available == 2) {
+                    $content .= '<li><a href="#" onclick="building_status(' . $model->id . ', 1);">Active</a></li>
+                                                         <li><a href="#" onclick="building_status(' . $model->id . ', 3);">Block</a></li>';
+                } else {
+                    $content .= '<li><a href="#" onclick="building_status(' . $model->id . ', 1);">Active</a></li>';
+                }
+                $content .= '</ul>
+                                </li>
+                            </ul>
+                        </div>';
+
+                return response()->json(['message' => 'success', 'content' => $content], 200);
+            }
+        }
+        return response()->json(['message' => 'failed']);
+    }
+
     public function get_documents()
     {
 
@@ -219,13 +280,15 @@ class BuildingController extends Controller
         $query->where('flats.building_id', $building_id);
 
         if ($keyword != "") {
-            $query->where('flats.name', 'LIKE', '%' . $keyword . '%')
-                ->orWhere('flats.premise_id', 'LIKE', '%' . $keyword . '%')
-                ->orWhere('flats.owner_name', 'LIKE', '%' . $keyword . '%')
-                ->orWhere('flats.landlord_name', 'LIKE', '%' . $keyword . '%')
-                ->orWhere('flats.plot_no', 'LIKE', '%' . $keyword . '%')
-                ->orWhere('construction_type.name', 'LIKE', '%' . $keyword . '%')
-                ->orWhere('flat_types.name', 'LIKE', '%' . $keyword . '%');
+            $query->where(function ($q) use ($keyword) {
+                $q->where('flats.name', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('flats.premise_id', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('flats.owner_name', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('flats.landlord_name', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('flats.plot_no', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('construction_type.name', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('flat_types.name', 'LIKE', '%' . $keyword . '%');
+            });
         }
 
         //Result
@@ -337,5 +400,18 @@ class BuildingController extends Controller
         }
 
         return response()->json(['message' => 'success']);
+    }
+
+    public function flat_all($key = 0)
+    {
+        $id = UriEncode::decrypt($key);
+        $model = new Buildings();
+        if ($id > 0)
+            $model = Buildings::find($id);
+        if (!isset($model->id))
+            abort(403, 'Unauthorized action.');
+
+        $view = 'buildings.flat.all';
+        return view($view, ['model' => $model, 'hiddenRow' => 1, 'from' => 1]);
     }
 }

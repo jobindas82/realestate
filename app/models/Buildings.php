@@ -51,7 +51,7 @@ class Buildings extends Model
 
     public function formated_purchase_date()
     {
-        return $this->exists  ? date('d/m/Y', strtotime($this->purchase_date)) : '';
+        return $this->exists && $this->purchase_date != NULL &&   $this->purchase_date != '0000-00-00' ? date('d/m/Y', strtotime($this->purchase_date)) : '';
     }
 
     public function flats_available()

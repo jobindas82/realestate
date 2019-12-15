@@ -46,7 +46,7 @@ class Buildings extends Model
 
     public function encoded_key()
     {
-        return UriEncode::encrypt((int) $this->id);
+        return $this->exists ? UriEncode::encrypt((int) $this->id) : '';
     }
 
     public function formated_purchase_date()

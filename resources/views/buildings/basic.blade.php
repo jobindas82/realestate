@@ -80,7 +80,7 @@
                                 @endphp
 
                                 <div id="location_drop_down_div">
-                                    {{ Form::select('location_id', $locations, $model->location_id, [ 'class' => 'form-control show-tick']) }}
+                                    {{ Form::select('location_id', $locations, $model->location_id, [ 'class' => 'form-control show-tick simple-dropdown']) }}
                                 </div>
 
                                 <label class="form-label">Location</label>
@@ -167,6 +167,7 @@
             url: '/masters/locations/' + country_id,
             success: function(response) {
                 $('#location_drop_down_div').html(response);
+
             }
         });
     }

@@ -33,7 +33,7 @@
 
     <!-- Table -->
     <div class="row clearfix">
-        @include('buildings.documents')
+        @include('document.list')
     </div>
     <!-- end -->
 

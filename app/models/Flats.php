@@ -33,8 +33,9 @@ class Flats extends Model
         });
     }
 
-    public function encoded_key(){
-        return UriEncode::encrypt((int) $this->id);
+    public function encoded_key()
+    {
+        return $this->exists ? UriEncode::encrypt((int) $this->id) : '';
     }
 
     public function building()

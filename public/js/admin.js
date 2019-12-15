@@ -549,6 +549,12 @@ $(function() {
 
     //Popover
     $('[data-toggle="popover"]').popover();
+
+        //Email
+    $('.have-mask').find('.email').inputmask({ alias: "email" });
+    $('.have-mask').find('.mobile-phone-number').inputmask('+\\971 99 999 9999', { placeholder: '+___ __ ___ ____' });
+    $('.have-mask').find('.emirates-id').inputmask('999-9999-9999999-9', { placeholder: '___-____-_______-_' });
+    $('.have-mask').find('.trn-no').inputmask('999999999999999', { placeholder: '_______________' });
 });
 
 

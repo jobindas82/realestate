@@ -7,7 +7,7 @@
     </div>
     <!-- Table -->
     <div class="row clearfix">
-        @include('buildings.flat.index')
+        @include('document.list')
     </div>
     <!-- end -->
 

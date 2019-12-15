@@ -36,9 +36,10 @@ class DocumentController extends Controller
         $models = [
             1 => new \App\models\Buildings(),
             2 => new \App\models\Flats(),
+            3 => new \App\models\Tenants()
         ];
 
-        if (!in_array($from, [1, 2]))
+        if (!in_array($from, [1, 2, 3]))
             abort(403, 'Unauthorized action.');
 
         if ((int) $parent_id > 0) {
@@ -48,8 +49,9 @@ class DocumentController extends Controller
                 abort(403, 'Unauthorized action.');
 
             $labels = [
-                1 => 'Building ' . $model->name,
-                2 => 'Flat ' . $model->name
+                1 => 'Building | ' . $model->name,
+                2 => 'Flat | ' . $model->name,
+                3 => 'Tenant | ' . $model->name
             ];
 
             $label = $labels[$from];
@@ -177,5 +179,114 @@ class DocumentController extends Controller
         $file = public_path() . '/uploads/' . $documentModel->filename;
 
         return response()->download($file, $documentModel->original_name);
+    }
+
+    public function get_documents()
+    {
+
+        $draw   = $_POST['draw'];
+        $offset = $_POST['start'];
+        $limit  = $_POST['length'];
+        $keyword = trim($_POST['search']['value']);
+
+        $parent  = (int) $_POST['parent'];
+        $from  = (int) $_POST['from'];
+
+        $columns = [
+            // datatable column index  => database column name
+            0 => 'id',
+            1 => 'title',
+            2 => 'expiry_date',
+            3 => 'id'
+        ];
+
+        $filterColumn = $columns[$_POST['order'][0]['column']];
+        $filterOrder  = $_POST['order'][0]['dir'];
+
+        //Eloquent Result
+        $query = Documents::query()->where('from', $from)->where('parent_id', $parent);
+
+        if ($keyword != "") {
+            $query->where(function ($q) use ($keyword) {
+                $q->orWhere('title', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('original_name', 'LIKE', '%' . $keyword . '%');
+            });
+        }
+        //Result
+        $result = $query->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->get();
+
+        $recordsTotal = $result->count();
+        $recordsFiltered = $recordsTotal;
+        $data['draw'] = $draw;
+        $data['recordsTotal'] = $recordsTotal;
+        $data['recordsFiltered'] = $recordsFiltered;
+        $eachItemData = [];
+
+        foreach ($result as $i => $eachItem) {
+            $no = $i + $offset + 1;
+            //Edit Button
+
+            $actions = '<a title="Download" href="/document/download/?__token=' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >file_download</i></a>';
+            $actions .= '<a title="Save" href="#" onclick="save_doc(' . $eachItem->id . ');"><i class="material-icons" >save</i></a>';
+            $actions .= '<a title="Remove" href="#" onclick="remove_doc(' . $eachItem->id . ');"><i class="material-icons" >delete_sweep</i></a>';
+
+            $eachItemData[] = [$no, '<input type="text" class="form-control" value="' . $eachItem->title . '" id="doc_title_' . $eachItem->id . '" />', '<input type="text" class="form-control datepicker" value="' . $eachItem->formated_expiry_date() . '" id="doc_exp_' . $eachItem->id . '" />', '<div class="text-center">' . $actions . '</div>'];
+        }
+        $data['data'] = $eachItemData;
+
+        return response()->json($data);
+    }
+
+    public function update_document(Request $request)
+    {
+        //Input Data
+        $data = $request->all();
+
+        if ($data['expiry_date'] != '')
+            $data['expiry_date'] = date('Y-m-d', strtotime(str_replace('/', '-', $data['expiry_date'])));
+
+        //Validation of Request
+        $validator = \Validator::make($data, [
+            '_ref' => ['required', 'integer', 'gt:0'],
+            'expiry_date' => ['nullable', 'date']
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), 200);
+        } else {
+            $model = Documents::find($data['_ref']);
+            $model->title = $data['title'];
+            $model->expiry_date = $data['expiry_date'];
+            $model->save();
+
+            return response()->json(['message' => 'success']);
+        }
+    }
+
+    public function document_all($from=0, $parent=0)
+    {
+
+        $parent_id = UriEncode::decrypt($parent);
+
+        $models = [
+            1 => new \App\models\Buildings(),
+            2 => new \App\models\Flats(),
+            3 => new \App\models\Tenants()
+        ];
+
+        if (!in_array($from, [1, 2, 3]))
+            abort(403, 'Unauthorized action.');
+
+        if ((int) $parent_id > 0) {
+            $model = $models[$from]::where('id', $parent_id)->first();
+
+            if (!isset($model))
+                abort(403, 'Unauthorized action.');
+
+            $view = 'document.all';
+            return view($view, ['model' => $model, 'from' => $from]);
+        } else {
+            abort(403, 'Unauthorized action.');
+        }
     }
 }

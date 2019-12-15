@@ -11,13 +11,18 @@
                     </a>
                 </li>
                 <li class="dropdown">
-                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="menu-filter">
                         <i class="material-icons">more_vert</i>
                     </a>
                     <ul class="dropdown-menu pull-right">
+                        <input type="hidden" name="availability" id="availability" value="0">
                         <input type="hidden" name="flat_building_id" id="flat_building_id" value="{{ $model->id }}">
                         <input type="hidden" name="flat_key" id="flat_key" value="{{ $model->encoded_key() }}">
                         <li><a href="#" onclick="goto_flat()"><i class="material-icons">add_circle</i> Add</a></li>
+                        <!-- <li><a href="#" onclick="updateFilter(0);"><i class="material-icons">check_circle</i> Show All</a></li>
+                        <li><a href="#" onclick="updateFilter(1);"><i class="material-icons">done</i> Show Available</a></li>
+                        <li><a href="#" onclick="updateFilter(2);"><i class="material-icons">done_all</i> Show Occupied</a></li>
+                        <li><a href="#" onclick="updateFilter(3);"><i class="material-icons">block</i> Show Blocked</a></li> -->
                     </ul>
                 </li>
             </ul>
@@ -47,6 +52,7 @@
     $(document).ready(function() {
         var table = $('#building_flat_list').on("preXhr.dt", function(e, settings, data) {
             data.parent = $('#flat_building_id').val();
+            data.availability = $('#availability').val();
             return data;
         }).DataTable({
             responsive: true,
@@ -106,5 +112,10 @@
                 });
             }
         });
+    }
+
+    function updateFilter(value){
+        $('#availability').val(value); 
+        reload_datatable('#building_flat_list'); 
     }
 </script>

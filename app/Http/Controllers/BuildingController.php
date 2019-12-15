@@ -164,87 +164,6 @@ class BuildingController extends Controller
         return response()->json(['message' => 'failed']);
     }
 
-    public function get_documents()
-    {
-
-        $draw   = $_POST['draw'];
-        $offset = $_POST['start'];
-        $limit  = $_POST['length'];
-        $keyword = trim($_POST['search']['value']);
-
-        $parent  = (int) $_POST['parent'];
-        $from  = (int) $_POST['from'];
-
-        $columns = [
-            // datatable column index  => database column name
-            0 => 'id',
-            1 => 'title',
-            2 => 'expiry_date',
-            3 => 'id'
-        ];
-
-        $filterColumn = $columns[$_POST['order'][0]['column']];
-        $filterOrder  = $_POST['order'][0]['dir'];
-
-        //Eloquent Result
-        $query = Documents::query()->where('from', $from)->where('parent_id', $parent);
-
-        if ($keyword != "") {
-            $query->where(function ($q) use ($keyword) {
-                $q->orWhere('title', 'LIKE', '%' . $keyword . '%')
-                    ->orWhere('original_name', 'LIKE', '%' . $keyword . '%');
-            });
-        }
-        //Result
-        $result = $query->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->get();
-
-        $recordsTotal = $result->count();
-        $recordsFiltered = $recordsTotal;
-        $data['draw'] = $draw;
-        $data['recordsTotal'] = $recordsTotal;
-        $data['recordsFiltered'] = $recordsFiltered;
-        $eachItemData = [];
-
-        foreach ($result as $eachItem) {
-            //Edit Button
-
-            $actions = '<a title="Download" href="/document/download/?__token=' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >file_download</i></a>';
-            $actions .= '<a title="Save" href="#" onclick="save_doc(' . $eachItem->id . ');"><i class="material-icons" >save</i></a>';
-            $actions .= '<a title="Remove" href="#" onclick="remove_doc(' . $eachItem->id . ');"><i class="material-icons" >delete_sweep</i></a>';
-
-            $eachItemData[] = [$eachItem->id, '<input type="text" class="form-control" value="' . $eachItem->title . '" id="doc_title_' . $eachItem->id . '" />', '<input type="text" class="form-control datepicker" value="' . $eachItem->formated_expiry_date() . '" id="doc_exp_' . $eachItem->id . '" />', '<div class="text-center">' . $actions . '</div>'];
-        }
-        $data['data'] = $eachItemData;
-
-        return response()->json($data);
-    }
-
-    public function update_document(Request $request)
-    {
-        //Input Data
-        $data = $request->all();
-
-        if ($data['expiry_date'] != '')
-            $data['expiry_date'] = date('Y-m-d', strtotime(str_replace('/', '-', $data['expiry_date'])));
-
-        //Validation of Request
-        $validator = \Validator::make($data, [
-            '_ref' => ['required', 'integer', 'gt:0'],
-            'expiry_date' => ['nullable', 'date']
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->messages(), 200);
-        } else {
-            $model = Documents::find($data['_ref']);
-            $model->title = $data['title'];
-            $model->expiry_date = $data['expiry_date'];
-            $model->save();
-
-            return response()->json(['message' => 'success']);
-        }
-    }
-
     public function flat_list()
     {
 
@@ -254,6 +173,7 @@ class BuildingController extends Controller
         $keyword = trim($_POST['search']['value']);
 
         $building_id  = (int) $_POST['parent'];
+        $availability  = (int) $_POST['availability'];
 
         $columns = [
             // datatable column index  => database column name
@@ -278,6 +198,8 @@ class BuildingController extends Controller
 
         //if ($building_id > 0)
         $query->where('flats.building_id', $building_id);
+        if( $availability > 0 )
+            $query->where('flats.is_available', $availability);
 
         if ($keyword != "") {
             $query->where(function ($q) use ($keyword) {
@@ -305,6 +227,7 @@ class BuildingController extends Controller
             $no = $i + $offset + 1;
             //Edit Button
             $actions = '<a title="Edit" href="#" onclick="window.open(\'/building/flat/?_key=' . UriEncode::encrypt($eachItem->id) . '\', \'_blank\')"><i class="material-icons" >create</i></a>';
+            $actions .= ' <a title="View Documents" href="#" onclick="window.open(\'/document/all/2/'. $eachItem->encoded_key() .'\', \'_blank\', \'location=yes,height=0,width=0,scrollbars=yes,status=yes\');"><i class="material-icons">folder</i></a>';
             $actions .= ' <a title="Add Document" href="#" onclick="window.open(\'/document/create/?__from=2&__uuid=' . UriEncode::encrypt($eachItem->id) . '\', \'_blank\')"><i class="material-icons" >attach_file</i></a>';
 
             if ($eachItem->is_available == 1) {

@@ -65,6 +65,10 @@
     <!-- Autosize Plugin Js -->
     <script src="{{ asset('plugins/autosize/autosize.js') }}"></script>
 
+    
+    <!-- Input Mask Plugin Js -->
+    <script src="{{ asset('plugins/jquery-inputmask/jquery.inputmask.bundle.js') }}"></script>
+
 
 </head>
 

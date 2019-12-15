@@ -56,7 +56,7 @@
                 <a href="#" onclick="window.open('/building/flat/all/{{ $each->encoded_key() }}', '_blank', 'location=yes,height=0,width=0,scrollbars=yes,status=yes');"><i class="material-icons">settings</i> All Flats</a><br>
                 <a href="javascript(0);"><i class="material-icons">settings</i> Active Contracts</a><br>
                 <a href="javascript(0);"><i class="material-icons">settings</i> Contracts</a><br>
-                <a href="javascript(0);"><i class="material-icons">settings</i> View Documents</a><br>
+                <a href="#" onclick="window.open('/document/all/1/{{ $each->encoded_key() }}', '_blank', 'location=yes,height=0,width=0,scrollbars=yes,status=yes');"><i class="material-icons">settings</i> View Documents</a><br>
             </div>
         </div>
     </div>

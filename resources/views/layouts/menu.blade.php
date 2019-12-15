@@ -85,8 +85,8 @@
 
         <!-- Menu Item -->
         <li class="header">Tenants & Properties</li>
-        <li class="{{ Route::is('tenant.index') ? 'active' : '' }}">
-            <a href="/">
+        <li class="{{ Route::is('tenant.index') || Route::is('tenant.create') ? 'active' : '' }}">
+            <a href="/tenant/index">
                 <i class="material-icons">record_voice_over</i>
                 <span>Tenants</span>
             </a>

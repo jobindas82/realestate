@@ -106,6 +106,9 @@
     <!-- Dropzone Plugin Js -->
     <script src="{{ asset('plugins/dropzone/dropzone.js') }}"></script>
 
+    <!-- Input Mask Plugin Js -->
+    <script src="{{ asset('plugins/jquery-inputmask/jquery.inputmask.bundle.js') }}"></script>
+
     <!-- Pusher -->
     <!-- <script src="https://js.pusher.com/5.0/pusher.min.js"></script> -->
     <!-- <script>
@@ -195,7 +198,7 @@
 
     </section>
 
-    <section class="content">
+    <section class="content" id="main-render-section">
         @yield('content')
     </section>
 

@@ -11,8 +11,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/building/index">
-                        <i class="material-icons">settings</i> Buildings
+                    <a href="/tenant/index">
+                        <i class="material-icons">record_voice_over</i> Tenants
                     </a>
                 </li>
                 <li class="active">
@@ -22,15 +22,7 @@
         </div>
     </div>
 
-    @include('buildings.basic')
-
-    @include('buildings.depreciation')
-
-    <!-- Table -->
-    <div class="row clearfix">
-        @include('buildings.flat.index')
-    </div>
-    <!-- end -->
+    @include('tenant.basic')
 
     <!-- Table -->
     <div class="row clearfix">

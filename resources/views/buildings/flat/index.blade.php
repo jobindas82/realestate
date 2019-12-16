@@ -15,7 +15,7 @@
                         <i class="material-icons">more_vert</i>
                     </a>
                     <ul class="dropdown-menu pull-right">
-                        <input type="hidden" name="availability" id="availability" value="0">
+                        <input type="hidden" name="availability" id="availability" value="@if(isset($status)) {{ $status }} @else 0 @endif">
                         <input type="hidden" name="flat_building_id" id="flat_building_id" value="{{ $model->id }}">
                         <input type="hidden" name="flat_key" id="flat_key" value="{{ $model->encoded_key() }}">
                         <li><a href="#" onclick="goto_flat()"><i class="material-icons">add_circle</i> Add</a></li>
@@ -90,7 +90,7 @@
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Block'
+            confirmButtonText: 'Save'
         }).then((result) => {
             if (result.value) {
                 $.ajax({

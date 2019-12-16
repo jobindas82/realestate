@@ -364,7 +364,7 @@ $.AdminBSB.input = {
 $.AdminBSB.select = {
     activate: function() {
         if ($.fn.selectpicker) {
-            $("select:not(.ms)").selectpicker();
+            $("select:not(.ms):not(.ajax-drop)").selectpicker();
         }
     }
 };

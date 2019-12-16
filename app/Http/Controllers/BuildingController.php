@@ -337,4 +337,17 @@ class BuildingController extends Controller
         $view = 'buildings.flat.all';
         return view($view, ['model' => $model, 'hiddenRow' => 1, 'from' => 1]);
     }
+
+    public function flat_active($status =0, $key = 0)
+    {
+        $id = UriEncode::decrypt($key);
+        $model = new Buildings();
+        if ($id > 0)
+            $model = Buildings::find($id);
+        if (!isset($model->id))
+            abort(403, 'Unauthorized action.');
+
+        $view = 'buildings.flat.all';
+        return view($view, ['model' => $model, 'hiddenRow' => 1, 'from' => 1, 'status' => $status]);
+    }
 }

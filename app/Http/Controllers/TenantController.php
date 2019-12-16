@@ -38,7 +38,7 @@ class TenantController extends Controller
         $offset = $_POST['start'];
         $limit  = $_POST['length'];
         $keyword = trim($_POST['search']['value']);
-       
+
         $columns = [
             0 => 'id',
             1 => 'name',
@@ -54,13 +54,13 @@ class TenantController extends Controller
         $filterOrder  = $_POST['order'][0]['dir'];
 
         $query = Tenants::query();
-        
+
         if ($keyword != "") {
             $query->orWhere('name', 'LIKE', '%' . $keyword . '%')
-                  ->orWhere('email', 'LIKE', '%' . $keyword . '%')
-                  ->orWhere('emirates_id', 'LIKE', '%' . $keyword . '%')
-                  ->orWhere('mobile', 'LIKE', '%' . $keyword . '%')
-                  ->orWhere('passport_number', 'LIKE', '%' . $keyword . '%');
+                ->orWhere('email', 'LIKE', '%' . $keyword . '%')
+                ->orWhere('emirates_id', 'LIKE', '%' . $keyword . '%')
+                ->orWhere('mobile', 'LIKE', '%' . $keyword . '%')
+                ->orWhere('passport_number', 'LIKE', '%' . $keyword . '%');
         }
 
         $result = $query->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->get();
@@ -77,7 +77,7 @@ class TenantController extends Controller
         foreach ($result as $eachItem) {
             //Edit Button
             $actions = '<a title="Edit" href="/tenant/create/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
-            $actions .= ' <a title="View Documents" href="#" onclick="window.open(\'/document/all/3/'. $eachItem->encoded_key() .'\', \'_blank\', \'location=yes,height=0,width=0,scrollbars=yes,status=yes\');"><i class="material-icons">folder</i></a>';
+            $actions .= ' <a title="View Documents" href="#" onclick="window.open(\'/document/all/3/' . $eachItem->encoded_key() . '\', \'_blank\', \'location=yes,height=0,width=0,scrollbars=yes,status=yes\');"><i class="material-icons">folder</i></a>';
             $actions .= ' <a title="Add Document" href="#" onclick="window.open(\'/document/create/?__from=3&__uuid=' . UriEncode::encrypt($eachItem->id) . '\', \'_blank\')"><i class="material-icons" >attach_file</i></a>';
 
             if ($eachItem->is_available == 1) {
@@ -129,12 +129,36 @@ class TenantController extends Controller
 
         if ($data['_ref'] > 0) {
             $model = Tenants::find($data['_ref']);
-            if ($model->id > 0 && $model->is_available != 2 ) {
+            if ($model->id > 0 && $model->is_available != 2) {
                 $model->is_available = $data['status'];
                 $model->save();
                 return response()->json(['message' => 'success'], 200);
             }
         }
         return response()->json(['message' => 'failed']);
+    }
+    public function query(Request $request)
+    {
+        $data = $request->all();
+        $keyword = trim($data['q']);
+        $response = [];
+
+        if ($keyword != '') {
+            $model = Tenants::where('is_available', 1)->where('name', 'LIKE', '%' . $keyword . '%')->select('name', 'id', 'email')->limit(200)->get();
+            foreach ($model as $i => $eachItem) {
+                $response[$i] = ['id' => $eachItem->id, 'name' => $eachItem->name, 'email' => $eachItem->email];
+            }
+        }
+
+        return response()->json($response, 200);
+    }
+
+    public function fetch(Request $request){
+        $data = $request->all();
+        if( isset($data['_ref']) && $data['_ref'] > 0 ){
+            $model = Tenants::find($data['_ref']);
+            return response()->json(['status' => 'success', 'emirates_id' => $model->emirates_id, 'email' => $model->email, 'passport_no' => $model->passport_number, 'phone' => $model->land_phone, 'mobile' => $model->mobile ]);
+        }
+        return response()->json(['status' => 'failed']);
     }
 }

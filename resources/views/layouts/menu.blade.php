@@ -13,8 +13,8 @@
 
         <!-- Menu Item -->
         <li class="header">Contracts & Accounting</li>
-        <li class="{{ Route::is('leasing.index') ? 'active' : '' }}">
-            <a href="/">
+        <li class="{{ Route::is('contract.index') || Route::is('contract.create') ? 'active' : '' }}">
+            <a href="/contract/index">
                 <i class="material-icons">folder</i>
                 <span>Leasing & Contracts</span>
             </a>
@@ -91,22 +91,11 @@
                 <span>Tenants</span>
             </a>
         </li>
-        <li class="{{ 
-                            Route::is('building.index') ||  
-                            Route::is('building.create') 
-                            ? 'active' : '' 
-                        }}">
-            <a href="javascript:void(0);" class="menu-toggle">
+        <li class="{{ Route::is('building.index') || Route::is('building.create') ? 'active' : '' }}">
+            <a href="/building/index">
                 <i class="material-icons">home</i>
-                <span>Properties</span>
+                <span>Buildings</span>
             </a>
-            <ul class="ml-menu">
-                <li class="{{ Route::is('building.index') || Route::is('building.create') ? 'active' : '' }}">
-                    <a href="/building/index">
-                        <span>Buildings</span>
-                    </a>
-                </li>
-            </ul>
         </li>
         <li class="{{ 
                             Route::is('masters.flat_type.index') ||  

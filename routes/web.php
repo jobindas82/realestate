@@ -36,8 +36,15 @@ Route::post('/building/flat/list', 'BuildingController@flat_list')->middleware('
 Route::post('/building/flat/save', 'BuildingController@flat_save')->middleware('auth');
 Route::post('/building/flat/status', 'BuildingController@flat_status')->middleware('auth');
 Route::get('/building/flat/all/{key}', ['as' => 'building.flat.all', 'uses' => 'BuildingController@flat_all'])->middleware('auth');
+Route::get('/building/flat/all/{status}/{key}', ['as' => 'building.flat.all', 'uses' => 'BuildingController@flat_active'])->middleware('auth');
 //properties routes end
 
+//Contracts 
+Route::get('/contract/index', ['as' => 'contract.index', 'uses' => 'ContractController@index'])->middleware('auth');
+Route::post('/contract/list', 'ContractController@list')->middleware('auth');
+Route::get('/contract/create', ['as' => 'contract.create', 'uses' => 'ContractController@create'])->middleware('auth');
+Route::get('/contract/create/{key}', ['as' => 'contract.create', 'uses' => 'ContractController@create'])->middleware('auth');
+//end
 
 //Tenants
 Route::get('/tenant/index', ['as' => 'tenant.index', 'uses' => 'TenantController@index'])->middleware('auth');
@@ -46,6 +53,8 @@ Route::get('/tenant/create', ['as' => 'tenant.create', 'uses' => 'TenantControll
 Route::get('/tenant/create/{key}', ['as' => 'tenant.create', 'uses' => 'TenantController@create'])->middleware('auth');
 Route::post('/tenant/save', 'TenantController@save')->middleware('auth');
 Route::post('/tenant/status', 'TenantController@status')->middleware('auth');
+Route::post('/tenant/query', 'TenantController@query')->middleware('auth');
+Route::post('/tenant/fetch', 'TenantController@fetch')->middleware('auth');
 
 //Document Handler
 Route::post('/document/get_documents', 'DocumentController@get_documents')->middleware('auth');

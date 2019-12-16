@@ -17,7 +17,7 @@
                     </h2>
                     <ul class="header-dropdown m-r--5">
                         <li>
-                            <a href="javascript:void(0);" data-toggle="cardloading" data-loading-effect="timer" data-loading-color="lightBlue">
+                            <a href="javascript:void(0);" onclick="window.open('/building/flat/all/1/{{ $each->encoded_key() }}', '_blank', 'location=yes,height=0,width=0,scrollbars=yes,status=yes');" data-toggle="cardloading" data-loading-effect="timer" data-loading-color="lightBlue">
                                 <span class="badge">{{ $each->flats_available() }} Flats Available</span>
                             </a>
                         </li>

@@ -23,4 +23,12 @@ class Ledgers extends Model
     protected $fillable = [
         'parent_id', 'name', 'is_active',
     ];
+
+    public static function children($id = 0)
+    {
+        $query = self::query()->where('is_active', 'Y')->where('is_parent', 'N');
+        if ($id > 0)
+            $query->orWhere('id', $id);
+        return $query->pluck('name', 'id');
+    }
 }

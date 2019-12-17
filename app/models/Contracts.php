@@ -23,7 +23,7 @@ class Contracts extends Model
      */
     protected $fillable = [
         'tenant_id', 'building_id', 'flat_id', 'generated_date', 'from_date', 'to_date',
-        'util_payment', 'is_active', 'is_renewed', 'previous_contract'
+        'util_payment', 'is_active', 'is_renewed', 'previous_contract', 'terms'
     ];
 
     protected static function boot()

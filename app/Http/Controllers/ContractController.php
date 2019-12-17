@@ -25,8 +25,8 @@ class ContractController extends Controller
         $id = UriEncode::decrypt($key);
         $model = new Contracts;
         if ($id > 0)
-            $model = Contracts::find($id);
-
+            $model = Contracts::with('tenant')->find($id);
+        //print_r($model);
         return view('contract.create', ['model' => $model]);
     }
 
@@ -94,7 +94,7 @@ class ContractController extends Controller
             //Edit Button
             $actions = '<a title="Edit" href="/contract/create/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
 
-            $eachItemData[] = [$no, $eachItem->tenant_name,  $eachItem->building_name, $eachItem->flat_name, $eachItem->formated_from_date(), $eachItem->formated_to_date(),  $eachItem->grossAmount(), $eachItem->status(), '<div class="text-center">' . $actions . '</div>'];
+            $eachItemData[] = [$eachItem->id, $eachItem->tenant_name,  $eachItem->building_name, $eachItem->flat_name, $eachItem->formated_from_date(), $eachItem->formated_to_date(),  $eachItem->grossAmount(), $eachItem->status(), '<div class="text-center">' . $actions . '</div>'];
             $no++;
         }
         $data['data'] = $eachItemData;
@@ -107,11 +107,21 @@ class ContractController extends Controller
         //Input Data
         $data = $request->all();
 
+        if ($data['generated_date'] != '')
+            $data['generated_date'] = date('Y-m-d', strtotime(str_replace('/', '-', $data['generated_date'])));
+        if ($data['from_date'] != '')
+            $data['from_date'] = date('Y-m-d', strtotime(str_replace('/', '-', $data['from_date'])));
+        if ($data['to_date'] != '')
+            $data['to_date'] = date('Y-m-d', strtotime(str_replace('/', '-', $data['to_date'])));
+
         //Validation of Request
         $validator = \Validator::make($data, [
-            'name' => ['required', \Illuminate\Validation\Rule::unique('Contracts')->ignore((int) $data['id']), 'max:255'],
-            'mobile' => ['required'],
-            'emirates_id' => ['required']
+            'tenant_id' => ['required', 'gt:0'],
+            'flat_id' => ['required', new \App\Rules\flatAvailability((int) $data['id'])],
+            'building_id' => ['required', 'gt:0'],
+            'generated_date' => ['required', 'date'],
+            'from_date' => ['required', 'date', 'after_or_equal:generated_date'],
+            'to_date' => ['required', 'date', 'after_or_equal:from_date']
         ]);
 
         if ($validator->fails()) {
@@ -125,7 +135,11 @@ class ContractController extends Controller
             $model->fill($data);
             $model->save();
 
-            return response()->json(['tenant_id' => $model->id, 'message' => 'success', 'tenant_id_encrypted' => $model->encoded_key()]);
+            //Update Status
+            $model->flat->occupied();
+            $model->tenant->onContract();
+
+            return response()->json(['contract_id' => $model->id, 'message' => 'success']);
         }
     }
 

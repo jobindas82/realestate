@@ -10614,3 +10614,11 @@ th.col-max-1 {
 .nw {
   white-space: nowrap !important;
 }
+
+td label.error {
+    font-size: 12px;
+    display: block;
+    margin-top: 5px;
+    font-weight: normal;
+    color: #f44336;
+}

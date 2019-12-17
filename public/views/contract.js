@@ -11,6 +11,15 @@ setTimeout(function() {
                         q: "{{{q}}}"
                     };
                     return params;
+                },
+                success : function(response){
+                    $('#contract_emirates_id').val('');
+                    $('#contract_email').val('');
+                    $('#contract_passport').val('');
+                    $('#contract_phone').val('');
+                    $('#contract_mobile').val('');
+    
+                    $('.tenant-set').removeClass('focused');
                 }
             },
             locale: {
@@ -39,7 +48,7 @@ setTimeout(function() {
             preserveSelected: false,
             bindEvent : "keypress"
         });
-}, 100);
+}, 600);
 
 $("#tenant-drop-contract").on("changed.bs.select",   function(e, clickedIndex, newValue, oldValue) {
     
@@ -54,7 +63,10 @@ $("#tenant-drop-contract").on("changed.bs.select",   function(e, clickedIndex, n
                 $('#contract_passport').val(response.passport_no);
                 $('#contract_phone').val(response.phone);
                 $('#contract_mobile').val(response.mobile);
+
+                $('.tenant-set').addClass('focused');
             }
         }
     });
 });
+

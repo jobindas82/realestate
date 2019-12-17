@@ -37,6 +37,7 @@ Route::post('/building/flat/save', 'BuildingController@flat_save')->middleware('
 Route::post('/building/flat/status', 'BuildingController@flat_status')->middleware('auth');
 Route::get('/building/flat/all/{key}', ['as' => 'building.flat.all', 'uses' => 'BuildingController@flat_all'])->middleware('auth');
 Route::get('/building/flat/all/{status}/{key}', ['as' => 'building.flat.all', 'uses' => 'BuildingController@flat_active'])->middleware('auth');
+Route::post('/flat/fetch', 'BuildingController@fetch_flat')->middleware('auth');
 //properties routes end
 
 //Contracts 
@@ -44,6 +45,7 @@ Route::get('/contract/index', ['as' => 'contract.index', 'uses' => 'ContractCont
 Route::post('/contract/list', 'ContractController@list')->middleware('auth');
 Route::get('/contract/create', ['as' => 'contract.create', 'uses' => 'ContractController@create'])->middleware('auth');
 Route::get('/contract/create/{key}', ['as' => 'contract.create', 'uses' => 'ContractController@create'])->middleware('auth');
+Route::post('/contract/save', 'ContractController@save')->middleware('auth');
 //end
 
 //Tenants
@@ -88,7 +90,7 @@ Route::get('/masters/country/index', ['as' => 'masters.country.index', 'uses' =>
 Route::get('/masters/country/create', ['as' => 'masters.country.create', 'uses' => 'MasterController@country_create'])->middleware('auth');
 Route::post('/masters/country/getlist', 'MasterController@country_list')->middleware('auth');
 Route::get('/masters/country/create/{key}', ['as' => 'masters.country.create', 'uses' => 'MasterController@country_create'])->middleware('auth');
-Route::post('/masters/country/save', 'MasterController@country_save')->middleware('auth');
+Route::post('/masters/country/save', 'MasterController@country_save')->middleware('auth'); 
 
 //Location
 Route::get('/masters/location/index', ['as' => 'masters.location.index', 'uses' => 'MasterController@location_index'])->middleware('auth');
@@ -117,6 +119,7 @@ Route::post('/masters/tax/save', 'MasterController@tax_code_save')->middleware('
 /**
  * dependent data
  */
+Route::get('/building/flats/{building_id}', ['as' => 'building.locations', 'uses' => 'BuildingController@flats'])->middleware('auth');
 Route::get('/masters/locations/{country_id}', ['as' => 'masters.locations', 'uses' => 'MasterController@locations'])->middleware('auth');
 //End
 

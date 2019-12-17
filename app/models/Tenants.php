@@ -46,4 +46,10 @@ class Tenants extends Model
         else
             return 'Blocked';
     }
+
+    public function onContract()
+    {
+        $this->is_available = 2;
+        $this->save();
+    }
 }

@@ -12,7 +12,6 @@ use App\models\JobTypes;
 use Illuminate\Http\Request;
 use App\Essentials\UriEncode;
 
-
 use Collective\Html\FormFacade as Form;
 
 

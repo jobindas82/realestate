@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Http\Request;
 use App\Essentials\UriEncode;
 
+use Collective\Html\FormFacade as Form;
+
 class BuildingController extends Controller
 {
     /**
@@ -349,5 +351,18 @@ class BuildingController extends Controller
 
         $view = 'buildings.flat.all';
         return view($view, ['model' => $model, 'hiddenRow' => 1, 'from' => 1, 'status' => $status]);
+    }
+
+    public function flats($building_id=0){
+        echo Form::select('flat_id', \App\models\Flats::activeFlats($building_id, 0), 0, [ 'class' => 'form-control show-tick ajax-drop', 'required', 'id' => 'flat_drop','min' => '1', 'onchange' => 'populate_flat_details(this.value)']);
+    }
+
+    public function fetch_flat(Request $request){
+        $data = $request->all();
+        if( $data['_ref'] > 0 ){
+            $model = Flats::find($data['_ref']);
+            return response()->json(['status' => 'success', 'premise' => $model->premise_id, 'floor' => $model->floor, 'square_feet' => $model->square_feet, 'construction_type' => $model->construction->name, 'flat_type' => $model->flat_type->name ]);
+        }
+        return response()->json(['message' => 'failed']);
     }
 }

@@ -33,27 +33,29 @@
                                 <i class="material-icons">more_vert</i>
                             </a>
                             <ul class="dropdown-menu pull-right">
-                                <li><a href="javascript:void(0);">New Tenant</a></li>
-                                <li><a href="javascript:void(0);">New Building</a></li>
-                                <li><a href="javascript:void(0);">New Flat</a></li>
+                                <li><a href="javascript:void(0);"><i class="material-icons">add_circle</i> Tenant</a></li>
+                                <li><a href="javascript:void(0);"><i class="material-icons">add_circle</i> Building</a></li>
+                                <li><a href="javascript:void(0);"><i class="material-icons">add_circle</i> Flat</a></li>
                             </ul>
                         </li>
                     </ul>
                 </div>
                 <div class="body">
-                    <form id="wizard_with_validation" method="POST">
-                        <h3>Tenant</h3>
-                        @include('contract.tenant')
+                    {{ Form::open(['method' => 'post', 'id' => 'contract_form']) }}
+                    {{ Form::hidden('id', $model->id, [ 'id' => 'contract_id' ]) }}
+                    <h3>Tenant</h3>
+                    @include('contract.tenant')
 
-                        <h3>Building</h3>
-                        @include('contract.building')
+                    <h3>Building</h3>
+                    @include('contract.building')
 
-                        <h3>Payments</h3>
-                        @include('contract.payments')
+                    <h3>Contract</h3>
+                    @include('contract.general')
 
-                        <h3>Terms</h3>
-                        @include('contract.terms')
-                    </form>
+                    <h3>Particulars</h3>
+                    @include('contract.particulars')
+
+                    {{ Form::close() }}
                 </div>
             </div>
         </div>
@@ -62,7 +64,7 @@
             $(function() {
 
                 //Advanced form with validation
-                var form = $('#wizard_with_validation').show();
+                var form = $('#contract_form').show();
                 form.steps({
                     headerTag: 'h3',
                     bodyTag: 'fieldset',
@@ -99,19 +101,50 @@
                         return form.valid();
                     },
                     onFinished: function(event, currentIndex) {
-                        swal("Good job!", "Submitted!", "success");
+                        //Hide Error Fields
+                        $('.error').hide();
+                        event.preventDefault();
+                        $('.page-loader-wrapper').fadeIn();
+
+                        $.ajax({
+                            type: "POST",
+                            url: '/contract/save',
+                            data: $(this).serialize(),
+                            success: function(response) {
+                                if (response.message == 'success') {
+
+                                    $('#contract_id').val(response.contract_id);
+
+                                    $('.page-loader-wrapper').fadeOut();
+                                    Swal.fire(
+                                        'SUCCESS',
+                                        'Contract Saved!',
+                                        'success'
+                                    );
+
+                                } else {
+                                    $('.page-loader-wrapper').fadeOut();
+                                    $.each(response, function(fieldName, fieldErrors) {
+                                        $('.' + fieldName ).append(' <label class="error" for="' + fieldName + '">' +fieldErrors.toString() + '</label>');
+                                    });
+                                }
+                            }
+                        });
                     }
                 });
 
                 form.validate({
                     highlight: function(input) {
                         $(input).parents('.form-line').addClass('error');
+                        $(input).parents('td').addClass('error');
                     },
                     unhighlight: function(input) {
                         $(input).parents('.form-line').removeClass('error');
+                        $(input).parents('td').removeClass('error');
                     },
                     errorPlacement: function(error, element) {
                         $(element).parents('.form-group').append(error);
+                        $(element).parents('td').append(error);
                     },
                     rules: {
                         'confirm': {

@@ -1636,7 +1636,7 @@
 
     remove: function () {
       this.$newElement.remove();
-      this.$element.remove();
+      this.$element.show();
     },
 
     destroy: function () {

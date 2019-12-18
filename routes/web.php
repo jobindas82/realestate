@@ -112,6 +112,7 @@ Route::get('/masters/tax/create', ['as' => 'masters.tax.create', 'uses' => 'Mast
 Route::post('/masters/tax/getlist', 'MasterController@tax_code_list')->middleware('auth');
 Route::get('/masters/tax/create/{key}', ['as' => 'masters.tax.create', 'uses' => 'MasterController@tax_code_create'])->middleware('auth');
 Route::post('/masters/tax/save', 'MasterController@tax_code_save')->middleware('auth');
+Route::post('/masters/tax/fetch', 'MasterController@fetch_tax')->middleware('auth');
 
 //Masters End
 

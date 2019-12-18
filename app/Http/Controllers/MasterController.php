@@ -555,4 +555,15 @@ class MasterController extends Controller
     public function locations($country_id = 0){
         echo Form::select('location_id', \App\models\Location::activeLocations($country_id, 0), 0, [ 'class' => 'form-control show-tick']);
     }
+
+    public function fetch_tax(Request $request){
+        $data = $request->all();
+        if( $data['_ref'] > 0 ){
+            $model = TaxCode::find( $data['_ref']  );
+            if( $model->id > 0 ){
+                return response()->json(['value' => $model->percentage ]);
+            }
+        }
+        return response()->json(['value' => 0]);
+    }
 }

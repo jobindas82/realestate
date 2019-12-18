@@ -121,10 +121,13 @@ class ContractController extends Controller
             'building_id' => ['required', 'gt:0'],
             'generated_date' => ['required', 'date'],
             'from_date' => ['required', 'date', 'after_or_equal:generated_date'],
-            'to_date' => ['required', 'date', 'after_or_equal:from_date']
+            'to_date' => ['required', 'date', 'after_or_equal:from_date'],
+            'ContractItems.*.ledger_id' => ['required', 'integer', 'gt:0'],
+            'ContractItems.*.amount' => ['required', 'gt:0', 'numeric'],
+            'ContractItems.*.tax_id' => ['required', 'integer', 'gt:0'],
         ]);
-
-        if ($validator->fails()) {
+        
+        if ($validator->fails() ) {
             return response()->json($validator->messages(), 200);
         } else {
 

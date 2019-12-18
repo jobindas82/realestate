@@ -121,6 +121,11 @@
     <!--  Ajax Select -->
     <script src="{{ asset('plugins/ajaxSelect/js/ajax-bootstrap-select.min.js') }}"></script>
 
+    <script>
+        function roundNumber(num, delimiter) {
+            return +(Math.round(num + "e+" + delimiter) + "e-" + delimiter);
+        }
+    </script>
 
     <!-- Pusher -->
     <!-- <script src="https://js.pusher.com/5.0/pusher.min.js"></script> -->

@@ -103,8 +103,8 @@ class TenantController extends Controller
         //Validation of Request
         $validator = \Validator::make($data, [
             'name' => ['required', \Illuminate\Validation\Rule::unique('tenants')->ignore((int) $data['id']), 'max:255'],
-            'mobile' => ['required'],
-            'emirates_id' => ['required']
+            'mobile' => ['required', \Illuminate\Validation\Rule::unique('tenants')->ignore((int) $data['id'])],
+            'emirates_id' => ['required', \Illuminate\Validation\Rule::unique('tenants')->ignore((int) $data['id'])]
         ]);
 
         if ($validator->fails()) {

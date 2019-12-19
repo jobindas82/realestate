@@ -54,9 +54,8 @@
             </ul>
         </li>
         <li class="{{ 
-                            Route::is('ledger.groups') ||  
-                            Route::is('ledger.ledgers') ||  
-                            Route::is('ledger.employee')
+                            Route::is('ledger.group.index') ||  
+                            Route::is('ledger.group.create')
                             ? 'active' : '' 
                         }}">
             <a href="javascript:void(0);" class="menu-toggle">
@@ -64,8 +63,8 @@
                 <span>Ledgers & Groups</span>
             </a>
             <ul class="ml-menu">
-                <li class="{{ Route::is('ledger.groups') ? 'active' : '' }}">
-                    <a href="/users/index">
+                <li class="{{ Route::is('ledger.group.index') || Route::is('ledger.group.create') ? 'active' : '' }}">
+                    <a href="/ledger/groups">
                         <span>Groups</span>
                     </a>
                 </li>

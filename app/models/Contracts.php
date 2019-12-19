@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use App\Essentials\UriEncode;
 
+use Akaunting\Money\Currency;
+use Akaunting\Money\Money;
+
 class Contracts extends Model
 {
     /**
@@ -54,6 +57,11 @@ class Contracts extends Model
         return $this->belongsTo(Contracts::class, 'previous_contract');
     }
 
+    public function items()
+    {
+        return $this->hasMany(ContractItems::class, 'contract_id');
+    }
+
     public function encoded_key()
     {
         return $this->exists ? UriEncode::encrypt((int) $this->id) : '';
@@ -83,6 +91,6 @@ class Contracts extends Model
     }
 
     public function grossAmount(){
-        return '0.00';
+        return Money::AED($this->items->sum('net_amount'), true)->format();
     }
 }

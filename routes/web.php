@@ -46,6 +46,15 @@ Route::post('/contract/list', 'ContractController@list')->middleware('auth');
 Route::get('/contract/create', ['as' => 'contract.create', 'uses' => 'ContractController@create'])->middleware('auth');
 Route::get('/contract/create/{key}', ['as' => 'contract.create', 'uses' => 'ContractController@create'])->middleware('auth');
 Route::post('/contract/save', 'ContractController@save')->middleware('auth');
+Route::get('/contract/export/{key}', ['as' => 'contract.export', 'uses' => 'ContractController@export'])->middleware('auth');
+//end
+
+//Ledgers & Groups 
+Route::get('/ledger/groups', ['as' => 'ledger.group.index', 'uses' => 'LedgerController@group_index'])->middleware('auth');
+Route::post('/ledger/groups/list', 'LedgerController@group_list')->middleware('auth');
+Route::get('/ledger/groups/create', ['as' => 'ledger.group.create', 'uses' => 'LedgerController@group_create'])->middleware('auth');
+Route::get('/ledger/groups/create/{key}', ['as' => 'ledger.group.create', 'uses' => 'LedgerController@group_create'])->middleware('auth');
+Route::post('/ledger/groups/save', 'LedgerController@group_save')->middleware('auth');
 //end
 
 //Tenants
@@ -125,20 +134,16 @@ Route::get('/masters/locations/{country_id}', ['as' => 'masters.locations', 'use
 //End
 
 
+//Helpers
+Route::post('/theme', 'UserController@update_theme')->middleware('auth');
+
 /**
  * User Master Routes
  */
-//User List
 Route::get('/users/index', ['as' => 'users.index', 'uses' => 'UserController@index'])->middleware('auth');
-//AJAX DATA
 Route::post('/users/getlist', 'UserController@userlist')->middleware('auth');
-//Create new user
 Route::get('/users/create', ['as' => 'users.create', 'uses' => 'UserController@create'])->middleware('auth');
-//Edit existing User
 Route::get('/users/create/{key}', ['as' => 'users.edit', 'uses' => 'UserController@create'])->middleware('auth');
-//Save or Update User
 Route::post('/users/update', ['as' => 'users.update', 'uses' => 'UserController@update'])->middleware('auth');
-//Save or Update User
 Route::post('/users/store', ['as' => 'users.store', 'uses' => 'UserController@store'])->middleware('auth');
-//Update password
 Route::post('/users/changepword', ['as' => 'users.changepword', 'uses' => 'UserController@changepword'])->middleware('auth');

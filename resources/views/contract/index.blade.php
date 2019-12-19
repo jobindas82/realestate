@@ -51,15 +51,15 @@
                         <table class="table table-bordered table-striped table-hover dataTable" id="contract_list">
                             <thead>
                                 <tr>
-                                    <th>Contract #</th>
-                                    <th>Tenant</th>
-                                    <th>Building</th>
-                                    <th>Flat</th>
-                                    <th>From</th>
-                                    <th>Date</th>
-                                    <th>Gross Amt.</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <th style="width: 5%">#</th>
+                                    <th style="width: 20%">Tenant</th>
+                                    <th style="width: 10%">Building</th>
+                                    <th style="width: 10%">Flat</th>
+                                    <th style="width: 10%">From</th>
+                                    <th style="width: 10%">Date</th>
+                                    <th style="width: 10%">Gross Amt.</th>
+                                    <th style="width: 5%">Status</th>
+                                    <th style="width: 10%">Actions</th>
                                 </tr>
                             </thead>
                         </table>

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Essentials\UriEncode;
 
 use App\models\Contracts;
+use App\models\ContractItems;
 
 class ContractController extends Controller
 {
@@ -25,7 +26,7 @@ class ContractController extends Controller
         $id = UriEncode::decrypt($key);
         $model = new Contracts;
         if ($id > 0)
-            $model = Contracts::with('tenant')->find($id);
+            $model = Contracts::find($id);
         //print_r($model);
         return view('contract.create', ['model' => $model]);
     }
@@ -93,6 +94,7 @@ class ContractController extends Controller
         foreach ($result as $eachItem) {
             //Edit Button
             $actions = '<a title="Edit" href="/contract/create/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
+            //$actions .= ' <a title="Export Contract" href="#" onclick="window.open(\'/contract/export/' . UriEncode::encrypt($eachItem->id) . '\', \'_blank\')"><i class="material-icons" >picture_as_pdf</i></a>';
 
             $eachItemData[] = [$eachItem->id, $eachItem->tenant_name,  $eachItem->building_name, $eachItem->flat_name, $eachItem->formated_from_date(), $eachItem->formated_to_date(),  $eachItem->grossAmount(), $eachItem->status(), '<div class="text-center">' . $actions . '</div>'];
             $no++;
@@ -126,17 +128,25 @@ class ContractController extends Controller
             'ContractItems.*.amount' => ['required', 'gt:0', 'numeric'],
             'ContractItems.*.tax_id' => ['required', 'integer', 'gt:0'],
         ]);
-        
-        if ($validator->fails() ) {
+
+        if ($validator->fails()) {
             return response()->json($validator->messages(), 200);
         } else {
 
             $model = new Contracts();
             if ($data['id'] > 0) {
                 $model = Contracts::find($data['id']);
+                ContractItems::where('contract_id', $data['id'])->delete();
             }
             $model->fill($data);
-            $model->save();
+            if ($model->save()) {
+                foreach ($data['ContractItems'] as $eachItem) {
+                    $itemModel = new ContractItems();
+                    $itemModel->contract_id = $model->id;
+                    $itemModel->fill($eachItem);
+                    $itemModel->save();
+                }
+            }
 
             //Update Status
             $model->flat->occupied();
@@ -160,5 +170,18 @@ class ContractController extends Controller
             }
         }
         return response()->json(['message' => 'failed']);
+    }
+
+    public function export($key = 0)
+    {
+        $id = UriEncode::decrypt($key);
+        if ($id > 0) {
+
+            $model = Contracts::find($id);
+            $pdf = \PDF::loadView('pdf.invoice_material', ['model' => $model]);
+	        return $pdf->stream('contract.pdf');
+        } else {
+            abort(403, 'Unauthorized action.');
+        }
     }
 }

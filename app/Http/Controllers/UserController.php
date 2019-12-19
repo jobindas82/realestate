@@ -9,6 +9,7 @@ use App\Rules\MatchOldPassword;
 use Illuminate\Support\Facades\Hash;
 use App\Essentials\UriEncode;
 use App\Events\MyEvent;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -214,5 +215,20 @@ class UserController extends Controller
         $data['data'] = $eachItemData;
 
         return response()->json($data);
+    }
+
+    public function update_theme(Request $request){
+        
+        if( !Auth::guest() ){
+            $data = $request->all();
+            $model = User::find(Auth::user()->id);
+            $model->theme = $data['_ref'];
+            $model->save();
+
+            return response()->json(['message' => 'success']);
+        }
+
+        return response()->json(['message' => 'failed']);
+
     }
 }

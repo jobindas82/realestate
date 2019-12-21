@@ -90,7 +90,24 @@ class Contracts extends Model
             return 'Closed';
     }
 
-    public function grossAmount(){
+    public function grossAmount()
+    {
         return Money::AED($this->items->sum('net_amount'), true)->format();
+    }
+
+    public function getContractDetailsAttribute()
+    {
+        return $this->id . ' | ' . $this->tenant->name;
+    }
+
+    public static function activeContracts($id = 0, $prepend = false)
+    {
+        $query = self::query()->where('is_active', 1);
+        if( $id > 0)
+            $query->orWhere('id', $id);
+        $response = $query->get()->pluck('contract_details', 'id');
+        if( $prepend )
+            $response = $response->prepend('0 | None', 0);
+        return $response;
     }
 }

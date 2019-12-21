@@ -16,7 +16,7 @@
                 @foreach( $model->exists ? $model->items : [new \App\models\Tenants()] as $i => $each )
                 <tr>
                     <th><label>{{ $i+1 }}</label></th>
-                    <td>{{ Form::select('ContractItems['.$i.'][ledger_id]', \App\models\Ledgers::children($each->ledger_id), $each->ledger_id, [ 'class' => 'contract-item form-control show-tick ajax-drop', 'required', 'id' => 'ContractItems_'.$i.'_ledger_id' ]) }}</td>
+                    <td>{{ Form::select('ContractItems['.$i.'][ledger_id]', \App\models\Ledgers::contractItems($each->ledger_id), $each->ledger_id, [ 'class' => 'contract-item form-control show-tick ajax-drop', 'required', 'id' => 'ContractItems_'.$i.'_ledger_id' ]) }}</td>
                     <td>{{ Form::number('ContractItems['.$i.'][amount]', $each->amount, [ 'class' => 'form-control', 'required', 'id' => 'ContractItems_'.$i.'_amount', 'min' => 0, 'max' => 999999999999999, 'onKeyup' => 'calculate();' , 'onBlur' => 'round_field(this.id)']) }}</td>
                     <td>
                         {{ Form::select('ContractItems['.$i.'][tax_id]', \App\models\TaxCode::activeCodes((int) $each->tax_id, true), $each->tax_id, [ 'class' => 'contract-item form-control show-tick ajax-drop', 'required', 'id' => 'ContractItems_'.$i.'_tax_id', 'min' => '1', 'onChange' => 'populatePercentage(this.id, this.value)' ]) }}

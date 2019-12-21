@@ -9,25 +9,23 @@ use App\models\Ledgers;
 
 class LedgerController extends Controller
 {
-
-
-    public function group_index()
+    public function index()
     {
-        return view('ledger.group.index');
+        return view('ledger.index');
     }
 
-    public function group_create($key = 0)
+    public function create($key = 0)
     {
         $id = UriEncode::decrypt($key);
         $model = new Ledgers;
         if ($id > 0)
             $model = Ledgers::find($id);
 
-        return view('ledger.group.create', ['model' => $model]);
+        return view('ledger.create', ['model' => $model]);
     }
 
 
-    public function group_list()
+    public function list()
     {
 
         $draw   = $_POST['draw'];
@@ -45,7 +43,8 @@ class LedgerController extends Controller
         $filterColumn = $columns[$_POST['order'][0]['column']];
         $filterOrder  = $_POST['order'][0]['dir'];
 
-        $query = Ledgers::query()->where('is_parent', 'Y');
+        $isParent = $_POST['is_parent'];
+        $query = Ledgers::query()->where('is_parent', $isParent);
 
         if ($keyword != "") {
             $query->where(function ($q) use ($keyword) {
@@ -65,14 +64,67 @@ class LedgerController extends Controller
         $no = $offset + 1;
 
         foreach ($result as $eachItem) {
-
-            $actions = '<a title="Edit" href="/ledger/groups/create/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
-            $eachItemData[] = [$no, $eachItem->name,  $eachItem->rootNames(), '<div class="text-center">' . $actions . '</div>'];
+            $actions= '';
+            if( $eachItem->is_generated == 'N')
+                $actions .= '<a title="Edit" href="/ledger/create/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
+            $eachItemData[] = $isParent == 'Y' ? [$no, $eachItem->name,  $eachItem->rootNames(), '<div class="text-center">' . $actions . '</div>'] :  [$no, $eachItem->name,  $eachItem->rootNames(), $eachItem->currentBalance(), '<div class="text-center">' . $actions . '</div>'];
             $no++;
         }
         $data['data'] = $eachItemData;
 
         return response()->json($data);
+    }
+
+    public function save(Request $request)
+    {
+        $data = $request->all();
+
+        $validator = \Validator::make($data, [
+            'name' => ['required', \Illuminate\Validation\Rule::unique('ledgers')->ignore((int) $data['id']), 'max:255'],
+            'parent_id' => ['required', 'integer', 'gt:0']
+        ], [
+            'parent_id.gt' => 'Primary Account Reserved for System',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), 200);
+        } else {
+
+            $model = new Ledgers();
+            if ($data['id'] > 0) {
+                $model = Ledgers::find($data['id']);
+            }
+
+            $model->fill($data);
+            $model->is_parent = 'N';
+            $model->addLevel();
+            $model->addRoot();
+            $model->inheritParent();
+            $model->addClass();
+
+            if ($model->is_reached_maximum_level()) {
+                $model->save();
+            } else {
+                return response()->json(['message' => 'failed', 'name' => 'Maximum allowable Level is ' . Ledgers::MAX_LEVEL]);
+            }
+
+            return response()->json(['ledger_id' => $model->id, 'message' => 'success']);
+        }
+    }
+
+    public function group_index()
+    {
+        return view('ledger.group.index');
+    }
+
+    public function group_create($key = 0)
+    {
+        $id = UriEncode::decrypt($key);
+        $model = new Ledgers;
+        if ($id > 0)
+            $model = Ledgers::find($id);
+
+        return view('ledger.group.create', ['model' => $model]);
     }
 
     public function group_save(Request $request)
@@ -105,7 +157,7 @@ class LedgerController extends Controller
             if ($model->is_reached_maximum_level()) {
                 $model->save();
             } else {
-                return response()->json(['message' => 'failed', 'name' => 'Maximum allowable Level is '. Ledgers::MAX_LEVEL ]);
+                return response()->json(['message' => 'failed', 'name' => 'Maximum allowable Level is ' . Ledgers::MAX_LEVEL]);
             }
 
             return response()->json(['group_id' => $model->id, 'message' => 'success']);

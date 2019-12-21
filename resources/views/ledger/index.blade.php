@@ -11,13 +11,13 @@
                     </a>
                 </li>
                 <li class="active">
-                    <i class="material-icons">view_list</i> Ledger Groups
+                    <i class="material-icons">view_list</i> Ledgers
                 </li>
             </ol>
             <div class="card">
                 <div class="header">
                     <h2>
-                        Ledger Groups
+                        Ledgers
                     </h2>
                     <ul class="header-dropdown m-r--5">
                         <li class="dropdown">
@@ -25,19 +25,20 @@
                                 <i class="material-icons">more_vert</i>
                             </a>
                             <ul class="dropdown-menu pull-right">
-                                <li><a href="/ledger/groups/create"><i class="material-icons">add_circle</i> Create</a></li>
+                                <li><a href="/ledger/create"><i class="material-icons">add_circle</i> Create</a></li>
                             </ul>
                         </li>
                     </ul>
                 </div>
                 <div class="body">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover dataTable" id="ledger_group_list">
+                        <table class="table table-bordered table-striped table-hover dataTable" id="ledger_list">
                             <thead>
                                 <tr>
                                     <th style="width: 2%">#</th>
                                     <th style="width: 20%">Name</th>
                                     <th style="width: 45%">Group</th>
+                                    <th style="width: 20%">Balance</th>
                                     <th style="width: 25%">Actions</th>
                                 </tr>
                             </thead>
@@ -52,8 +53,8 @@
 
 <script>
     $(function() {
-        $('#ledger_group_list').on("preXhr.dt", function(e, settings, data) {
-            data.is_parent = 'Y';
+        $('#ledger_list').on("preXhr.dt", function(e, settings, data) {
+            data.is_parent = 'N';
             return data;
         }).DataTable({
             responsive: true,

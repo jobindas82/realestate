@@ -147,7 +147,11 @@
 
 </head>
 
-<body class="{{ config('app.theme', 'theme-indigo') }}">
+@php
+    $themeName = Auth::user()->theme;
+@endphp
+
+<body class="{{ 'theme-'.$themeName }}">
 
     <!-- Page Loader -->
     @include('layouts.loader')

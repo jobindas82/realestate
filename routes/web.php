@@ -19,6 +19,23 @@ Auth::routes();
 Route::get('/', 'HomeController@index')->middleware('auth');
 Route::get('/home', 'HomeController@index')->name('home')->middleware('auth');
 
+//Contracts 
+Route::get('/contract/index', ['as' => 'contract.index', 'uses' => 'ContractController@index'])->middleware('auth');
+Route::post('/contract/list', 'ContractController@list')->middleware('auth');
+Route::get('/contract/create', ['as' => 'contract.create', 'uses' => 'ContractController@create'])->middleware('auth');
+Route::get('/contract/create/{key}', ['as' => 'contract.create', 'uses' => 'ContractController@create'])->middleware('auth');
+Route::post('/contract/save', 'ContractController@save')->middleware('auth');
+Route::get('/contract/export/{key}', ['as' => 'contract.export', 'uses' => 'ContractController@export'])->middleware('auth');
+//end
+
+//Finance
+Route::get('/finance/receipt', ['as' => 'finance.receipt.index', 'uses' => 'FinanceController@receipt_index'])->middleware('auth');
+Route::post('/finance/receipt/list', 'FinanceController@list')->middleware('auth');
+Route::get('/finance/receipt/create', ['as' => 'finance.receipt.create', 'uses' => 'FinanceController@receipt_create'])->middleware('auth');
+Route::get('/finance/receipt/create/{key}', ['as' => 'finance.receipt.create', 'uses' => 'FinanceController@receipt_create'])->middleware('auth');
+Route::post('/finance/receipt/save', 'FinanceController@receipt_save')->middleware('auth');
+//end
+
 /**
  * Properties Route
  */
@@ -40,21 +57,19 @@ Route::get('/building/flat/all/{status}/{key}', ['as' => 'building.flat.all', 'u
 Route::post('/flat/fetch', 'BuildingController@fetch_flat')->middleware('auth');
 //properties routes end
 
-//Contracts 
-Route::get('/contract/index', ['as' => 'contract.index', 'uses' => 'ContractController@index'])->middleware('auth');
-Route::post('/contract/list', 'ContractController@list')->middleware('auth');
-Route::get('/contract/create', ['as' => 'contract.create', 'uses' => 'ContractController@create'])->middleware('auth');
-Route::get('/contract/create/{key}', ['as' => 'contract.create', 'uses' => 'ContractController@create'])->middleware('auth');
-Route::post('/contract/save', 'ContractController@save')->middleware('auth');
-Route::get('/contract/export/{key}', ['as' => 'contract.export', 'uses' => 'ContractController@export'])->middleware('auth');
-//end
-
 //Ledgers & Groups 
 Route::get('/ledger/groups', ['as' => 'ledger.group.index', 'uses' => 'LedgerController@group_index'])->middleware('auth');
-Route::post('/ledger/groups/list', 'LedgerController@group_list')->middleware('auth');
+Route::post('/ledger/groups/list', 'LedgerController@list')->middleware('auth');
 Route::get('/ledger/groups/create', ['as' => 'ledger.group.create', 'uses' => 'LedgerController@group_create'])->middleware('auth');
 Route::get('/ledger/groups/create/{key}', ['as' => 'ledger.group.create', 'uses' => 'LedgerController@group_create'])->middleware('auth');
 Route::post('/ledger/groups/save', 'LedgerController@group_save')->middleware('auth');
+
+//Ledger
+Route::get('/ledger', ['as' => 'ledger.index', 'uses' => 'LedgerController@index'])->middleware('auth');
+Route::post('/ledger/list', 'LedgerController@list')->middleware('auth');
+Route::get('/ledger/create', ['as' => 'ledger.create', 'uses' => 'LedgerController@create'])->middleware('auth');
+Route::get('/ledger/create/{key}', ['as' => 'ledger.create', 'uses' => 'LedgerController@create'])->middleware('auth');
+Route::post('/ledger/save', 'LedgerController@save')->middleware('auth');
 //end
 
 //Tenants

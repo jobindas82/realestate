@@ -11,16 +11,18 @@ class Ledgers extends Model
 {
 
     const MAX_LEVEL = 5;
+    const CASH_CHILD = 'CASH_C';
+    const BANK_CHILD = 'BANK_C';
 
     protected $table = 'ledgers';
 
     protected $fillable = [
-        'parent_id', 'name', 'is_active',
+        'parent_id', 'name', 'is_active', 'is_contract_item'
     ];
 
     public $availableClasses = [
-        'BANK_P' => 'BANK_C',
-        'CASH_P' => 'CASH_C',
+        'BANK_P' =>  self::BANK_CHILD,
+        'CASH_P' => self::CASH_CHILD,
         'VAT_P' => 'VAT_C'
     ];
 
@@ -113,5 +115,24 @@ class Ledgers extends Model
 
     public function is_reached_maximum_level(){
         return $this->level > self::MAX_LEVEL ? false : true;
+    }
+
+    public static function contractItems($id = 0)
+    {
+        $query = self::query()->where('is_active', 'Y')->where('is_parent', 'N')->where('is_contract_item', 'Y');
+        if ($id > 0)
+            $query->orWhere('id', $id);
+        return $query->pluck('name', 'id');
+    }
+
+    public function currentBalance(){
+        return 100;
+    }
+
+    public static function childrenHaveClass($id =0, $class = NULL){
+        $query = self::query()->where('is_active', 'Y')->where('is_parent', 'N')->where('class', $class);
+        if ($id > 0)
+            $query->orWhere('id', $id);
+        return $query->pluck('name', 'id');
     }
 }

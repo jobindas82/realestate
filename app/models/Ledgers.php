@@ -13,6 +13,7 @@ class Ledgers extends Model
     const MAX_LEVEL = 5;
     const CASH_CHILD = 'CASH_C';
     const BANK_CHILD = 'BANK_C';
+    const SALES_VAT = 'VAT_S';
 
     protected $table = 'ledgers';
 
@@ -133,6 +134,10 @@ class Ledgers extends Model
         $query = self::query()->where('is_active', 'Y')->where('is_parent', 'N')->where('class', $class);
         if ($id > 0)
             $query->orWhere('id', $id);
-        return $query->pluck('name', 'id');
+        return $query->pluck('name', 'id')->prepend('None', 0);
+    }
+
+    public static function findClass($class = NULL){
+        return self::where('class', $class)->first();
     }
 }

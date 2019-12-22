@@ -26,6 +26,7 @@ Route::get('/contract/create', ['as' => 'contract.create', 'uses' => 'ContractCo
 Route::get('/contract/create/{key}', ['as' => 'contract.create', 'uses' => 'ContractController@create'])->middleware('auth');
 Route::post('/contract/save', 'ContractController@save')->middleware('auth');
 Route::get('/contract/export/{key}', ['as' => 'contract.export', 'uses' => 'ContractController@export'])->middleware('auth');
+Route::post('/contract/fetch', 'ContractController@fetch')->middleware('auth');
 //end
 
 //Finance

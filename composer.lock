@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "193462fcbc04ae2a678227aedca51ae1",
+    "content-hash": "b84bbbf5dce7a9a4cdcd0e729642ad79",
     "packages": [
         {
             "name": "akaunting/money",
@@ -1133,6 +1133,81 @@
             "time": "2019-12-08T21:46:50+00:00"
         },
         {
+            "name": "mad-web/laravel-initializer",
+            "version": "2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mad-web/laravel-initializer.git",
+                "reference": "e15027534c1943bc411a080b153e6a3d7613b448"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mad-web/laravel-initializer/zipball/e15027534c1943bc411a080b153e6a3d7613b448",
+                "reference": "e15027534c1943bc411a080b153e6a3d7613b448",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/bus": "~5.5.0|~5.8.0|^6.0",
+                "illuminate/config": "~5.5.0|~5.8.0|^6.0",
+                "illuminate/console": "~5.5.0|~5.8.0|^6.0",
+                "illuminate/container": "~5.5.0|~5.8.0|^6.0",
+                "illuminate/support": "~5.5.0|~5.8.0|^6.0",
+                "nunomaduro/laravel-console-task": "^1.3",
+                "php": "^7.2",
+                "symfony/process": "^4.1"
+            },
+            "require-dev": {
+                "codedungeon/phpunit-result-printer": "^0.26",
+                "mockery/mockery": "^1.0.0",
+                "orchestra/testbench": "~3.5.0|~3.8.0|^4.0",
+                "phpunit/phpunit": "^6.5|^7.0|^8.0"
+            },
+            "suggest": {
+                "laravel/framework": "Required to use additional MakeCronTask, MakeEchoServerConfig and MakeSupervisorConfig Jobs."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "MadWeb\\Initializer\\InitializerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MadWeb\\Initializer\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mad Web",
+                    "email": "madweb.dev@gmail.com",
+                    "homepage": "https://github.com/mad-web",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A convenient way to initialize your application",
+            "homepage": "https://github.com/mad-web/laravel-initializer",
+            "keywords": [
+                "Tasks",
+                "command",
+                "deploy",
+                "exec",
+                "init",
+                "initialize",
+                "install",
+                "laravel-initializer",
+                "mad-web",
+                "process",
+                "update"
+            ],
+            "time": "2019-10-21T19:37:31+00:00"
+        },
+        {
             "name": "markbaker/complex",
             "version": "1.4.7",
             "source": {
@@ -1661,6 +1736,64 @@
                 "pdf"
             ],
             "time": "2019-02-14T07:51:06+00:00"
+        },
+        {
+            "name": "nunomaduro/laravel-console-task",
+            "version": "v1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nunomaduro/laravel-console-task.git",
+                "reference": "bce1a48a74b6d386ee4fc90c127d37395f4c0986"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nunomaduro/laravel-console-task/zipball/bce1a48a74b6d386ee4fc90c127d37395f4c0986",
+                "reference": "bce1a48a74b6d386ee4fc90c127d37395f4c0986",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "~5.5.26|5.6.*|5.7.*|5.8.*|^6.0",
+                "illuminate/support": "~5.5.26|5.6.*|5.7.*|5.8.*|^6.0",
+                "php": "^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "NunoMaduro\\LaravelConsoleTask\\LaravelConsoleTaskServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "NunoMaduro\\LaravelConsoleTask\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nuno Maduro",
+                    "email": "enunomaduro@gmail.com"
+                }
+            ],
+            "description": "Laravel Console Task is a output method for your Laravel/Laravel Zero commands.",
+            "keywords": [
+                "artisan",
+                "cli",
+                "command-line",
+                "console",
+                "laravel",
+                "laravel-zero",
+                "php",
+                "symfony"
+            ],
+            "time": "2019-08-04T12:35:49+00:00"
         },
         {
             "name": "opis/closure",

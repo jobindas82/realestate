@@ -11,7 +11,7 @@ class Entries extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'head_id', 'ledger_id', 'amount', 'code', 'contract_id', 'building_id', 'flat_id', 'tenant_id'
+        'head_id', 'ledger_id', 'amount', 'code', 'contract_id', 'building_id', 'flat_id', 'tenant_id', 'visible', 'date'
     ];
 
     public function ledger()

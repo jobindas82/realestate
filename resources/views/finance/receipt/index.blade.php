@@ -41,7 +41,7 @@
                                     <th style="width: 10%">Cheque #</th>
                                     <th style="width: 10%">Cheque Date</th>
                                     <th style="width: 30%">Tenant</th>
-                                    <th style="width: 10%">Amount</th>
+                                    <th style="width: 10%;">Amount</th>
                                     <th style="width: 10%">Actions</th>
                                 </tr>
                             </thead>

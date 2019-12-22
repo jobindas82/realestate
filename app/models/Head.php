@@ -25,9 +25,14 @@ class Head extends Model
         });
     }
 
+    public static function credit($value = 0)
+    {
+        return ($value > 0) ? -1 * abs($value) : 0;
+    }
+
     public function entry_type()
     {
-        return $this->belongsTo(Types::class, 'contract_id');
+        return $this->belongsTo(Types::class, 'type');
     }
 
     public function contract()
@@ -50,7 +55,7 @@ class Head extends Model
         return $this->belongsTo(Tenants::class, 'tenant_id');
     }
 
-    public function items()
+    public function entries()
     {
         return $this->hasMany(Entries::class, 'head_id');
     }
@@ -89,22 +94,15 @@ class Head extends Model
         return $this->is_cancelled == 0 ? false : true;
     }
 
-    public function createNumber()
+    public function createNumber($update = true)
     {
-        if ($this->entry_type->current > 0) {
-            $newNumber = $this->entry_type->current + 1;
-            $this->entry_type->current = $newNumber;
-            $this->entry_type->save();
-            return (int) $newNumber;
-        }
-        $this->entry_type->current = $this->start;
-        $this->entry_type->save();
-        return (int) $this->entry_type->start;
+        $this->number = $this->entry_type->generate($update);
     }
 
-    public function amount()
+    public function debitSum($format = false)
     {
-        return 0;
+        $amount = $this->entries()->where('amount', '>', '0')->get()->sum('amount');
+        return $format ? number_format($amount, 2, '.', ',') : $amount;
     }
 
     public function formated_date()
@@ -117,18 +115,29 @@ class Head extends Model
         return $this->exists && $this->cheque_date != NULL &&   $this->cheque_date != '0000-00-00' ? date('d/m/Y', strtotime($this->cheque_date)) : '';
     }
 
-    public function cash_account()
+    public function fillContract()
     {
-        return 0;
+        $this->building_id = $this->contract->building_id;
+        $this->flat_id  = $this->contract->flat_id;
+        $this->tenant_id  = $this->contract->tenant_id;
     }
 
-    public function cheque_account()
+    public function createEntries($entries = [], $fillDate = true, $fillContractInfo = false)
     {
-        return 0;
-    }
-
-    public function bank_account()
-    {
-        return 0;
+        if (count($entries) > 0) {
+            foreach ($entries as $each) {
+                $each->head_id = $this->id;
+                if ($fillContractInfo) {
+                    $each->tenant_id =  $this->tenant_id;
+                    $each->flat_id =  $this->flat_id;
+                    $each->building_id =  $this->building_id;
+                    $each->contract_id =  $this->contract_id;
+                }
+                if ($fillDate) {
+                    $each->date =  $this->date;
+                }
+                $each->save();
+            }
+        }
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddDateField extends Migration
+class SetAutoincrement extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class AddDateField extends Migration
      */
     public function up()
     {
-        Schema::table('entries', function (Blueprint $table) {
-            $table->date('date')->after('head_id');
-            $table->integer('visible')->after('code')->nullable()->default(1);
+        Schema::table('contracts', function (Blueprint $table) {
+            DB::update("ALTER TABLE contracts AUTO_INCREMENT = 1001;");
         });
     }
 
@@ -26,7 +25,7 @@ class AddDateField extends Migration
      */
     public function down()
     {
-        Schema::table('entries', function (Blueprint $table) {
+        Schema::table('contracts', function (Blueprint $table) {
             //
         });
     }

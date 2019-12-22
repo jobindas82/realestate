@@ -74,7 +74,9 @@
             (this.name !== undefined) ? this.name = this.name.replace(/\d+/, new_id): this.style = '';
         });
         newRow.find('select').selectpicker({
-            liveSearch: true
+            liveSearch: true,
+            dropupAuto: false,
+            size: 5
         });
         $('#contract-items-table').find('tbody').append(newRow);
     }
@@ -128,7 +130,7 @@
             tax_percentage = Number($(this).find("[id $=_tax_percentage]").val());
 
             amount = roundNumber(amount, 6);
-            console.log(amount);
+            // console.log(amount);
             tax_amount = (amount * tax_percentage) / 100;
             tax_amount = roundNumber(tax_amount, 6);
 
@@ -163,16 +165,6 @@
                 calculate();
             }
         });
-    }
-
-    function round_field(field_id)
-    {
-        if (!isNaN($('#' + field_id).val())) {
-            var value = Number($('#' + field_id).val());
-            value = value >= 0 ? roundNumber(value, 6) : 0;
-            $('#' + field_id).val(value.toFixed(6));
-        }
-
     }
 
     setTimeout(function() {

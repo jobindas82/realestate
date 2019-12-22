@@ -62,6 +62,11 @@ class Contracts extends Model
         return $this->hasMany(ContractItems::class, 'contract_id');
     }
 
+    public function receipts()
+    {
+        return $this->hasMany(Head::class, 'contract_id');
+    }
+
     public function encoded_key()
     {
         return $this->exists ? UriEncode::encrypt((int) $this->id) : '';
@@ -90,9 +95,10 @@ class Contracts extends Model
             return 'Closed';
     }
 
-    public function grossAmount()
+    public function grossAmount($format = true)
     {
-        return Money::AED($this->items->sum('net_amount'), true)->format();
+        $amount = $this->items->sum('net_amount');
+        return $format ? Money::AED($amount, true)->format() : number_format($amount, 2, '.', ',');
     }
 
     public function getContractDetailsAttribute()

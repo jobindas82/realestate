@@ -45,16 +45,16 @@
                         <div class="col-sm-3">
                             <div class="form-group form-float">
                                 <div class="form-line">
-                                    {{ Form::select('contract_id', \App\models\Contracts::activeContracts($model->contract_id, true), $model->contract_id, [ 'class' => 'form-control show-tick', 'data-live-search' => true]) }}
+                                    {{ Form::select('contract_id', \App\models\Contracts::activeContracts($model->contract_id, true), $model->contract_id, [ 'class' => 'form-control show-tick', 'data-live-search' => true, 'onchange' => 'fetchContract(this.value);']) }}
                                     <label class="form-label">Contract #</label>
                                 </div>
                                 <label id="contract_id-error" class="error" for="contract_id"></label>
                             </div>
                         </div>
-                        <div class="col-sm-1">
+                        <div class="col-sm-2">
                             <div class="form-group form-float">
                                 <div class="form-line">
-                                    {{ Form::text('contract_value', $model->exists ? $model->contract->grossAmount() : '0.00', [ 'class' => 'form-control align-right' , 'readonly' => true]) }}
+                                    {{ Form::text('contract_value', $model->exists ? $model->contract->grossAmount(false) : '0.00', [ 'class' => 'form-control align-right' , 'readonly' => true, 'id' => 'contract_value']) }}
                                     <label class="form-label">Contract Amount</label>
                                 </div>
                             </div>
@@ -63,22 +63,14 @@
                             <div class="form-group form-float">
                                 <div class="form-line">
                                     {{ Form::hidden('tenant_id', $model->tenant_id, [ 'id' => 'tenant_id' ]) }}
-                                    {{ Form::text('tenant_name', $model->exists ? $model->tenant->name : '', [ 'class' => 'form-control' , 'readonly' => true]) }}
+                                    {{ Form::text('tenant_name', $model->exists ? $model->tenant->name : '', [ 'class' => 'form-control' , 'readonly' => true, 'id' => 'tenant_name']) }}
                                     <label class="form-label">Tenant</label>
                                 </div>
                                 <label id="tenant_id-error" class="error" for="tenant_id"></label>
 
                             </div>
                         </div>
-                        <div class="col-sm-2">
-                            <div class="form-group form-float">
-                                <div class="form-line">
-                                    {{ Form::number('amount', $model->amount() , [ 'class' => 'form-control align-right', 'min' => 0, 'max' => 999999999]) }}
-                                    <label class="form-label">Receipt Amount</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-2">
+                        <div class="col-sm-3">
                             <div class="form-group form-float">
                                 <div class="form-line">
                                     {{ Form::select('method', \App\models\Head::METHOD, $model->method, [ 'class' => 'form-control show-tick', 'onchange' => 'method_visibility(this.value)']) }}
@@ -92,7 +84,10 @@
                         <div class="col-sm-4">
                             <div class="form-group form-float">
                                 <div class="form-line">
-                                    {{ Form::select('cash_account_id', \App\models\Ledgers::childrenHaveClass($model->cash_account(),  \App\models\Ledgers::CASH_CHILD), $model->cash_account(), [ 'class' => 'form-control show-tick', 'data-live-search' => true]) }}
+                                    @php
+                                        $debitLedger = $model->exists ? $model->entries()->where('amount', '>', 0)->first()->ledger_id : 0;
+                                    @endphp
+                                    {{ Form::select('cash_account_id', \App\models\Ledgers::childrenHaveClass(0,  \App\models\Ledgers::CASH_CHILD), $debitLedger, [ 'class' => 'form-control show-tick', 'data-live-search' => true]) }}
                                     <label class="form-label">Cash A/C</label>
                                 </div>
                                 <label id="cash_account_id-error" class="error" for="cash_account_id"></label>
@@ -123,10 +118,10 @@
                         <div class="col-sm-4">
                             <div class="form-group form-float">
                                 <div class="form-line">
-                                    {{ Form::select('cheque_account_id', \App\models\Ledgers::childrenHaveClass($model->cheque_account(),  \App\models\Ledgers::BANK_CHILD), $model->cheque_account(), [ 'class' => 'form-control show-tick', 'data-live-search' => true]) }}
+                                    {{ Form::select('cheque_account_id', \App\models\Ledgers::childrenHaveClass(0,  \App\models\Ledgers::BANK_CHILD), $debitLedger, [ 'class' => 'form-control show-tick', 'data-live-search' => true]) }}
                                     <label class="form-label">Bank A/C</label>
                                 </div>
-                                <label id="bank_account_id-error" class="error" for="bank_account_id"></label>
+                                <label id="cheque_account_id-error" class="error" for="cheque_account_id"></label>
                             </div>
                         </div>
                     </div>
@@ -134,13 +129,50 @@
                         <div class="col-sm-4">
                             <div class="form-group form-float">
                                 <div class="form-line">
-                                    {{ Form::select('bank_account_id', \App\models\Ledgers::childrenHaveClass($model->bank_account(),  \App\models\Ledgers::BANK_CHILD), $model->bank_account(), [ 'class' => 'form-control show-tick', 'data-live-search' => true]) }}
+                                    {{ Form::select('bank_account_id', \App\models\Ledgers::childrenHaveClass(0,  \App\models\Ledgers::BANK_CHILD), $debitLedger, [ 'class' => 'form-control show-tick', 'data-live-search' => true]) }}
                                     <label class="form-label">Bank A/C</label>
                                 </div>
                                 <label id="bank_account_id-error" class="error" for="bank_account_id"></label>
                             </div>
                         </div>
                     </div>
+                    <div class="body table-responsive">
+                        <table class="table table-hover" id="receipts-items-table">
+                            <thead>
+                                <tr>
+                                    <th style="width:2%">#</th>
+                                    <th style="width:30%">Ledger</th>
+                                    <th style="width:30%">Amount</th>
+                                    <th style="width:2%"><a href="#" title="Add Row" onclick="addRow();"><i class="material-icons">add_circle</i></a></th>
+                                </tr>
+                            </thead>
+                            <tbody id="receipt-tbody">
+                                @php
+                                        $totalAmount = 0;
+                                @endphp
+                                @foreach( $model->exists ? $model->entries()->where('amount', '<', 0)->get() : [new \App\models\Entries()] as $i => $each )
+                                    @php
+                                        $amount = number_format((float)abs($each->amount), 6, '.', '');
+                                        $totalAmount += $amount;
+                                    @endphp
+                                    <tr>
+                                        <th><label>{{ $i+1 }}</label></th>
+                                        <td>{{ Form::select('Entries['.$i.'][ledger_id]', \App\models\Ledgers::children($each->ledger_id), $each->ledger_id, [ 'class' => 'form-control show-tick', 'required' => true, 'id' => 'Entries_'.$i.'_ledger_id' ]) }}</td>
+                                        <td>{{ Form::number('Entries['.$i.'][amount]', $amount, [ 'class' => 'form-control align-right', 'required' => true, 'id' => 'Entries_'.$i.'_amount', 'min' => 0, 'max' => 999999999999999, 'onKeyup' => 'calculate();' , 'onBlur' => 'round_field(this.id)']) }}</td>
+                                        <td><a href="#" title="Remove" id="Entries_{{ $i }}_delete" onclick="deleteRow(this);"><i class="material-icons">delete_forever</i></a></td>
+                                    </tr>
+                                    @endforeach
+                            </tbody>
+                            <tfoot>
+                                <tr class="warning">
+                                    <th colspan="2" style="text-align:right">Total</th>
+                                    <th><input type="text" name="total_value" id="total_value" class="form-control align-right" readonly="true" value="{{ number_format(round($totalAmount,  2), 2, '.', '') }}"></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
                     <div class="form-group align-right">
                         {{ Form::submit('Save', [ 'id' => 'basic_submit', 'class' => 'btn btn-danger'] )  }}
                     </div>
@@ -162,19 +194,16 @@
 
             $.ajax({
                 type: "POST",
-                url: '/tenant/save',
+                url: '/finance/receipt/save',
                 data: $(this).serialize(),
                 success: function(response) {
                     if (response.message == 'success') {
 
                         $('#receipt_id').val(response.receipt_id);
-                        $('#doc_parent_id').val(response.receipt_id);
-                        $('#parent_key').val(response.receipt_id_encrypted);
-
                         $('.page-loader-wrapper').fadeOut();
                         Swal.fire(
                             'SUCCESS',
-                            'Tenant Saved!',
+                            'Receipt Saved!',
                             'success'
                         );
 
@@ -201,6 +230,100 @@
         } else {
             $('#bank_method_div').show();
         }
+    }
+
+    function fetchContract(contract_id) {
+
+        $.ajax({
+            url: '/contract/fetch',
+            method: 'POST',
+            data: {
+                _ref: +contract_id
+            },
+            success: function(response) {
+
+                $('#contract_value').val(response.amount);
+                $('#tenant_name').val(response.tenant_name);
+                $('#receipt-tbody').html(response.contract_items);
+
+                $('#receipt-tbody').find('select').selectpicker({
+                    liveSearch: true,
+                    dropupAuto: false
+                });
+            }
+        });
+    }
+
+    function addRow() {
+        last_field = $('#receipts-items-table').find('tbody').find('tr:last select').attr('id');
+        last_id = last_field.match(/\d+/g);
+        new_id = Number(last_id) + 1;
+        newRow = $('#receipts-items-table').find('tbody').find('tr:last').clone();
+        newRow.find('label:first').html(new_id + 1);
+        newRow.attr('class', new_id);
+        newRow.find('.bootstrap-select').replaceWith(function() {
+            return $('select', this);
+        });
+        newRow.find('div,input,textarea,checkbox,td,select,a,button').each(function() {
+            this.id = this.id.replace(/\d+/, new_id);
+            if (!$(this).is(':checkbox'))
+                this.value = '';
+            else
+                $(this).prop('checked', false);
+            (this.name !== undefined) ? this.name = this.name.replace(/\d+/, new_id): this.style = '';
+        });
+        newRow.find('select').selectpicker({
+            liveSearch: true,
+            dropupAuto: false,
+            size: 5
+        });
+        $('#receipts-items-table').find('tbody').append(newRow);
+    }
+
+    function deleteRow(event) {
+        var rowCount = $('#receipts-items-table').find('tr:gt(0)').length;
+        if (rowCount > 2) {
+            $(event).parents('tr').remove();
+            var i = 0;
+            $('#receipts-items-table').find('tr:gt(0)').each(function() {
+                $(this).find('div,input,textarea,checkbox,td,select,a,button').each(function() {
+                    old_id = $(this).attr('id');
+                    if (old_id) {
+                        new_id = old_id.replace(/\d+/, i);
+                        $(this).attr('id', new_id);
+                        old_name = $(this).attr('name');
+                        if (old_name !== undefined) {
+                            new_name = old_name.replace(/\d+/, i);
+                            $(this).attr('name', new_name);
+                        }
+                    }
+                    old_data_id = $(this).attr('data-id');
+                    if (old_data_id) {
+                        new_data_id = old_data_id.replace(/\d+/, i);
+                        $(this).attr('data-id', new_data_id);
+                    }
+                });
+                $(this).find('label:first').html(++i);
+                calculate();
+            });
+
+
+        } else {
+            Swal.fire('At least one item needed here!!');
+        }
+    }
+
+    function calculate() {
+
+        var totalAmount = 0;
+
+        $("#receipts-items-table").find('tbody').find("tr").each(function() {
+            totalAmount += +Number($(this).find("[id $=_amount]").val());
+        });
+
+
+        $("#total_value").val(roundNumber(totalAmount, 2).toFixed(2));
+        return false;
     }
 </script>
 

@@ -125,7 +125,18 @@
         function roundNumber(num, delimiter) {
             return +(Math.round(num + "e+" + delimiter) + "e-" + delimiter);
         }
+
+        function round_field(field_id) {
+            if (!isNaN($('#' + field_id).val())) {
+                var value = Number($('#' + field_id).val());
+                value = value >= 0 ? roundNumber(value, 6) : 0;
+                $('#' + field_id).val(value.toFixed(6));
+            }
+
+        }
     </script>
+
+
 
     <!-- Pusher -->
     <!-- <script src="https://js.pusher.com/5.0/pusher.min.js"></script> -->
@@ -148,7 +159,7 @@
 </head>
 
 @php
-    $themeName = Auth::user()->theme;
+$themeName = Auth::user()->theme;
 @endphp
 
 <body class="{{ 'theme-'.$themeName }}">

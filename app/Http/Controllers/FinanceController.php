@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Essentials\UriEncode;
 
 use App\models\Head;
+use App\models\Entries;
 
 class FinanceController extends Controller
 {
@@ -66,11 +67,11 @@ class FinanceController extends Controller
         }
 
         $result = $query
-        ->select('finance.number', 'finance.date', 'finance.contract_id', 'finance.cheque_no', 'finance.cheque_date', 'tenants.name', 'finance.id', 'finance.is_posted', 'finance.is_cancelled')
-        ->skip($offset)
-        ->take($limit)
-        ->orderBy($filterColumn, $filterOrder)
-        ->get();
+            ->select('finance.number', 'finance.date', 'finance.contract_id', 'finance.cheque_no', 'finance.cheque_date', 'tenants.name', 'finance.id', 'finance.is_posted', 'finance.is_cancelled')
+            ->skip($offset)
+            ->take($limit)
+            ->orderBy($filterColumn, $filterOrder)
+            ->get();
 
         $recordsTotal = $result->count();
         $recordsFiltered = $recordsTotal;
@@ -80,14 +81,19 @@ class FinanceController extends Controller
         $eachItemData = array();
 
         $no = $offset + 1;
+        $routes = [
+            1 => '/finance/receipt/create/',
+            2 => '/finance/payment/create/',
+            3 => '/finance/journal/create/'
+        ];
 
         foreach ($result as $eachItem) {
             //Edit Button
             $actions = '';
-            if( !$eachItem->isCancelled() )
-                $actions .= '<a title="Edit" href="/tenant/create/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
-            
-            $eachItemData[] = [$eachItem->number, $eachItem->formated_date(),  $eachItem->contract_id, $eachItem->cheque_no, $eachItem->cheque_date, $eachItem->name,  $eachItem->amount(), '<div class="text-center">' . $actions . '</div>'];
+            if (!$eachItem->isCancelled())
+                $actions .= '<a title="Edit" href="' . $routes[$type] . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
+
+            $eachItemData[] = [$eachItem->number, $eachItem->formated_date(),  $eachItem->contract_id, $eachItem->cheque_no, $eachItem->formated_cheque_date(), $eachItem->name,  $eachItem->debitSum(true), '<div class="text-center">' . $actions . '</div>'];
             $no++;
         }
         $data['data'] = $eachItemData;
@@ -95,71 +101,74 @@ class FinanceController extends Controller
         return response()->json($data);
     }
 
-    public function save(Request $request)
+    public function receipt_save(Request $request)
     {
-        //Input Data
         $data = $request->all();
 
-        //Validation of Request
+        if ($data['date'] != '')
+            $data['date'] = date('Y-m-d', strtotime(str_replace('/', '-', $data['date'])));
+        if ($data['cheque_date'] != '')
+            $data['cheque_date'] = date('Y-m-d', strtotime(str_replace('/', '-', $data['cheque_date'])));
+
         $validator = \Validator::make($data, [
-            'name' => ['required', \Illuminate\Validation\Rule::unique('tenants')->ignore((int) $data['id']), 'max:255'],
-            'mobile' => ['required', \Illuminate\Validation\Rule::unique('tenants')->ignore((int) $data['id'])],
-            'emirates_id' => ['required', \Illuminate\Validation\Rule::unique('tenants')->ignore((int) $data['id'])]
+            'date' => ['required', 'date'],
+            'contract_id' => ['bail', 'required', 'gt:0'],
+            'method' => ['bail', 'required', 'gt:0'],
+            'cash_account_id' => [new \App\Rules\cashMethod((int) $data['method'])],
+            'cheque_account_id' => [new \App\Rules\chequeMethod((int) $data['method'])],
+            'cheque_date' => [new \App\Rules\chequeMethodDate((int) $data['method'])],
+            'bank_account_id' => [new \App\Rules\bankMethod((int) $data['method'])],
+            'Entries.*.ledger_id' => ['required', 'integer', 'gt:0'],
+            'Entries.*.amount' => ['required', 'gt:0', 'numeric'],
+            'total_value' => ['required', 'gt:0', 'numeric']
+        ], [
+            'contract_id.gt' => 'Contract cannot blank.'
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->messages(), 200);
         } else {
 
-            $model = new Tenants();
+            $dbLedger = [
+                1 => $data['cash_account_id'],
+                2 => $data['cheque_account_id'],
+                3 => $data['bank_account_id']
+            ];
+
+            $model = new Head();
             if ($data['id'] > 0) {
-                $model = Tenants::find($data['id']);
+                $model = Head::find($data['id']);
+                Entries::where('head_id', $data['id'])->delete();
+            } else {
+                $model->type = 1;
+                $model->createNumber();
             }
             $model->fill($data);
-            $model->save();
+            $model->fillContract();
 
-            return response()->json(['tenant_id' => $model->id, 'message' => 'success', 'tenant_id_encrypted' => $model->encoded_key()]);
-        }
-    }
-
-    public function status(Request $request)
-    {
-        //Input Data
-        $data = $request->all();
-
-        if ($data['_ref'] > 0) {
-            $model = Tenants::find($data['_ref']);
-            if ($model->id > 0 && $model->is_available != 2) {
-                $model->is_available = $data['status'];
-                $model->save();
-                return response()->json(['message' => 'success'], 200);
+            $items = [];
+            $totalAmount = 0;
+            $consideringDate = $data['method'] == 2 ? $data['cheque_date'] : $data['date'];
+            foreach ($data['Entries'] as $i => $eachItem) {
+                $items[$i] = new Entries;
+                $items[$i]->ledger_id = $eachItem['ledger_id'];
+                $items[$i]->amount = -1 * $eachItem['amount'];
+                $items[$i]->date = $consideringDate;
+                $totalAmount += $eachItem['amount'];
             }
-        }
-        return response()->json(['message' => 'failed']);
-    }
-    public function query(Request $request)
-    {
-        $data = $request->all();
-        $keyword = trim($data['q']);
-        $response = [];
 
-        if ($keyword != '') {
-            $model = Tenants::where('is_available', 1)->where('name', 'LIKE', '%' . $keyword . '%')->select('name', 'id', 'email')->limit(200)->get();
-            foreach ($model as $i => $eachItem) {
-                $response[$i] = ['id' => $eachItem->id, 'name' => $eachItem->name, 'email' => $eachItem->email];
+            $db = new Entries;
+            $db->ledger_id = $dbLedger[$model->method];
+            $db->amount = $totalAmount;
+            $db->date = $consideringDate;
+            $db->code = 'R-DB';
+
+            if ($model->save()) {
+                $model->createEntries([$db], false, true); //dr
+                $model->createEntries($items, false, true); //cr
             }
-        }
 
-        return response()->json($response, 200);
-    }
-
-    public function fetch(Request $request)
-    {
-        $data = $request->all();
-        if (isset($data['_ref']) && $data['_ref'] > 0) {
-            $model = Tenants::find($data['_ref']);
-            return response()->json(['status' => 'success', 'emirates_id' => $model->emirates_id, 'email' => $model->email, 'passport_no' => $model->passport_number, 'phone' => $model->land_phone, 'mobile' => $model->mobile]);
+            return response()->json(['receipt_id' => $model->id, 'message' => 'success']);
         }
-        return response()->json(['status' => 'failed']);
     }
 }

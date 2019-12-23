@@ -12,7 +12,7 @@ class Head extends Model
     protected $table = 'finance';
 
     protected $fillable = [
-        'date', 'type', 'number', 'method', 'contract_id', 'building_id', 'flat_id', 'tenant_id', 'cheque_date', 'cheque_no'
+        'date', 'type', 'number', 'method', 'contract_id', 'building_id', 'flat_id', 'tenant_id', 'cheque_date', 'cheque_no', 'narration'
     ];
 
     const METHOD = [1 => 'Cash', 2 => 'Cheque', 3 => 'Bank Transfer'];
@@ -23,11 +23,6 @@ class Head extends Model
         static::saving(function ($model) {
             $model->created_by =  Auth::user()->id;
         });
-    }
-
-    public static function credit($value = 0)
-    {
-        return ($value > 0) ? -1 * abs($value) : 0;
     }
 
     public function entry_type()
@@ -105,6 +100,12 @@ class Head extends Model
         return $format ? number_format($amount, 2, '.', ',') : $amount;
     }
 
+    public function creditSum($reverse = false)
+    {
+        $amount = $this->entries()->where('amount', '<', '0')->get()->sum('amount');
+        return $reverse ? -1 * $amount : $amount;
+    }
+
     public function formated_date()
     {
         return $this->exists && $this->date != NULL &&   $this->date != '0000-00-00' ? date('d/m/Y', strtotime($this->date)) : '';
@@ -117,9 +118,11 @@ class Head extends Model
 
     public function fillContract()
     {
-        $this->building_id = $this->contract->building_id;
-        $this->flat_id  = $this->contract->flat_id;
-        $this->tenant_id  = $this->contract->tenant_id;
+        if ($this->contract_id > 0) {
+            $this->building_id = $this->contract->building_id;
+            $this->flat_id  = $this->contract->flat_id;
+            $this->tenant_id  = $this->contract->tenant_id;
+        }
     }
 
     public function createEntries($entries = [], $fillDate = true, $fillContractInfo = false)
@@ -128,15 +131,34 @@ class Head extends Model
             foreach ($entries as $each) {
                 $each->head_id = $this->id;
                 if ($fillContractInfo) {
-                    $each->tenant_id =  $this->tenant_id;
-                    $each->flat_id =  $this->flat_id;
-                    $each->building_id =  $this->building_id;
-                    $each->contract_id =  $this->contract_id;
+                    if ($this->contract_id > 0) {
+                        $each->tenant_id =  $this->tenant_id;
+                        $each->flat_id =  $this->flat_id;
+                        $each->building_id =  $this->building_id;
+                        $each->contract_id =  $this->contract_id;
+                    }
                 }
                 if ($fillDate) {
                     $each->date =  $this->date;
                 }
                 $each->save();
+            }
+        }
+    }
+
+    public function update_ubl()
+    {
+        if ($this->id > 0) {
+            $debitAmount = (float) $this->debitSum();
+            $creditAmount = (float) $this->creditSum(true);
+
+            if ($debitAmount != $creditAmount) {
+                $balanceAmount = $debitAmount > $creditAmount ? $creditAmount - $debitAmount : ($debitAmount - $creditAmount) * -1;
+                $item = new Entries;
+                $item->ledger_id = Ledgers::findClass(Ledgers::UNBALANCED_AMT)->id;
+                $item->amount = $balanceAmount;
+                $item->code = 'UB';
+                $this->createEntries([$item], true, true);
             }
         }
     }

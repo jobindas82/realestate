@@ -154,10 +154,10 @@ class LedgerController extends Controller
             $model->inheritParent();
             $model->addClass();
 
-            if ($model->is_reached_maximum_level()) {
+            if ($model->is_reached_maximum_level(true)) {
                 $model->save();
             } else {
-                return response()->json(['message' => 'failed', 'name' => 'Maximum allowable Level is ' . Ledgers::MAX_LEVEL]);
+                return response()->json(['message' => 'failed', 'name' => 'Maximum allowable Level is ' .( Ledgers::MAX_LEVEL - 1 )]);
             }
 
             return response()->json(['group_id' => $model->id, 'message' => 'success']);

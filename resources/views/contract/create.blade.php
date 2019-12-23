@@ -158,6 +158,16 @@
                 $(event.currentTarget).find('[role="menu"] li a').removeClass('waves-effect');
                 $(event.currentTarget).find('[role="menu"] li:not(.disabled) a').addClass('waves-effect');
             }
+
+            @if( $model->exists )
+                setTimeout(function(){
+                    $('[role="tab"]').each(function () {
+                        $(this).removeClass('disabled').addClass('done');
+                    });
+                    $('#contract_form-t-3').click();
+                }, 500);
+            @endif;
+
         </script>
 
     </div>

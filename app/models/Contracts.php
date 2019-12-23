@@ -101,6 +101,11 @@ class Contracts extends Model
         return $format ? Money::AED($amount, true)->format() : number_format($amount, 2, '.', ',');
     }
 
+    public function gross_amount_wo_format()
+    {
+       return round($this->items->sum('net_amount'), 2);
+    }
+
     public function getContractDetailsAttribute()
     {
         return $this->id . ' | ' . $this->tenant->name;

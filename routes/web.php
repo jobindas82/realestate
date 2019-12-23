@@ -27,6 +27,8 @@ Route::get('/contract/create/{key}', ['as' => 'contract.create', 'uses' => 'Cont
 Route::post('/contract/save', 'ContractController@save')->middleware('auth');
 Route::get('/contract/export/{key}', ['as' => 'contract.export', 'uses' => 'ContractController@export'])->middleware('auth');
 Route::post('/contract/fetch', 'ContractController@fetch')->middleware('auth');
+Route::get('/contract/cheques/{key}', ['as' => 'contract.create', 'uses' => 'ContractController@create_cheques'])->middleware('auth');
+Route::post('/contract/cheques/save', 'ContractController@save_cheques')->middleware('auth');
 //end
 
 //Finance
@@ -35,6 +37,20 @@ Route::post('/finance/receipt/list', 'FinanceController@list')->middleware('auth
 Route::get('/finance/receipt/create', ['as' => 'finance.receipt.create', 'uses' => 'FinanceController@receipt_create'])->middleware('auth');
 Route::get('/finance/receipt/create/{key}', ['as' => 'finance.receipt.create', 'uses' => 'FinanceController@receipt_create'])->middleware('auth');
 Route::post('/finance/receipt/save', 'FinanceController@receipt_save')->middleware('auth');
+
+Route::get('/finance/payment', ['as' => 'finance.payment.index', 'uses' => 'FinanceController@payment_index'])->middleware('auth');
+Route::post('/finance/payment/list', 'FinanceController@list')->middleware('auth');
+Route::get('/finance/payment/create', ['as' => 'finance.payment.create', 'uses' => 'FinanceController@payment_create'])->middleware('auth');
+Route::get('/finance/payment/create/{key}', ['as' => 'finance.payment.create', 'uses' => 'FinanceController@payment_create'])->middleware('auth');
+Route::post('/finance/payment/save', 'FinanceController@payment_save')->middleware('auth');
+
+Route::get('/finance/journal', ['as' => 'finance.journal.index', 'uses' => 'FinanceController@journal_index'])->middleware('auth');
+Route::post('/finance/journal/list', 'FinanceController@list')->middleware('auth');
+Route::get('/finance/journal/create', ['as' => 'finance.journal.create', 'uses' => 'FinanceController@journal_create'])->middleware('auth');
+Route::get('/finance/journal/create/{key}', ['as' => 'finance.journal.create', 'uses' => 'FinanceController@journal_create'])->middleware('auth');
+Route::post('/finance/journal/save', 'FinanceController@journal_save')->middleware('auth');
+
+Route::post('/finance/status', 'FinanceController@update_status')->middleware('auth');
 //end
 
 /**

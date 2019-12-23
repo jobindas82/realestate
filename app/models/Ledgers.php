@@ -14,7 +14,8 @@ class Ledgers extends Model
     const CASH_CHILD = 'CASH_C';
     const BANK_CHILD = 'BANK_C';
     const SALES_VAT = 'VAT_S';
-
+    const UNBALANCED_AMT = 'UBL';
+    
     protected $table = 'ledgers';
 
     protected $fillable = [
@@ -114,8 +115,9 @@ class Ledgers extends Model
         }
     }
 
-    public function is_reached_maximum_level(){
-        return $this->level > self::MAX_LEVEL ? false : true;
+    public function is_reached_maximum_level($lessThanOne = false){
+        $maxLevel = $lessThanOne ? self::MAX_LEVEL - 1 : self::MAX_LEVEL;
+        return $this->level > $maxLevel ? false : true;
     }
 
     public static function contractItems($id = 0)

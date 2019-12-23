@@ -33,6 +33,18 @@ class ContractController extends Controller
         return view('contract.create', ['model' => $model]);
     }
 
+    public function create_cheques($key =0)
+    {
+        $contract_id = UriEncode::decrypt($key);
+        if( $contract_id > 0 )
+            $model = Contracts::find($contract_id);
+        
+        if( isset($model->id) && $model->id > 0 )
+            return view('contract.create_cheques', ['model' => $model]);
+        else    
+            abort(403, 'Unauthorized action.');
+    }
+
 
     public function list()
     {
@@ -96,6 +108,7 @@ class ContractController extends Controller
         foreach ($result as $eachItem) {
             //Edit Button
             $actions = '<a title="Edit" href="/contract/create/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
+            $actions .= ' <a title="Add Cheques" href="/contract/cheques/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >add_circle</i></a>';
             //$actions .= ' <a title="Export Contract" href="#" onclick="window.open(\'/contract/export/' . UriEncode::encrypt($eachItem->id) . '\', \'_blank\')"><i class="material-icons" >picture_as_pdf</i></a>';
 
             $eachItemData[] = [$eachItem->id, $eachItem->tenant_name,  $eachItem->building_name, $eachItem->flat_name, $eachItem->formated_from_date(), $eachItem->formated_to_date(),  $eachItem->grossAmount(), $eachItem->status(), '<div class="text-center">' . $actions . '</div>'];
@@ -196,7 +209,7 @@ class ContractController extends Controller
         $items = ' <tr>
                     <th><label>1</label></th>
                     <td>' . Form::select('Entries[0][ledger_id]', \App\models\Ledgers::children(0), '', ['class' => 'form-control show-tick', 'required' => true, 'id' => 'Entries_0_ledger_id']) . '</td>
-                    <td>' . Form::number('Entries[0][amount]', '', ['class' => 'form-control align-right', 'required' => true, 'id' => 'Entries_0_amount', 'min' => 1, 'max' => 999999999999999, 'onKeyup' => 'calculate();', 'onBlur' => 'round_field(this.id)']) . '</td>
+                    <td>' . Form::number('Entries[0][amount]', '', ['class' => 'form-control align-right', 'required' => true, 'id' => 'Entries_0_amount', 'min' => 1, 'max' => 999999999999999, 'step'=> '.0000001', 'onKeyup' => 'calculate();', 'onBlur' => 'round_field(this.id)']) . '</td>
                     <td><a href="#" title="Remove" id="Entries_0_delete" onclick="deleteRow(this);"><i class="material-icons">delete_forever</i></a></td>
                 </tr>';
 
@@ -210,7 +223,7 @@ class ContractController extends Controller
                 $items .= ' <tr>
                                 <th><label>' . ($i + 1) . '</label></th>
                                 <td>' . Form::select('Entries[' . $i . '][ledger_id]', \App\models\Ledgers::children($eachItem->ledger_id), $eachItem->ledger_id, ['class' => 'form-control show-tick', 'required' => true, 'id' => 'Entries_' . $i . '_ledger_id']) . '</td>
-                                <td>' . Form::number('Entries[' . $i . '][amount]', '', ['class' => 'form-control align-right', 'required' => true, 'id' => 'Entries_' . $i . '_amount', 'min' => 1, 'max' => 999999999999999, 'onKeyup' => 'calculate();', 'onBlur' => 'round_field(this.id)']) . '</td>
+                                <td>' . Form::number('Entries[' . $i . '][amount]', '', ['class' => 'form-control align-right', 'required' => true, 'id' => 'Entries_' . $i . '_amount', 'min' => 1, 'max' => 999999999999999, 'step'=> '.0000001', 'onKeyup' => 'calculate();', 'onBlur' => 'round_field(this.id)']) . '</td>
                                 <td><a href="#" title="Remove" id="Entries_' . $i . '_delete" onclick="deleteRow(this);"><i class="material-icons">delete_forever</i></a></td>
                             </tr>';
                 $j = $i;
@@ -220,7 +233,7 @@ class ContractController extends Controller
                 $items .= ' <tr>
                             <th><label>' . $j . '</label></th>
                             <td>' . Form::select('Entries[' . $j . '][ledger_id]', \App\models\Ledgers::children(0), Ledgers::findClass(Ledgers::SALES_VAT)->id, ['class' => 'form-control show-tick', 'required' => true, 'id' => 'Entries_' . $j . '_ledger_id']) . '</td>
-                            <td>' . Form::number('Entries[' . $j . '][amount]', '', ['class' => 'form-control align-right', 'required' => true, 'id' => 'Entries_' . $j . '_amount', 'min' => 1, 'max' => 999999999999999, 'onKeyup' => 'calculate();', 'onBlur' => 'round_field(this.id)']) . '</td>
+                            <td>' . Form::number('Entries[' . $j . '][amount]', '', ['class' => 'form-control align-right', 'required' => true, 'id' => 'Entries_' . $j . '_amount', 'min' => 1, 'max' => 999999999999999, 'step'=> '.0000001', 'onKeyup' => 'calculate();', 'onBlur' => 'round_field(this.id)']) . '</td>
                             <td><a href="#" title="Remove" id="Entries_' . $j . '_delete" onclick="deleteRow(this);"><i class="material-icons">delete_forever</i></a></td>
                         </tr>';
         }

@@ -248,14 +248,14 @@
         var clicked = arr_field_id[2];
         var fieldValue = event.value;
 
-        $('#Entries_' + i + '_debit').attr('readonly', false);
-        $('#Entries_' + i + '_credit').attr('readonly', false);
+        $('#Entries_' + i + '_debit').attr('readonly', false).attr('tabindex', 0);
+        $('#Entries_' + i + '_credit').attr('readonly', false).attr('tabindex', 0);
 
         if (+fieldValue > 0) {
             if (clicked == 'debit') {
-                $('#Entries_' + i + '_credit').attr('readonly', true);
+                $('#Entries_' + i + '_credit').attr('readonly', true).attr('tabindex', -1);
             } else {
-                $('#Entries_' + i + '_debit').attr('readonly', true);
+                $('#Entries_' + i + '_debit').attr('readonly', true).attr('tabindex', -1);
             }
         }
     }

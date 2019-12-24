@@ -141,7 +141,8 @@ class Head extends Model
                 if ($fillDate) {
                     $each->date =  $this->date;
                 }
-                $each->save();
+                if( round($each->amount, 6) != 0 )
+                    $each->save();
             }
         }
     }

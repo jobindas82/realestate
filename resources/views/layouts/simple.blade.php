@@ -65,9 +65,49 @@
     <!-- Autosize Plugin Js -->
     <script src="{{ asset('plugins/autosize/autosize.js') }}"></script>
 
-    
+
     <!-- Input Mask Plugin Js -->
     <script src="{{ asset('plugins/jquery-inputmask/jquery.inputmask.bundle.js') }}"></script>
+
+    <script>
+        function updateStatus(entry_id, status, type) {
+            var label = status == 0 ? 'Un-Post' : 'Post';
+            if (type == 1)
+                label = 'Cancel';
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you want ' + label + ' this!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, ' + label + ' it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/finance/status',
+                        data: {
+                            _ref: entry_id,
+                            status: status,
+                            type: type
+                        },
+                        success: function(response) {
+                            $('.page-loader-wrapper').fadeOut();
+                            Swal.fire(
+                                'Updated!',
+                                'Entry ' + label + 'ed!',
+                                'success'
+                            );
+                            reload_datatable('#receipt_list');
+                            reload_datatable('#journal_list');
+                            reload_datatable('#payment_list');
+                        }
+                    });
+                }
+            });
+        }
+    </script>
 
 
 </head>

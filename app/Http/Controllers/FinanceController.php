@@ -49,8 +49,13 @@ class FinanceController extends Controller
         $filterColumn = $columns[$_POST['order'][0]['column']];
         $filterOrder  = $_POST['order'][0]['dir'];
         $type = (int) $_POST['type'];
+        $contract_id = (int) $_POST['contract'];
 
         $query = Head::query()->leftJoin('tenants', 'tenants.id', 'finance.tenant_id')->where('finance.type', $type);
+
+        if ($contract_id > 0) {
+            $query->where('finance.contract_id', $contract_id);
+        }
 
         if ($keyword != "") {
             $query->where(function ($q) use ($keyword) {
@@ -85,13 +90,13 @@ class FinanceController extends Controller
         foreach ($result as $eachItem) {
             //Edit Button
             $actions = '';
-            if (!$eachItem->isCancelled()) {
+            if (!$eachItem->isCancelled() && $contract_id == 0) {
                 $actions .= '<a title="Edit" href="' . $routes[$type] . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
-                if( $eachItem->isPosted())
-                    $actions .= '<a title="Un-Post" href="#" onclick="updateStatus('. $eachItem->id .', 0, 0);"><i class="material-icons" >thumb_down</i></a>';
+                if ($eachItem->isPosted())
+                    $actions .= '<a title="Un-Post" href="#" onclick="updateStatus(' . $eachItem->id . ', 0, 0);"><i class="material-icons" >thumb_down</i></a>';
                 else
-                    $actions .= '<a title="Post" href="#" onclick="updateStatus('. $eachItem->id .', 1, 0);"><i class="material-icons" >thumb_up</i></a>';
-                $actions .= '<a title="Cancel" href="#" onclick="updateStatus('. $eachItem->id .', 1, 1);"><i class="material-icons" >block</i></a>';
+                    $actions .= '<a title="Post" href="#" onclick="updateStatus(' . $eachItem->id . ', 1, 0);"><i class="material-icons" >thumb_up</i></a>';
+                $actions .= '<a title="Cancel" href="#" onclick="updateStatus(' . $eachItem->id . ', 1, 1);"><i class="material-icons" >block</i></a>';
             }
             if ($type == 1) {
                 $eachItemData[] = [$eachItem->number, $eachItem->formated_date(),  $eachItem->contract_id, $eachItem->cheque_no, $eachItem->formated_cheque_date(), $eachItem->name,  $eachItem->debitSum(true), '<div class="text-center">' . $actions . '</div>', $eachItem->is_posted, $eachItem->is_cancelled];
@@ -325,12 +330,13 @@ class FinanceController extends Controller
         }
     }
 
-    public function update_status(Request $request){
+    public function update_status(Request $request)
+    {
         $data = $request->all();
-        if( $data['_ref'] > 0 ){
-            if( $data['type'] == 0 ) 
+        if ($data['_ref'] > 0) {
+            if ($data['type'] == 0)
                 $data['status'] == 0 ? Head::find($data['_ref'])->unPost() : Head::find($data['_ref'])->post();
-            else 
+            else
                 Head::find($data['_ref'])->cancel();
         }
         return response()->json(['message' => 'success']);

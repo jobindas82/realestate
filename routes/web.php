@@ -28,6 +28,7 @@ Route::post('/contract/save', 'ContractController@save')->middleware('auth');
 Route::get('/contract/export/{key}', ['as' => 'contract.export', 'uses' => 'ContractController@export'])->middleware('auth');
 Route::post('/contract/fetch', 'ContractController@fetch')->middleware('auth');
 Route::get('/contract/cheques/{key}', ['as' => 'contract.create', 'uses' => 'ContractController@create_cheques'])->middleware('auth');
+Route::get('/contract/cheques/list/{key}', 'ContractController@cheques_list' )->middleware('auth');
 Route::post('/contract/cheques/save', 'ContractController@save_cheques')->middleware('auth');
 //end
 

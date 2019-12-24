@@ -7,18 +7,12 @@ use Illuminate\Support\Facades\Auth;
 
 class ConstructionTypes extends Model
 {
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
+
+    const COMMERCIAL_ID = 1;
+    const RESIDENTIAL_ID = 2;
+    
     protected $table = 'construction_type';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'name', 'is_active', 'tax_code'
     ];

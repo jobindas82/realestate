@@ -35,6 +35,7 @@
                         <div class="col-sm-4">
                             <div class="form-group form-float">
                                 <div class="form-line">
+                                    {{ Form::hidden('contract_id', $model->id) }}
                                     {{ Form::text('contract_amount', $model->gross_amount_wo_format(), [ 'class' => 'form-control', 'required' => true, 'id' => 'contract_amount' ]) }}
                                     <label class="form-label">Contract Amount</label>
                                 </div>
@@ -46,8 +47,9 @@
                             <thead>
                                 <tr>
                                     <th style="width:2%">#</th>
-                                    <th style="width:20%">Cheque Date</th>
-                                    <th style="width:30%">Cheque No</th>
+                                    <th style="width:10%">Cheque Date</th>
+                                    <th style="width:20%">Cheque No</th>
+                                    <th style="width:30%">Bank</th>
                                     <th style="width:20%">Amount</th>
                                     <th style="width:2%"><a href="#" title="Add Row" onclick="addRow();"><i class="material-icons">add_circle</i></a></th>
                                 </tr>
@@ -58,6 +60,7 @@
                                     <th><label>{{ $i+1 }}</label></th>
                                     <td>{{ Form::text('Entries['.$i.'][cheque_date]', '', [ 'class' => 'form-control datepicker', 'id' => 'Entries_'.$i.'_cheque_date', 'required' => true]) }}</td>
                                     <td>{{ Form::text('Entries['.$i.'][cheque_no]', '', [ 'class' => 'form-control', 'required' => true]) }}</td>
+                                    <td>{{ Form::select('Entries['.$i.'][bank_id]', \App\models\Ledgers::childrenHaveClass(0,  \App\models\Ledgers::BANK_CHILD), 0, [ 'class' => 'form-control show-tick' ]) }}</td>
                                     <td>{{ Form::number('Entries['.$i.'][amount]', '', [ 'class' => 'form-control align-right', 'min' => 1, 'max' => 99999999, 'step'=> '.00001', 'onKeyup' => 'calculate(); checkMax(this.id);' , 'onBlur' => 'round_field(this.id)', 'id' => 'Entries_'.$i.'_amount', 'required' => true]) }}</td>
                                     <td><a href="#" title="Remove" id="Entries_{{ $i }}_delete" onclick="deleteRow(this);"><i class="material-icons">delete_forever</i></a></td>
                                 </tr>
@@ -65,7 +68,7 @@
                             </tbody>
                             <tfoot>
                                 <tr class="warning">
-                                    <th colspan="3" style="text-align:right">Total</th>
+                                    <th colspan="4" style="text-align:right">Total</th>
                                     <th><input type="text" name="total_value" id="total_value" class="form-control align-right" readonly="true" value="0.00"></th>
                                 </tr>
                             </tfoot>
@@ -87,48 +90,36 @@
     $(document).ready(function() {
         $('#cheque-form').on('submit', function(e) {
 
-            var totalDebit = 0;
-            var totalCredit = 0;
+            //Hide Error Fields
+            $('.error').hide();
+            e.preventDefault();
+            $('.page-loader-wrapper').fadeIn();
 
-            $("#cheque-items-table").find('tbody').find("tr").each(function() {
-                totalDebit += +Number($(this).find("[id $=_debit]").val());
-                totalCredit += +Number($(this).find("[id $=_credit]").val());
+            $.ajax({
+                type: "POST",
+                url: '/contract/cheques/save',
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.message == 'success') {
+                        $('.page-loader-wrapper').fadeOut();
+                        Swal.fire(
+                            'SUCCESS',
+                            'Receipts Saved!',
+                            'success'
+                        ).then(response => {
+                            location.href = '/contract/index';
+                        });
+
+                    } else {
+                        $('.page-loader-wrapper').fadeOut();
+                        $.each(response, function(fieldName, fieldErrors) {
+                            $('#' + fieldName + '-error').text(fieldErrors.toString());
+                            $('#' + fieldName + '-error').show();
+                        });
+                    }
+                }
             });
 
-            if (totalDebit > 0 && totalDebit === totalCredit) {
-                //Hide Error Fields
-                $('.error').hide();
-                e.preventDefault();
-                $('.page-loader-wrapper').fadeIn();
-
-                $.ajax({
-                    type: "POST",
-                    url: '/finance/journal/save',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        if (response.message == 'success') {
-
-                            $('#journal_id').val(response.journal_id);
-                            $('.page-loader-wrapper').fadeOut();
-                            Swal.fire(
-                                'SUCCESS',
-                                'Journal Saved!',
-                                'success'
-                            );
-
-                        } else {
-                            $('.page-loader-wrapper').fadeOut();
-                            $.each(response, function(fieldName, fieldErrors) {
-                                $('#' + fieldName + '-error').text(fieldErrors.toString());
-                                $('#' + fieldName + '-error').show();
-                            });
-                        }
-                    }
-                });
-            } else {
-                alert('Totals Are not Matching!');
-                return false;
-            }
         });
     });
 
@@ -139,6 +130,9 @@
         newRow = $('#cheque-items-table').find('tbody').find('tr:last').clone();
         newRow.find('label:first').html(new_id + 1);
         newRow.attr('class', new_id);
+        newRow.find('.bootstrap-select').replaceWith(function() {
+            return $('select', this);
+        });
         newRow.find('div,input,textarea,checkbox,td,select,a,button').each(function() {
             this.id = this.id.replace(/\d+/, new_id);
             if (!$(this).is(':checkbox'))
@@ -146,6 +140,11 @@
             else
                 $(this).prop('checked', false);
             (this.name !== undefined) ? this.name = this.name.replace(/\d+/, new_id): this.style = '';
+        });
+        newRow.find('select').selectpicker({
+            liveSearch: true,
+            dropupAuto: false,
+            size: 5
         });
         newRow.find(".datepicker").datepicker({
             autoclose: true,
@@ -196,15 +195,14 @@
         return false;
     }
 
-    function checkMax(fieldId){
+    function checkMax(fieldId) {
         var total = +$('#total_value').val();
         var max = +$('#contract_amount').val();
-        if( total > max ){
+        if (total > max) {
             $('#' + fieldId).val('');
         }
         calculate();
     }
-
 </script>
 
 @endsection

@@ -74,4 +74,12 @@ class Flats extends Model
         $this->is_available = 2;
         $this->save();
     }
+
+    public function isCommercial(){
+        return $this->construction_type_id == ConstructionTypes::COMMERCIAL_ID ? true : false;
+    }
+
+    public function isResidential(){
+        return $this->construction_type_id == ConstructionTypes::RESIDENTIAL_ID ? true : false;
+    }
 }

@@ -57,6 +57,7 @@
     $(function() {
         $('#journal_list').on("preXhr.dt", function(e, settings, data) {
             data.type = 3;
+            data.contract =0;
             return data;
         }).DataTable({
             responsive: true,

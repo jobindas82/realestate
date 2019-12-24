@@ -29,19 +29,18 @@ class ContractController extends Controller
         $model = new Contracts;
         if ($id > 0)
             $model = Contracts::find($id);
-        //print_r($model);
         return view('contract.create', ['model' => $model]);
     }
 
-    public function create_cheques($key =0)
+    public function create_cheques($key = 0)
     {
         $contract_id = UriEncode::decrypt($key);
-        if( $contract_id > 0 )
+        if ($contract_id > 0)
             $model = Contracts::find($contract_id);
-        
-        if( isset($model->id) && $model->id > 0 )
+
+        if (isset($model->id) && $model->id > 0)
             return view('contract.create_cheques', ['model' => $model]);
-        else    
+        else
             abort(403, 'Unauthorized action.');
     }
 
@@ -109,7 +108,8 @@ class ContractController extends Controller
             //Edit Button
             $actions = '<a title="Edit" href="/contract/create/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
             $actions .= ' <a title="Add Cheques" href="/contract/cheques/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >add_circle</i></a>';
-            //$actions .= ' <a title="Export Contract" href="#" onclick="window.open(\'/contract/export/' . UriEncode::encrypt($eachItem->id) . '\', \'_blank\')"><i class="material-icons" >picture_as_pdf</i></a>';
+            $actions .= '  <a title="View Receipts" href="#" onclick="window.open(\'cheques/list/' . UriEncode::encrypt($eachItem->id) . '\', \'_blank\', \'location=yes,height=0,width=0,scrollbars=yes,status=yes\');"><i class="material-icons">euro_symbol</i></a>';
+            $actions .= ' <a title="Export Contract" href="#" onclick="window.open(\'/contract/export/' . UriEncode::encrypt($eachItem->id) . '\', \'_blank\')"><i class="material-icons" >picture_as_pdf</i></a>';
 
             $eachItemData[] = [$eachItem->id, $eachItem->tenant_name,  $eachItem->building_name, $eachItem->flat_name, $eachItem->formated_from_date(), $eachItem->formated_to_date(),  $eachItem->grossAmount(), $eachItem->status(), '<div class="text-center">' . $actions . '</div>'];
             $no++;
@@ -193,7 +193,7 @@ class ContractController extends Controller
         if ($id > 0) {
 
             $model = Contracts::find($id);
-            $pdf = \PDF::loadView('pdf.invoice_material', ['model' => $model]);
+            $pdf = \PDF::loadView('pdf.contract.contract', ['model' => $model]);
             return $pdf->stream('contract.pdf');
         } else {
             abort(403, 'Unauthorized action.');
@@ -209,7 +209,7 @@ class ContractController extends Controller
         $items = ' <tr>
                     <th><label>1</label></th>
                     <td>' . Form::select('Entries[0][ledger_id]', \App\models\Ledgers::children(0), '', ['class' => 'form-control show-tick', 'required' => true, 'id' => 'Entries_0_ledger_id']) . '</td>
-                    <td>' . Form::number('Entries[0][amount]', '', ['class' => 'form-control align-right', 'required' => true, 'id' => 'Entries_0_amount', 'min' => 1, 'max' => 999999999999999, 'step'=> '.0000001', 'onKeyup' => 'calculate();', 'onBlur' => 'round_field(this.id)']) . '</td>
+                    <td>' . Form::number('Entries[0][amount]', '', ['class' => 'form-control align-right', 'required' => true, 'id' => 'Entries_0_amount', 'min' => 1, 'max' => 999999999999999, 'step' => '.0000001', 'onKeyup' => 'calculate();', 'onBlur' => 'round_field(this.id)']) . '</td>
                     <td><a href="#" title="Remove" id="Entries_0_delete" onclick="deleteRow(this);"><i class="material-icons">delete_forever</i></a></td>
                 </tr>';
 
@@ -223,7 +223,7 @@ class ContractController extends Controller
                 $items .= ' <tr>
                                 <th><label>' . ($i + 1) . '</label></th>
                                 <td>' . Form::select('Entries[' . $i . '][ledger_id]', \App\models\Ledgers::children($eachItem->ledger_id), $eachItem->ledger_id, ['class' => 'form-control show-tick', 'required' => true, 'id' => 'Entries_' . $i . '_ledger_id']) . '</td>
-                                <td>' . Form::number('Entries[' . $i . '][amount]', '', ['class' => 'form-control align-right', 'required' => true, 'id' => 'Entries_' . $i . '_amount', 'min' => 1, 'max' => 999999999999999, 'step'=> '.0000001', 'onKeyup' => 'calculate();', 'onBlur' => 'round_field(this.id)']) . '</td>
+                                <td>' . Form::number('Entries[' . $i . '][amount]', '', ['class' => 'form-control align-right', 'required' => true, 'id' => 'Entries_' . $i . '_amount', 'min' => 1, 'max' => 999999999999999, 'step' => '.0000001', 'onKeyup' => 'calculate();', 'onBlur' => 'round_field(this.id)']) . '</td>
                                 <td><a href="#" title="Remove" id="Entries_' . $i . '_delete" onclick="deleteRow(this);"><i class="material-icons">delete_forever</i></a></td>
                             </tr>';
                 $j = $i;
@@ -233,10 +233,81 @@ class ContractController extends Controller
                 $items .= ' <tr>
                             <th><label>' . $j . '</label></th>
                             <td>' . Form::select('Entries[' . $j . '][ledger_id]', \App\models\Ledgers::children(0), Ledgers::findClass(Ledgers::SALES_VAT)->id, ['class' => 'form-control show-tick', 'required' => true, 'id' => 'Entries_' . $j . '_ledger_id']) . '</td>
-                            <td>' . Form::number('Entries[' . $j . '][amount]', '', ['class' => 'form-control align-right', 'required' => true, 'id' => 'Entries_' . $j . '_amount', 'min' => 1, 'max' => 999999999999999, 'step'=> '.0000001', 'onKeyup' => 'calculate();', 'onBlur' => 'round_field(this.id)']) . '</td>
+                            <td>' . Form::number('Entries[' . $j . '][amount]', '', ['class' => 'form-control align-right', 'required' => true, 'id' => 'Entries_' . $j . '_amount', 'min' => 1, 'max' => 999999999999999, 'step' => '.0000001', 'onKeyup' => 'calculate();', 'onBlur' => 'round_field(this.id)']) . '</td>
                             <td><a href="#" title="Remove" id="Entries_' . $j . '_delete" onclick="deleteRow(this);"><i class="material-icons">delete_forever</i></a></td>
                         </tr>';
         }
         return response()->json(['message' => 'success', 'tenant_name' => $name, 'amount' => $amount, 'contract_items' => $items], 200);
+    }
+
+    public function save_cheques(Request $request)
+    {
+        $data = $request->all();
+
+        //Validation of Request
+        $validator = \Validator::make($data, [
+            'contract_id' => ['required', 'gt:0', 'integer'],
+            'Entries.*.cheque_date' => ['required'],
+            'Entries.*.cheque_no' => ['required', 'max:255'],
+            'Entries.*.amount' => ['required', 'numeric', 'gt:0'],
+            'Entries.*.bank_id' => ['required', 'gt:0', 'integer']
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), 200);
+        } else {
+            foreach ($data['Entries'] as $each) {
+
+                $head = new \App\models\Head();
+                $head->date = date('Y-m-d', strtotime(str_replace('/', '-', $each['cheque_date'])));
+                $head->type = 1;
+                $head->method = 2;
+                $head->contract_id = $data['contract_id'];
+                $head->cheque_date = $head->date;
+                $head->cheque_no = $each['cheque_no'];
+                $head->narration = 'Cheque Received for Contract #' . $head->contract_id;
+                $head->createNumber();
+                $head->fillContract();
+
+                if ($head->save()) {
+
+                    $db = new \App\models\Entries;
+                    $db->ledger_id = $each['bank_id'];
+                    $db->amount = $each['amount'];
+                    $db->date =  $head->date;
+                    $db->code = 'R-DB';
+                    $items[0] = $db;
+
+                    $j = 0;
+                    foreach ($head->contract->items as $i => $eachItem) {
+                        $ratio = $eachItem->ratio();
+                        $items[$i + 1] = new \App\models\Entries;
+                        $items[$i + 1]->ledger_id = $eachItem->ledger_id;
+                        $items[$i + 1]->amount = -1 * round(($each['amount'] * $ratio), 6);
+
+                        $j = $i + 1;
+                    }
+
+                    $j++;
+                    $items[$j] = new \App\models\Entries;
+                    $items[$j]->ledger_id = Ledgers::findClass(Ledgers::SALES_VAT)->id;
+                    $items[$j]->amount = -1 * round(($each['amount'] * $head->contract->vatRatio()), 6);
+
+                    $head->createEntries($items, true, true);
+                    $head->update_ubl();
+                }
+            }
+
+            return response()->json(['message' => 'success']);
+        }
+    }
+
+    public function cheques_list($key = 0)
+    {
+        $id = UriEncode::decrypt($key);
+        $model = new Contracts;
+        if ($id > 0)
+            $model = Contracts::find($id);
+        return view('contract.cheques_list', ['model' => $model]);
     }
 }

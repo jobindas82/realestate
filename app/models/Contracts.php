@@ -103,7 +103,18 @@ class Contracts extends Model
 
     public function gross_amount_wo_format()
     {
-       return round($this->items->sum('net_amount'), 2);
+       return $this->items->sum('net_amount');
+    }
+
+    public function taxAmount($format = true)
+    {
+        $amount = $this->items->sum('tax_amount');
+        return $format ? Money::AED($amount, true)->format() : number_format($amount, 2, '.', ',');
+    }
+
+    public function tax_amount_wo_format()
+    {
+       return $this->items->sum('tax_amount');
     }
 
     public function getContractDetailsAttribute()
@@ -120,5 +131,13 @@ class Contracts extends Model
         if( $prepend )
             $response = $response->prepend('0 | None', 0);
         return $response;
+    }
+
+    public function vatRatio(){
+        return $this->gross_amount_wo_format() > 0 ?  round( ( $this->tax_amount_wo_format() / $this->gross_amount_wo_format() ), 6) : 0;
+    }
+
+    public function isRenewed(){
+        return $this->is_renewed == 1 ? true : false;
     }
 }

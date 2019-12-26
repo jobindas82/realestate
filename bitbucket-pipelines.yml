@@ -16,6 +16,11 @@ pipelines:
           - docker-php-ext-install pdo_mysql
           - bash ./install-composer.sh
           - composer install
+          - curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh
+          - bash nodesource_setup.sh
+          - apt-get install nodejs -y
+          - npm install
+          - npm run prod
           - ln -f -s .env.pipelines .env
           - php artisan migrate
           - php artisan serve &amp;

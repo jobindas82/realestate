@@ -67,7 +67,7 @@ class FinanceController extends Controller
         }
 
         $result = $query
-            ->select('finance.number', 'finance.date', 'finance.contract_id', 'finance.cheque_no', 'finance.cheque_date', 'tenants.name', 'finance.id', 'finance.is_posted', 'finance.is_cancelled')
+            ->select('finance.cheque_status', 'finance.number', 'finance.date', 'finance.contract_id', 'finance.cheque_no', 'finance.cheque_date', 'tenants.name', 'finance.id', 'finance.is_posted', 'finance.is_cancelled')
             ->skip($offset)
             ->take($limit)
             ->orderBy($filterColumn, $filterOrder)
@@ -88,7 +88,9 @@ class FinanceController extends Controller
         ];
 
         foreach ($result as $eachItem) {
-            //Edit Button
+            $cancelledOrReturned = $eachItem->is_cancelled;
+            if ($eachItem->cheque_status == 2)
+                $cancelledOrReturned = 100; ///////////////////////// Override |||| Cheque returns
             $actions = '';
             if (!$eachItem->isCancelled() && $contract_id == 0) {
                 $actions .= '<a title="Edit" href="' . $routes[$type] . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
@@ -99,11 +101,11 @@ class FinanceController extends Controller
                 $actions .= '<a title="Cancel" href="#" onclick="updateStatus(' . $eachItem->id . ', 1, 1);"><i class="material-icons" >block</i></a>';
             }
             if ($type == 1) {
-                $eachItemData[] = [$eachItem->number, $eachItem->formated_date(),  $eachItem->contract_id, $eachItem->cheque_no, $eachItem->formated_cheque_date(), $eachItem->name,  $eachItem->debitSum(true), '<div class="text-center">' . $actions . '</div>', $eachItem->is_posted, $eachItem->is_cancelled];
+                $eachItemData[] = [$eachItem->number, $eachItem->formated_date(),  $eachItem->contract_id, $eachItem->cheque_no, $eachItem->formated_cheque_date(), $eachItem->name,  $eachItem->debitSum(true), '<div class="text-center">' . $actions . '</div>', $eachItem->is_posted, $cancelledOrReturned];
             } else if ($type == 2) {
-                $eachItemData[] = [$eachItem->number, $eachItem->formated_date(), $eachItem->cheque_no, $eachItem->formated_cheque_date(), $eachItem->debitSum(true), '<div class="text-center">' . $actions . '</div>', $eachItem->is_posted, $eachItem->is_cancelled];
+                $eachItemData[] = [$eachItem->number, $eachItem->formated_date(), $eachItem->cheque_no, $eachItem->formated_cheque_date(), $eachItem->debitSum(true), '<div class="text-center">' . $actions . '</div>', $eachItem->is_posted, $cancelledOrReturned];
             } else {
-                $eachItemData[] = [$eachItem->number, $eachItem->formated_date(),  $eachItem->entries()->where('amount', '>', 0)->first()->ledger->name,  $eachItem->debitSum(true), '<div class="text-center">' . $actions . '</div>', $eachItem->is_posted, $eachItem->is_cancelled];
+                $eachItemData[] = [$eachItem->number, $eachItem->formated_date(),  $eachItem->entries()->where('amount', '>', 0)->first()->ledger->name,  $eachItem->debitSum(true), '<div class="text-center">' . $actions . '</div>', $eachItem->is_posted, $cancelledOrReturned];
             }
             $no++;
         }

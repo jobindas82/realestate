@@ -29,7 +29,30 @@ class ContractController extends Controller
         $model = new Contracts;
         if ($id > 0)
             $model = Contracts::find($id);
-        return view('contract.create', ['model' => $model]);
+        return view('contract.create', ['model' => $model, 'renewFlag' => false]);
+    }
+
+    public function renew($key = 0)
+    {
+        $id = UriEncode::decrypt($key);
+        $model = new Contracts;
+        if ($id > 0) {
+            $model = Contracts::find($id);
+            $model->generated_date = date('Y-m-d');
+            $model->from_date = NULL;
+            $model->to_date = NULL;
+        }
+        return view('contract.create', ['model' => $model, 'renewFlag' => true]);
+    }
+
+    public function settlement($key = 0)
+    {
+        $id = UriEncode::decrypt($key);
+        if ($id > 0)
+            $model = Contracts::find($id);
+        if (!isset($model->id) || (int) $model->id == 0)
+            abort(403, 'Unauthorized action.');
+        return view('contract.settlement', ['model' => $model, 'total' => 0]);
     }
 
     public function create_cheques($key = 0)
@@ -105,10 +128,16 @@ class ContractController extends Controller
         $no = $offset + 1;
 
         foreach ($result as $eachItem) {
-            //Edit Button
-            $actions = '<a title="Edit" href="/contract/create/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
-            $actions .= ' <a title="Add Cheques" href="/contract/cheques/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >add_circle</i></a>';
-            $actions .= '  <a title="View Receipts" href="#" onclick="window.open(\'cheques/list/' . UriEncode::encrypt($eachItem->id) . '\', \'_blank\', \'location=yes,height=0,width=0,scrollbars=yes,status=yes\');"><i class="material-icons">euro_symbol</i></a>';
+            $actions = '';
+            if ($eachItem->is_active == 1) {
+                $actions .= ' <a title="Edit" href="/contract/create/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
+                $actions .= ' <a title="Add Cheques" href="/contract/cheques/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >add_circle</i></a>';
+                $actions .= ' <a title="Settlement" href="/contract/settlement/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >low_priority</i></a>';
+            }
+            if ($eachItem->is_active == 0) {
+                $actions .= ' <a title="Renew Contract" href="/contract/renew/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >autorenew</i></a>';
+            }
+            $actions .= ' <a title="View Receipts" href="#" onclick="window.open(\'cheques/list/' . UriEncode::encrypt($eachItem->id) . '\', \'_blank\', \'location=yes,height=0,width=0,scrollbars=yes,status=yes\');"><i class="material-icons">euro_symbol</i></a>';
             $actions .= ' <a title="Export Contract" href="#" onclick="window.open(\'/contract/export/' . UriEncode::encrypt($eachItem->id) . '\', \'_blank\')"><i class="material-icons" >picture_as_pdf</i></a>';
 
             $eachItemData[] = [$eachItem->id, $eachItem->tenant_name,  $eachItem->building_name, $eachItem->flat_name, $eachItem->formated_from_date(), $eachItem->formated_to_date(),  $eachItem->grossAmount(), $eachItem->status(), '<div class="text-center">' . $actions . '</div>'];
@@ -309,5 +338,32 @@ class ContractController extends Controller
         if ($id > 0)
             $model = Contracts::find($id);
         return view('contract.cheques_list', ['model' => $model]);
+    }
+
+    public function save_early_settlement(Request $request)
+    {
+        $data = $request->all();
+
+        //Validation of Request
+        $validator = \Validator::make($data, [
+            'id' => ['bail', 'required', 'gt:0', 'integer'],
+            'contract_no' => [new \App\Rules\ifClosedContract($data['id'])]
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), 200);
+        } else {
+            $model = Contracts::find($data['id']);
+            $model->closeContract();
+            $model->tenant->makeAvailable();
+            $model->flat->vacant();
+
+            foreach( $data['Receipts'] as $each ){
+                if( $each > 0 ){
+                    \App\models\Head::find($each)->returnCheque();
+                }
+            }
+            return response()->json(['message' => 'success']);
+        }
     }
 }

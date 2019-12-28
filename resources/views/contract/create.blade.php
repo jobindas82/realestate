@@ -26,7 +26,7 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="card">
                 <div class="header">
-                    <h2>@if( $model->exists ) {{ 'Contract # '.$model->id }} @else New Contract @endif</h2>
+                    <h2>@if( $model->exists && !$renewFlag ) {{ 'Contract # '.$model->id }} @else New Contract @endif</h2>
                     <ul class="header-dropdown m-r--5">
                         <li class="dropdown">
                             <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -42,7 +42,13 @@
                 </div>
                 <div class="body">
                     {{ Form::open(['method' => 'post', 'id' => 'contract_form']) }}
-                    {{ Form::hidden('id', $model->id, [ 'id' => 'contract_id' ]) }}
+                    {{ Form::hidden('id', $renewFlag ? NULL : $model->id, [ 'id' => 'contract_id' ]) }}
+                    
+                    @if( $renewFlag )
+                        {{ Form::hidden('is_renewed', 1) }}
+                        {{ Form::hidden('previous_contract', $model->id) }}
+                    @endif
+                    
                     <h3>Tenant</h3>
                     @include('contract.tenant')
 
@@ -159,7 +165,7 @@
                 $(event.currentTarget).find('[role="menu"] li:not(.disabled) a').addClass('waves-effect');
             }
 
-            @if( $model->exists )
+            @if( $model->exists && !$renewFlag )
                 setTimeout(function(){
                     $('[role="tab"]').each(function () {
                         $(this).removeClass('disabled').addClass('done');

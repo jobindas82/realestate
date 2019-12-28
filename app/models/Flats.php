@@ -21,7 +21,7 @@ class Flats extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'building_id', 'floor', 'premise_id', 'square_feet', 'minimum_value', 
+        'name', 'building_id', 'floor', 'premise_id', 'square_feet', 'minimum_value',
         'construction_type_id', 'flat_type_id', 'plot_no', 'owner_name', 'landlord_name', 'is_available'
     ];
 
@@ -53,33 +53,44 @@ class Flats extends Model
         return $this->belongsTo(FlatTypes::class, 'flat_type_id');
     }
 
-    public function occupancy(){
-        if( $this->is_available == 1 )
+    public function occupancy()
+    {
+        if ($this->is_available == 1)
             return 'Available';
-        else if( $this->is_available == 2 )
+        else if ($this->is_available == 2)
             return 'Occupied';
         else
             return 'Blocked';
     }
 
-    public static function activeFlats($building_id =0, $id =0){
+    public static function activeFlats($building_id = 0, $id = 0)
+    {
         $query = self::query()->where('is_available', 1)->where('building_id', $building_id);
         if ($id > 0)
             $query->orWhere('id', $id);
 
         return $query->pluck('name', 'id')->prepend('None', 0);
-    } 
+    }
 
-    public function occupied(){
+    public function occupied()
+    {
         $this->is_available = 2;
         $this->save();
     }
 
-    public function isCommercial(){
+    public function vacant()
+    {
+        $this->is_available = 1;
+        $this->save();
+    }
+
+    public function isCommercial()
+    {
         return $this->construction_type_id == ConstructionTypes::COMMERCIAL_ID ? true : false;
     }
 
-    public function isResidential(){
+    public function isResidential()
+    {
         return $this->construction_type_id == ConstructionTypes::RESIDENTIAL_ID ? true : false;
     }
 }

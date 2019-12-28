@@ -52,4 +52,10 @@ class Tenants extends Model
         $this->is_available = 2;
         $this->save();
     }
+
+    public function makeAvailable()
+    {
+        $this->is_available = 1;
+        $this->save();
+    }
 }

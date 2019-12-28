@@ -15,6 +15,8 @@ class Ledgers extends Model
     const BANK_CHILD = 'BANK_C';
     const SALES_VAT = 'VAT_S';
     const UNBALANCED_AMT = 'UBL';
+    const SECURITY_DEPOSIT = 'SE_D';
+    const RENT = 'RNT';
     
     protected $table = 'ledgers';
 

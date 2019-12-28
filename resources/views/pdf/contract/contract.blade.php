@@ -136,17 +136,17 @@
                 </tr>
                 <tr>
                     <td><b>Annual rent </b></td>
-                    <td colspan="4"><b>0.00&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></td>
+                    <td colspan="4"><b>{{ $model->annualRent() }}</b></td>
                     <td style="text-align:right;">الايجار السنوي</td>
                 </tr>
                 <tr>
                     <td><b>Contract value </b></td>
-                    <td colspan="4"><b>{{ $model->grossAmount() }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></td>
+                    <td colspan="4"><b>{{ $model->grossAmount() }}</b></td>
                     <td style="text-align:right;">قيمة العقد</td>
                 </tr>
                 <tr>
                     <td><b>Security Deposit </b></td>
-                    <td><b>0.00</b></td>
+                    <td><b>{{ $model->securityDeposit() }}</b></td>
                     <td><b>مبلغ التامين </b></td>
                     <td><b>Mode of payment </b></td>
                     <td><b></b></td>

@@ -112,6 +112,18 @@ class Contracts extends Model
         return $format ? Money::AED($amount, true)->format() : number_format($amount, 2, '.', ',');
     }
 
+    public function securityDeposit($format = true)
+    {
+        $amount = $this->items()->where('ledger_id', Ledgers::findClass(Ledgers::SECURITY_DEPOSIT)->id)->get()->sum('net_amount');
+        return $format ? Money::AED($amount, true)->format() : $amount;
+    }
+
+    public function annualRent($format = true)
+    {
+        $amount = $this->items()->where('ledger_id', Ledgers::findClass(Ledgers::RENT)->id)->get()->sum('net_amount');
+        return $format ? Money::AED($amount, true)->format() : $amount;
+    }
+
     public function tax_amount_wo_format()
     {
        return $this->items->sum('tax_amount');
@@ -139,5 +151,15 @@ class Contracts extends Model
 
     public function isRenewed(){
         return $this->is_renewed == 1 ? true : false;
+    }
+
+    public function chequeReceipts()
+    {
+        return Head::where('contract_id', $this->id)->where('method', 2)->orderBy('date', 'asc')->get();
+    }
+
+    public function closeContract(){
+        $this->is_active = 0;
+        $this->save();
     }
 }

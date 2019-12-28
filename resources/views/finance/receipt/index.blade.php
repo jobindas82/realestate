@@ -87,6 +87,9 @@
                 if (data[9] == 1) {
                     $(row).addClass("danger");
                 }
+                if (data[9] == 100) {
+                    $(row).addClass("warning");
+                }
             },
         });
     });

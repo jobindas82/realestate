@@ -189,7 +189,7 @@ class DefaultSeeder extends Seeder
                     'level' => 2,
                     'root' => 7,
                     'type' => 'I',
-                    'class' => NULL,
+                    'class' => 'RNT',
                     'is_parent' => 'N',
                     'is_generated' => 'Y',
                     'is_contract_item' => 'Y',
@@ -273,7 +273,20 @@ class DefaultSeeder extends Seeder
                     'is_contract_item' => 'N',
                     'is_active' => 'Y',
                     'created_by' => 0
-                ]
+                ],
+                [
+                    'parent_id' => 3,
+                    'name' => 'Security Deposit',
+                    'level' => 2,
+                    'root' => 3,
+                    'type' => 'L',
+                    'class' => 'SE_D',
+                    'is_parent' => 'N',
+                    'is_generated' => 'Y',
+                    'is_contract_item' => 'Y',
+                    'is_active' => 'Y',
+                    'created_by' => 0
+                ],
             ]
         );
 

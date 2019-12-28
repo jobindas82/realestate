@@ -79,6 +79,12 @@ class Head extends Model
         $this->save();
     }
 
+    public function returnCheque(){
+        $this->cancel();
+        $this->cheque_status = 2;
+        $this->save();
+    }
+
     public function isPosted()
     {
         return $this->is_posted == 0 ? false : true;
@@ -87,6 +93,11 @@ class Head extends Model
     public function isCancelled()
     {
         return $this->is_cancelled == 0 ? false : true;
+    }
+
+    public function isReturned()
+    {
+        return $this->cheque_status == 2 ? true : false;
     }
 
     public function createNumber($update = true)

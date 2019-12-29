@@ -5,7 +5,7 @@
 <table class="table table-condensed table-hover" id="ese_cheque_list">
     <thead>
         <tr>
-            <th style="width: 1%"></th>
+            <th style="width: 1%">#</th>
             <th style="width: 10%">Receipt Date</th>
             <th style="width: 10%">Cheque Date</th>
             <th style="width: 20%">Cheque No.</th>
@@ -35,14 +35,11 @@
         $total += $eachReceipt->cheque_status == 0 ? $eachReceipt->debitSum(false) : 0;
         @endphp
         @endforeach
-        @else
-        <tr>
-            <td colspan="5" class="align-center">No Receipts Available</td>
-        </tr>
+    
         @endif
     </tbody>
     <tfoot>
-        <tr>
+        <tr  class="warning">
             <td colspan="5" class="align-right font-bold"> Total</td>
             <td class="align-right font-bold" id="total_td">{{ number_format($total, 2, '.', ',')  }}</td>
         </tr>

@@ -91,14 +91,14 @@ class ContractController extends Controller
         $filterColumn = $columns[$_POST['order'][0]['column']];
         $filterOrder  = $_POST['order'][0]['dir'];
 
-        $status = (int) $_POST['status'];
+        $status = $_POST['status'];
 
         $query = Contracts::query()
             ->leftJoin('tenants', 'tenants.id', 'contracts.tenant_id')
             ->leftJoin('buildings', 'buildings.id', 'contracts.building_id')
             ->leftJoin('flats', 'flats.id', 'contracts.flat_id');
 
-        if ($status > 0)
+        if ($status != '')
             $query->where('is_active', $status);
 
         if ($keyword != "") {
@@ -166,7 +166,7 @@ class ContractController extends Controller
             'flat_id' => ['required', new \App\Rules\flatAvailability((int) $data['id'])],
             'building_id' => ['required', 'gt:0'],
             'generated_date' => ['required', 'date'],
-            'from_date' => ['required', 'date', 'after_or_equal:generated_date'],
+            'from_date' => ['required', 'date'],
             'to_date' => ['required', 'date', 'after_or_equal:from_date'],
             'ContractItems.*.ledger_id' => ['required', 'integer', 'gt:0'],
             'ContractItems.*.amount' => ['required', 'gt:0', 'numeric'],
@@ -358,11 +358,42 @@ class ContractController extends Controller
             $model->tenant->makeAvailable();
             $model->flat->vacant();
 
-            foreach( $data['Receipts'] as $each ){
-                if( $each > 0 ){
+            foreach ($data['Receipts'] as $each) {
+                if ($each > 0) {
                     \App\models\Head::find($each)->returnCheque();
                 }
             }
+            return response()->json(['message' => 'success']);
+        }
+    }
+
+    public function save_expired_settlement(Request $request)
+    {
+        $data = $request->all();
+
+        //Validation of Request
+        $validator = \Validator::make($data, [
+            'id' => ['bail', 'required', 'gt:0', 'integer'],
+            'contract_no' => [new \App\Rules\ifClosedContract($data['id'])],
+            'ContractSettlement.*.remarks' => ['required', 'nullable'],
+            'ContractSettlement.*.amount' => ['required', 'nullable', 'numeric', 'gt:0'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), 200);
+        } else {
+            $model = Contracts::find($data['id']);
+            $model->closeContract();
+            $model->tenant->makeAvailable();
+            $model->flat->vacant();
+
+            $items = [];
+            foreach ($data['ContractSettlement'] as $i => $each) {
+                $items[$i] = new \App\models\ContractSettlement();
+                $items[$i]->remarks = $each['remarks'];
+                $items[$i]->amount = $each['amount'];   
+            }
+            $model->addSettlement($items);  
             return response()->json(['message' => 'success']);
         }
     }

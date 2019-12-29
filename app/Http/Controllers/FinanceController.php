@@ -8,6 +8,8 @@ use App\Essentials\UriEncode;
 use App\models\Head;
 use App\models\Entries;
 
+use Collective\Html\FormFacade as Form;
+
 class FinanceController extends Controller
 {
 
@@ -100,6 +102,7 @@ class FinanceController extends Controller
                     $actions .= '<a title="Post" href="#" onclick="updateStatus(' . $eachItem->id . ', 1, 0);"><i class="material-icons" >thumb_up</i></a>';
                 $actions .= '<a title="Cancel" href="#" onclick="updateStatus(' . $eachItem->id . ', 1, 1);"><i class="material-icons" >block</i></a>';
             }
+            $actions .= ' <a title="Export" href="#" onclick="window.open(\'/finance/export/' . UriEncode::encrypt($eachItem->id) . '\', \'_blank\')"><i class="material-icons" >picture_as_pdf</i></a>';
             if ($type == 1) {
                 $eachItemData[] = [$eachItem->number, $eachItem->formated_date(),  $eachItem->contract_id, $eachItem->cheque_no, $eachItem->formated_cheque_date(), $eachItem->name,  $eachItem->debitSum(true), '<div class="text-center">' . $actions . '</div>', $eachItem->is_posted, $cancelledOrReturned];
             } else if ($type == 2) {
@@ -158,6 +161,7 @@ class FinanceController extends Controller
             }
             $model->fill($data);
             $model->fillContract();
+            $model->resetCheque();
 
             $items = [];
             $totalAmount = 0;
@@ -244,6 +248,7 @@ class FinanceController extends Controller
 
             $model->fill($data);
             $model->fillContract();
+            $model->resetCheque();
 
             $items = [];
             $totalAmount = 0;
@@ -343,4 +348,143 @@ class FinanceController extends Controller
         }
         return response()->json(['message' => 'success']);
     }
+
+    public function cheque_management()
+    {
+        return view('finance.cheque_management');
+    }
+
+    public function cheque_list()
+    {
+        $draw   = $_POST['draw'];
+        $offset = $_POST['start'];
+        $limit  = $_POST['length'];
+        $keyword = trim($_POST['search']['value']);
+
+        $columns = [
+            0 => 'number',
+            1 => 'date',
+            2 => 'cheque_date',
+            3 => 'cheque_no',
+            4 => 'number',
+            5 => 'narration',
+            6 => 'id',
+            7 => 'id'
+        ];
+
+        $filterColumn = $columns[$_POST['order'][0]['column']];
+        $filterOrder  = $_POST['order'][0]['dir'];
+
+        $type = (int) $_POST['type'];
+        $history = (int) $_POST['history'];
+
+        $query = Head::query();
+
+        if ($history == 0) {
+            $query->where('type', $type)
+                ->where('method', 2)
+                ->where('is_posted', 1)
+                ->where('cheque_status', 0);
+        } else {
+            $query->where('cheque_status', 2);
+        }
+
+
+        if ($keyword != "") {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('cheque_no', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('number', 'LIKE', '%' . $keyword . '%');
+            });
+        }
+
+        $result = $query
+            ->skip($offset)
+            ->take($limit)
+            ->orderBy($filterColumn, $filterOrder)
+            ->get();
+
+        $recordsTotal = $result->count();
+        $recordsFiltered = $recordsTotal;
+        $data['draw'] = $draw;
+        $data['recordsTotal'] = $recordsTotal;
+        $data['recordsFiltered'] = $recordsFiltered;
+        $eachItemData = array();
+
+        foreach ($result as $eachItem) {
+            $havingLedger = $eachItem->type == 1 ? $eachItem->entries()->where('amount', '>', '0')->first() : $eachItem->entries()->where('amount', '<', '0')->first();
+
+            if ($history == 0) {
+
+                $actions = '<a title="Clear Cheque" href="#" onclick="updateCheque(' . $eachItem->id . ', true, ' . $type . ');"><i class="material-icons" >check</i></a>';
+                $actions .= ' <a title="Return Cheque" href="#" onclick="updateCheque(' . $eachItem->id . ', false, ' . $type . ');"><i class="material-icons" >block</i></a>';
+
+                $eachItemData[] = [
+                    $eachItem->number,
+                    $eachItem->formated_date(),
+                    '<input type="text" class="form-control datepicker" value="' . $eachItem->formated_cheque_date() . '" id="Cheque_date_' . $eachItem->id . '" />',
+                    '<input type="text" class="form-control" value="' . $eachItem->cheque_no . '" id="Cheque_no_' . $eachItem->id . '" />',
+                    '' . Form::select('Bank_' . $eachItem->id, \App\models\Ledgers::childrenHaveClass($havingLedger->id,  \App\models\Ledgers::BANK_CHILD), $havingLedger->id, ['class' => 'form-control show-tick', 'id' => 'Bank_' . $eachItem->id]) . '',
+                    $eachItem->narration,
+                    $eachItem->debitSum(true),
+                    '<div class="text-center">' . $actions . '</div>'
+                ];
+            } else {
+
+                $actions = ' <a title="Revert Cheque Return" href="#" onclick="revertCheque(' . $eachItem->id . ');"><i class="material-icons" >sync_problem</i></a>';
+
+                $eachItemData[] = [
+                    $eachItem->entry_type->name,
+                    $eachItem->number,
+                    $eachItem->formated_date(),
+                    $eachItem->formated_cheque_date(),
+                    $eachItem->cheque_no,
+                    $havingLedger->ledger->name,
+                    $eachItem->narration,
+                    $eachItem->debitSum(true),
+                    '<div class="text-center">' . $actions . '</div>'
+                ];
+            }
+        }
+        $data['data'] = $eachItemData;
+
+        return response()->json($data);
+    }
+
+    public function update_cheques(Request $request)
+    {
+        $data = $request->all();
+        if ($data['id'] > 0) {
+            $model = Head::find($data['id']);
+            $model->cheque_date = date('Y-m-d', strtotime(str_replace('/', '-', $data['cheque_date'])));
+            if (trim($data['cheque_no']) != null)
+                $model->cheque_no = $data['cheque_no'];
+            $model->updateEntryByCode($data['type'] == 1 ? 'R-DB' : 'P-CR', $data['bank']);
+            $model->updateChequeDates();
+            $data['operation'] == 'true' ? $model->clearCheque() : $model->returnCheque();
+        }
+        return response()->json(['message' => 'success']);
+    }
+
+    public function revert_cheques(Request $request)
+    {
+        $data = $request->all();
+        if ($data['id'] > 0) {
+            $model = Head::find($data['id']);
+            $model->resetCheque();
+        }
+        return response()->json(['message' => 'success']);
+    }
+
+    public function export($key = 0)
+    {
+        $id = UriEncode::decrypt($key);
+        if ($id > 0) {
+            $model = Head::find($id);
+            $pdf = \PDF::loadView('pdf.finance.' . strtolower($model->entry_type->name), ['model' => $model]);
+            return $pdf->stream('voucher.pdf');
+        } else {
+            abort(403, 'Unauthorized action.');
+        }
+    }
+
 }

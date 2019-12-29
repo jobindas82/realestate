@@ -14,7 +14,11 @@ class AddSettlementDetailsTable extends Migration
     public function up()
     {
         Schema::create('contract_settlement', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
+            $table->integer('contract_id');
+            $table->text('remarks')->nullable();
+            $table->decimal('amount', 15, 2)->nullable();
+            $table->integer('created_by')->default(0);
             $table->timestamps();
         });
     }

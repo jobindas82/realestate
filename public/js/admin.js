@@ -567,6 +567,10 @@ $(function() {
     $(".have-mask")
         .find(".trn-no")
         .inputmask("999999999999999", { placeholder: "_______________" });
+
+    $('a[data-toggle="tab"]').on("shown.bs.tab", function(e) {
+        $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+    });
 });
 
 $(document).ajaxComplete(function() {

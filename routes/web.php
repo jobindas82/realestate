@@ -33,6 +33,7 @@ Route::get('/contract/cheques/{key}', ['as' => 'contract.create', 'uses' => 'Con
 Route::get('/contract/cheques/list/{key}', 'ContractController@cheques_list' )->middleware('auth');
 Route::post('/contract/cheques/save', 'ContractController@save_cheques')->middleware('auth');
 Route::post('/contract/settlement/early', 'ContractController@save_early_settlement')->middleware('auth');
+Route::post('/contract/settlement/expired', 'ContractController@save_expired_settlement')->middleware('auth');
 //end
 
 //Finance
@@ -41,6 +42,10 @@ Route::post('/finance/receipt/list', 'FinanceController@list')->middleware('auth
 Route::get('/finance/receipt/create', ['as' => 'finance.receipt.create', 'uses' => 'FinanceController@receipt_create'])->middleware('auth');
 Route::get('/finance/receipt/create/{key}', ['as' => 'finance.receipt.create', 'uses' => 'FinanceController@receipt_create'])->middleware('auth');
 Route::post('/finance/receipt/save', 'FinanceController@receipt_save')->middleware('auth');
+Route::get('/finance/cheques', ['as' => 'finance.cheque', 'uses' => 'FinanceController@cheque_management'])->middleware('auth');
+Route::post('/finance/cheques/list', 'FinanceController@cheque_list')->middleware('auth');
+Route::post('/finance/cheques/save', 'FinanceController@update_cheques')->middleware('auth');
+Route::post('/finance/cheques/revert', 'FinanceController@revert_cheques')->middleware('auth');
 
 Route::get('/finance/payment', ['as' => 'finance.payment.index', 'uses' => 'FinanceController@payment_index'])->middleware('auth');
 Route::post('/finance/payment/list', 'FinanceController@list')->middleware('auth');
@@ -55,6 +60,7 @@ Route::get('/finance/journal/create/{key}', ['as' => 'finance.journal.create', '
 Route::post('/finance/journal/save', 'FinanceController@journal_save')->middleware('auth');
 
 Route::post('/finance/status', 'FinanceController@update_status')->middleware('auth');
+Route::get('/finance/export/{key}', ['as' => 'finance.export', 'uses' => 'FinanceController@export'])->middleware('auth');
 //end
 
 /**

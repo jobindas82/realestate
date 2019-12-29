@@ -79,9 +79,32 @@ class Head extends Model
         $this->save();
     }
 
-    public function returnCheque(){
+    public function revertCancel()
+    {
+        $this->is_posted = 1;
+        $this->is_cancelled = 0;
+        $this->save();
+    }
+
+    public function returnCheque()
+    {
         $this->cancel();
         $this->cheque_status = 2;
+        $this->save();
+    }
+
+    public function resetCheque()
+    {
+        if ($this->id > 0) {
+            $this->revertCancel();
+            $this->cheque_status = 0;
+            $this->save();
+        }
+    }
+
+    public function clearCheque()
+    {
+        $this->cheque_status = 1;
         $this->save();
     }
 
@@ -109,6 +132,11 @@ class Head extends Model
     {
         $amount = $this->entries()->where('amount', '>', '0')->get()->sum('amount');
         return $format ? number_format($amount, 2, '.', ',') : $amount;
+    }
+
+    public function totalAmount($format = false)
+    {
+        return \Akaunting\Money\Money::AED($this->entries()->where('amount', '>', '0')->get()->sum('amount'), true)->format();
     }
 
     public function creditSum($reverse = false)
@@ -152,7 +180,7 @@ class Head extends Model
                 if ($fillDate) {
                     $each->date =  $this->date;
                 }
-                if( round($each->amount, 6) != 0 )
+                if (round($each->amount, 6) != 0)
                     $each->save();
             }
         }
@@ -173,5 +201,30 @@ class Head extends Model
                 $this->createEntries([$item], true, true);
             }
         }
+    }
+
+    public function updateChequeDates()
+    {
+        foreach ($this->entries as $each) {
+            $each->date = $this->cheque_date;
+            $each->save();
+        }
+    }
+
+    public function updateEntryByCode($code = NULL, $ledger_id = 0)
+    {
+        if ($code != NULL && $ledger_id > 0) {
+            $model = $this->entries()->where('code', $code)->first();
+            $model->ledger_id = $ledger_id;
+            $model->save();
+        }
+    }
+
+    public function paymentMethod(){
+        return self::METHOD[$this->method];
+    }
+
+    public function paymentMethodDetails(){
+        return self::METHOD[$this->method];
     }
 }

@@ -1,8 +1,8 @@
 <div class="row clearfix">
     <div class="col-sm-4">
         <div class="form-group form-float">
-            <div class="form-line">
-                {{ Form::hidden('id', $model->id, [ 'id' => 'ese_contract_id' ]) }}
+            <div class="form-line">   
+                {{ Form::hidden('id', $model->id) }}
                 {{ Form::text('tenant', $model->tenant->name, [ 'class' => 'form-control', 'readonly' => true ]) }}
                 <label class="form-label">Tenant</label>
             </div>

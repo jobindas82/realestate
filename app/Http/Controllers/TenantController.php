@@ -144,7 +144,7 @@ class TenantController extends Controller
         $response = [];
 
         if ($keyword != '') {
-            $model = Tenants::where('is_available', 1)->where('name', 'LIKE', '%' . $keyword . '%')->select('name', 'id', 'email')->limit(200)->get();
+            $model = Tenants::where('name', 'LIKE', '%' . $keyword . '%')->select('name', 'id', 'email')->limit(200)->get();
             foreach ($model as $i => $eachItem) {
                 $response[$i] = ['id' => $eachItem->id, 'name' => $eachItem->name, 'email' => $eachItem->email];
             }

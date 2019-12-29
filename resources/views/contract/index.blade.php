@@ -21,7 +21,7 @@
                     </h2>
                     <ul class="header-dropdown m-r--5">
                         <li>
-                            <a title="All Contracts" href="javascript:void(0);" onclick="$('#contact_status').val(0); reload_datatable('#contract_list');" title="Refresh">
+                            <a title="All Contracts" href="javascript:void(0);" onclick="$('#contact_status').val(''); reload_datatable('#contract_list');" title="Refresh">
                                 <i class="material-icons">done_all</i>
                             </a>
                         </li>
@@ -31,7 +31,7 @@
                             </a>
                         </li>
                         <li>
-                            <a title="Closed Contracts" href="javascript:void(0);" onclick="$('#contact_status').val(2); reload_datatable('#contract_list');" title="Refresh">
+                            <a title="Closed Contracts" href="javascript:void(0);" onclick="$('#contact_status').val(0); reload_datatable('#contract_list');" title="Refresh">
                                 <i class="material-icons">close</i>
                             </a>
                         </li>

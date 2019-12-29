@@ -155,11 +155,22 @@ class Contracts extends Model
 
     public function chequeReceipts()
     {
-        return Head::where('contract_id', $this->id)->where('method', 2)->orderBy('date', 'asc')->get();
+        return Head::where('contract_id', $this->id)->where('is_posted', 1)->where('method', 2)->orderBy('date', 'asc')->get();
     }
 
     public function closeContract(){
         $this->is_active = 0;
         $this->save();
+    }
+
+    public function addSettlement($items = []){
+        if(count($items) > 0){
+            foreach( $items as $each ){
+                if( $each->amount > 0 ){
+                    $each->contract_id = $this->id;
+                    $each->save();
+                }
+            }
+        }
     }
 }

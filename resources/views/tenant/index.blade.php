@@ -32,7 +32,7 @@
                 </div>
                 <div class="body">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover dataTable" id="tenant_list">
+                        <table class="table table-bordered table-striped table-hover" id="tenant_list">
                             <thead>
                                 <tr>
                                     <th>#</th>

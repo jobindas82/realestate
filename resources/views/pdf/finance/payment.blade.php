@@ -23,7 +23,7 @@
             <div class="text-right"><img src="{{ public_path('images/logo.png') }}" class="logo"></div> <br>
             <table class="table" style="width:100%;">
                 <tr>
-                    <td>Receipt Date</td>
+                    <td>Payment Date</td>
                     <td>{{ $model->formated_date() }}</td>
                 </tr>
             </table>
@@ -43,7 +43,7 @@
                     <td style="border-bottom:1px solid #fff;"><b>Account :</b></td>
                     <td class="text-right" style="border-bottom:none;border-top:none;"><b>&nbsp;</b></td>
                 </tr>
-                @foreach( $model->entries()->where('amount', '<', 0)->get() as $each )
+                @foreach( $model->entries()->where('amount', '>', 0)->get() as $each )
                     <tr>
                         <td style="border-bottom:none;border-top:none;">&nbsp;&nbsp;&nbsp;&nbsp;<b>{{ $each->ledger->name }}</b><br><br></td>
                         <td class="text-right" style="border-bottom:none;border-top:none;">
@@ -56,7 +56,7 @@
                         <td class="text-right" style="border-bottom:none;border-top:none;"><b>&nbsp;</b></td>
                     </tr>
 
-                    @foreach( $model->entries()->where('amount', '>', 0)->get() as $each )
+                    @foreach( $model->entries()->where('amount', '<', 0)->get() as $each )
                     <tr>
                         <td style="border-bottom:none;border-top:none;"> &nbsp;&nbsp;&nbsp;&nbsp;<b>{{ $each->ledger->name }}</b><br>
                             &nbsp;&nbsp;&nbsp;&nbsp;<small><b>Amount : </b>{{ Akaunting\Money\Money::AED(abs($each->amount), true)->format() }}</small>

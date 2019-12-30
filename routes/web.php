@@ -61,6 +61,7 @@ Route::post('/finance/journal/save', 'FinanceController@journal_save')->middlewa
 
 Route::post('/finance/status', 'FinanceController@update_status')->middleware('auth');
 Route::get('/finance/export/{key}', ['as' => 'finance.export', 'uses' => 'FinanceController@export'])->middleware('auth');
+Route::get('/finance/export/invoice/{key}', ['as' => 'finance.export', 'uses' => 'FinanceController@export_invoice'])->middleware('auth');
 //end
 
 /**
@@ -129,6 +130,12 @@ Route::get('/masters/locations/{country_id}', ['as' => 'masters.locations', 'use
 
 //Helpers
 Route::post('/theme', 'UserController@update_theme')->middleware('auth');
+
+
+//FM
+Route::get('/fm/tickets', ['as' => 'fm.tickets', 'uses' => 'FmController@tickets'])->middleware('auth');
+Route::post('/fm/tickets/list', 'FmController@ticket_list')->middleware('auth');
+//FM End
 
 /**
  * User Master Routes

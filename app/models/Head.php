@@ -134,9 +134,14 @@ class Head extends Model
         return $format ? number_format($amount, 2, '.', ',') : $amount;
     }
 
-    public function totalAmount($format = false)
+    public function totalAmount()
     {
         return \Akaunting\Money\Money::AED($this->entries()->where('amount', '>', '0')->get()->sum('amount'), true)->format();
+    }
+
+    public function totalTax()
+    {
+        return \Akaunting\Money\Money::AED(abs($this->entries()->where('ledger_id', Ledgers::findClass(Ledgers::SALES_VAT)->id)->get()->sum('amount')), true)->format();
     }
 
     public function creditSum($reverse = false)
@@ -225,6 +230,11 @@ class Head extends Model
     }
 
     public function paymentMethodDetails(){
-        return self::METHOD[$this->method];
+        $methodDetails ='';
+        if( $this->method == 2 ){ //Cheque
+            $methodDetails .= 'Cheque No : '. $this->cheque_no.'<br>';
+            $methodDetails .= 'Cheque Date :'. $this->formated_cheque_date().'<br>';
+        } 
+        return $methodDetails;
     }
 }

@@ -69,7 +69,7 @@ class FinanceController extends Controller
         }
 
         $result = $query
-            ->select('finance.cheque_status', 'finance.number', 'finance.date', 'finance.contract_id', 'finance.cheque_no', 'finance.cheque_date', 'tenants.name', 'finance.id', 'finance.is_posted', 'finance.is_cancelled')
+            ->select('finance.type', 'finance.cheque_status', 'finance.number', 'finance.date', 'finance.contract_id', 'finance.cheque_no', 'finance.cheque_date', 'tenants.name', 'finance.id', 'finance.is_posted', 'finance.is_cancelled')
             ->skip($offset)
             ->take($limit)
             ->orderBy($filterColumn, $filterOrder)
@@ -96,9 +96,11 @@ class FinanceController extends Controller
             $actions = '';
             if (!$eachItem->isCancelled() && $contract_id == 0) {
                 $actions .= '<a title="Edit" href="' . $routes[$type] . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
-                if ($eachItem->isPosted())
+                if ($eachItem->isPosted()) {
                     $actions .= '<a title="Un-Post" href="#" onclick="updateStatus(' . $eachItem->id . ', 0, 0);"><i class="material-icons" >thumb_down</i></a>';
-                else
+                    if ($eachItem->type == 1 && $eachItem->contract_id > 0 )
+                        $actions .= ' <a title="Export Invoice" href="#" onclick="window.open(\'/finance/export/invoice/' . UriEncode::encrypt($eachItem->id) . '\', \'_blank\')"><i class="material-icons" >receipt</i></a>';
+                } else
                     $actions .= '<a title="Post" href="#" onclick="updateStatus(' . $eachItem->id . ', 1, 0);"><i class="material-icons" >thumb_up</i></a>';
                 $actions .= '<a title="Cancel" href="#" onclick="updateStatus(' . $eachItem->id . ', 1, 1);"><i class="material-icons" >block</i></a>';
             }
@@ -423,7 +425,7 @@ class FinanceController extends Controller
                     $eachItem->formated_date(),
                     '<input type="text" class="form-control datepicker" value="' . $eachItem->formated_cheque_date() . '" id="Cheque_date_' . $eachItem->id . '" />',
                     '<input type="text" class="form-control" value="' . $eachItem->cheque_no . '" id="Cheque_no_' . $eachItem->id . '" />',
-                    '' . Form::select('Bank_' . $eachItem->id, \App\models\Ledgers::childrenHaveClass($havingLedger->id,  \App\models\Ledgers::BANK_CHILD), $havingLedger->id, ['class' => 'form-control show-tick', 'id' => 'Bank_' . $eachItem->id]) . '',
+                    '' . Form::select('Bank_' . $eachItem->id, \App\models\Ledgers::childrenHaveClass($havingLedger->ledger_id,  \App\models\Ledgers::BANK_CHILD), $havingLedger->ledger_id, ['class' => 'form-control show-tick', 'id' => 'Bank_' . $eachItem->id]) . '',
                     $eachItem->narration,
                     $eachItem->debitSum(true),
                     '<div class="text-center">' . $actions . '</div>'
@@ -480,11 +482,28 @@ class FinanceController extends Controller
         $id = UriEncode::decrypt($key);
         if ($id > 0) {
             $model = Head::find($id);
+            $watermarkText = NULL;
+            if ($model->is_cancelled == 1)
+                $watermarkText = 'Cancelled';
+            if ($model->cheque_status == 2)
+                $watermarkText = 'Returned';
+
             $pdf = \PDF::loadView('pdf.finance.' . strtolower($model->entry_type->name), ['model' => $model]);
-            return $pdf->stream('voucher.pdf');
+            $pdf->setWatermarkText(['showWatermarkText' => true, 'watermarkText' => $watermarkText]);
+            return $pdf->stream(strtolower($model->entry_type->name). $model->number . '.pdf');
         } else {
             abort(403, 'Unauthorized action.');
         }
     }
 
+    public function export_invoice($key = 0)
+    {
+        $id = UriEncode::decrypt($key);
+        if ($id > 0) {
+            $model = Head::find($id);
+            return \PDF::loadView('pdf.finance.invoice', ['model' => $model])->stream('invoice.pdf');
+        } else {
+            abort(403, 'Unauthorized action.');
+        }
+    }
 }

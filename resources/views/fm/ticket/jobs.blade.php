@@ -5,7 +5,9 @@
             <th style="width: 5%">Date</th>
             <th style="width: 15%">Tenant</th>
             <th style="width: 10%">Contract #</th>
-            <th style="width: 40%">Details</th>
+            <th style="width: 30%">Details</th>
+            <th style="width: 30%">Remarks</th>
+            <th style="width: 1%">Status</th>
             <th style="width: 10%">Actions</th>
         </tr>
     </thead>
@@ -30,7 +32,47 @@
             processing: true,
             order: [
                 [1, "asc"]
-            ]
+            ],
+            columnDefs: [{
+                targets: [6],
+                visible: false
+            }],
+            rowCallback: function(row, data) {
+                if (data[6] == 0) {
+                    $(row).addClass("danger");
+                }
+            },
         });
     });
+
+    function updateJob(ticket_id, action) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You wanna do the selected action?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Do it!'
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    type: "POST",
+                    url: '/document/remove_with_ref',
+                    data: {
+                        _ref: document_id
+                    },
+                    success: function(response) {
+                        $('.page-loader-wrapper').fadeOut();
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        );
+                        reload_datatable('#document_list');
+                    }
+                });
+            }
+        });
+    }
 </script>

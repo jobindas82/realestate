@@ -159,17 +159,28 @@
 
         <!-- Menu Item -->
         <li class="header">Facility Management</li>
-        <li class="{{ Route::is('fm.tickets') ? 'active' : '' }}">
+        <li class="{{ Route::is('fm.tickets') ||  Route::is('fm.tickets.create') ? 'active' : '' }}">
             <a href="/fm/tickets">
                 <i class="material-icons">subject</i>
                 <span>Tickets</span>
             </a>
         </li>
-        <li class="{{ Route::is('fm.jobs') ? 'active' : '' }}">
-            <a href="/fm/jobs">
-                <i class="material-icons">build</i>
-                <span>Jobs</span>
+        <!-- End -->
+
+        <!-- Menu Item -->
+        <li class="header">Reports</li>
+        <li class="{{ Route::is('users.index') ||  Route::is('users.create') ||  Route::is('users.edit') ? 'active' : '' }}">
+            <a href="javascript:void(0);" class="menu-toggle">
+                <i class="material-icons">group</i>
+                <span>Users & Groups</span>
             </a>
+            <ul class="ml-menu">
+                <li class="{{ Route::is('users.index') ||  Route::is('users.create') ||  Route::is('users.edit') ? 'active' : '' }}">
+                    <a href="/users/index">
+                        <span>Users</span>
+                    </a>
+                </li>
+            </ul>
         </li>
         <!-- End -->
 

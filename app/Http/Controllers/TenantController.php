@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Essentials\UriEncode;
+use Illuminate\Support\Facades\Input;
 
 use App\models\Tenants;
+
+use Collective\Html\FormFacade as Form;
 
 class TenantController extends Controller
 {
@@ -144,7 +147,7 @@ class TenantController extends Controller
         $response = [];
 
         if ($keyword != '') {
-            $model = Tenants::where('name', 'LIKE', '%' . $keyword . '%')->select('name', 'id', 'email')->limit(200)->get();
+            $model = Tenants::where('name', 'LIKE', '%' . $keyword . '%')->orWhere('mobile', 'LIKE', '%' . $keyword . '%')->select('name', 'id', 'email')->limit(200)->get();
             foreach ($model as $i => $eachItem) {
                 $response[$i] = ['id' => $eachItem->id, 'name' => $eachItem->name, 'email' => $eachItem->email];
             }
@@ -153,12 +156,138 @@ class TenantController extends Controller
         return response()->json($response, 200);
     }
 
-    public function fetch(Request $request){
+    public function fetch(Request $request)
+    {
         $data = $request->all();
-        if( isset($data['_ref']) && $data['_ref'] > 0 ){
+        if (isset($data['_ref']) && $data['_ref'] > 0) {
             $model = Tenants::find($data['_ref']);
-            return response()->json(['status' => 'success', 'emirates_id' => $model->emirates_id, 'email' => $model->email, 'passport_no' => $model->passport_number, 'phone' => $model->land_phone, 'mobile' => $model->mobile ]);
+            return response()->json([
+                'status' => 'success',
+                'emirates_id' => $model->emirates_id,
+                'email' => $model->email,
+                'passport_no' => $model->passport_number,
+                'phone' => $model->land_phone,
+                'mobile' => $model->mobile,
+                'active_contracts' =>  '' . Form::select('contract_id', \App\models\Contracts::activeContractsTenant($model->id, true), '', ['class' => 'form-control show-tick simple-dropdown', 'onChange' => 'getDetails(this.value);']) . ''
+            ]);
         }
         return response()->json(['status' => 'failed']);
+    }
+
+    public function pdf()
+    {
+        $filter = Input::get('filter');
+        $table = '<div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered ">
+                        <thead>
+                            <tr>
+                                <th style="width:1%">#</th>
+                                <th style="width:15%">Name</th>
+                                <th style="width:15%">E-Mail</th>
+                                <th style="width:8%">Emirates ID</th>
+                                <th style="width:5%">Phone</th>
+                                <th style="width:5%">Mobile</th>
+                                <th style="width:5%">Passport</th>
+                                <th style="width:5%">TRN</th>
+                            </tr>
+                        </thead>
+                        <tbody>';
+
+        $conditionFilter = [
+            1 => ['field' => 'is_available', 'value' => 1, 'alias' => 'Active'],
+            2 => ['field' => 'is_available', 'value' => 2, 'alias' => 'Have Contract'],
+            3 => ['field' => 'is_available', 'value' => 3, 'alias' => 'Blocked'],
+        ];
+
+        $model = Tenants::query();
+
+        $condition = array_key_exists($filter, $conditionFilter) ? $conditionFilter[$filter] : NULL;
+
+        if ($condition != NULL) {
+            $model->where($condition['field'], $condition['value']);
+        }
+
+        $items = $model->get();
+
+        if ($items->count() > 0) {
+            foreach ($items as $i => $eachItem) {
+                $table .= '  <tr>
+                               <td>' . ($i + 1) . '</td>
+                               <td>' . $eachItem->name . '</td>
+                               <td>' . $eachItem->email . '</td>
+                               <td>' . $eachItem->emirates_id . '</td>
+                               <td>' . $eachItem->phone . '</td>
+                               <td>' . $eachItem->mobile . '</td>
+                               <td>' . $eachItem->passport . '</td>
+                               <td>' . $eachItem->trn_no . '</td>
+                            </tr>';
+            }
+        } else {
+            $table .= ' <tr>
+                            <td colspan="8">No data</th>
+                        </tr>';
+        }
+
+
+
+        $table .= '</tbody>
+                </table>
+            </div>';
+        $props = [
+            'title' => 'Tenant List',
+            'table' => $table
+        ];
+
+        $condition != NULL ? $props['customField'] = ['name' => 'Filter', 'value' => $condition['alias']] : '';
+
+        return \PDF::loadView('pdf.exports.table', ['props' => $props])->download('tenants.pdf');
+    }
+
+    public function excel()
+    {
+        $filter = Input::get('filter');
+
+        $conditionFilter = [
+            1 => ['field' => 'is_available', 'value' => 1, 'alias' => 'Active'],
+            2 => ['field' => 'is_available', 'value' => 2, 'alias' => 'Have Contract'],
+            3 => ['field' => 'is_available', 'value' => 3, 'alias' => 'Blocked'],
+        ];
+
+        $model = Tenants::query();
+
+        $condition = array_key_exists($filter, $conditionFilter) ? $conditionFilter[$filter] : NULL;
+
+        if ($condition != NULL) {
+            $model->where($condition['field'], $condition['value']);
+        }
+
+        $items = $model->get();
+
+        $row = 4;
+        $excelFile = new \App\Essentials\ExcelBuilder('tenants_list');
+        $excelFile->setCellMultiple([
+            ['A' . $row, 'Name'],
+            ['B' . $row, 'Email'],
+            ['C' . $row, 'Emirates ID'],
+            ['D' . $row, 'Phone'],
+            ['E' . $row, 'Mobile'],
+            ['F' . $row, 'Passport'],
+            ['G' . $row, 'TRN']
+        ]);
+        if ($items->count() > 0) {
+            foreach ($items as $eachItem) {
+                $row++;
+                $excelFile->setCellMultiple([
+                    ['A' . $row, $eachItem->name,],
+                    ['B' . $row, $eachItem->email,],
+                    ['C' . $row, $eachItem->emirates_id,],
+                    ['D' . $row, $eachItem->phone,],
+                    ['E' . $row, $eachItem->mobile,],
+                    ['F' . $row, $eachItem->passport,],
+                    ['G' . $row, $eachItem->trn_no,]
+                ]);
+            }
+        }
+        $excelFile->output();
     }
 }

@@ -145,6 +145,15 @@ class Contracts extends Model
         return $response;
     }
 
+    public static function activeContractsTenant($tenant = 0, $prepend = false)
+    {
+        $query = self::query()->where('is_active', 1)->where('tenant_id', $tenant);
+        $response = $query->get()->pluck('id', 'id');
+        if( $prepend )
+            $response = $response->prepend('None', 0);
+        return $response;
+    }
+
     public function vatRatio(){
         return $this->gross_amount_wo_format() > 0 ?  round( ( $this->tax_amount_wo_format() / $this->gross_amount_wo_format() ), 6) : 0;
     }

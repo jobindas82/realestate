@@ -40,7 +40,10 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapWebRoutes();
 
         $this->mapMasterRoutes();
-        //
+        
+        $this->mapFinanceRoutes();
+
+        $this->mapContractRoutes();
     }
 
     /**
@@ -85,4 +88,19 @@ class RouteServiceProvider extends ServiceProvider
             ->namespace($this->namespace)
             ->group(base_path('routes/masters.php'));
     }
+
+    protected function mapFinanceRoutes()
+    {
+        Route::middleware('web')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/finance.php'));
+    }
+
+    protected function mapContractRoutes()
+    {
+        Route::middleware('web')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/contracts.php'));
+    }
+    
 }

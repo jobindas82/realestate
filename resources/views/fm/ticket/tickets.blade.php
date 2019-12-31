@@ -5,7 +5,9 @@
             <th style="width: 5%">Date</th>
             <th style="width: 15%">Tenant</th>
             <th style="width: 10%">Contract #</th>
-            <th style="width: 40%">Details</th>
+            <th style="width: 30%">Details</th>
+            <th style="width: 30%">Remarks</th>
+            <th style="width: 1%">Status</th>
             <th style="width: 10%">Actions</th>
         </tr>
     </thead>
@@ -14,7 +16,7 @@
 <script>
     $(function() {
         $('#ticket_list').on("preXhr.dt", function(e, settings, data) {
-            data.job_type = 2;
+            data.job_type = 1;
             data.status = 1;
             return data;
         }).DataTable({
@@ -30,7 +32,16 @@
             processing: true,
             order: [
                 [1, "asc"]
-            ]
+            ],
+            columnDefs: [{
+                targets: [5, 6],
+                visible: false
+            }],
+            rowCallback: function(row, data) {
+                if (data[6] == 0) {
+                    $(row).addClass("danger");
+                }
+            },
         });
     });
 </script>

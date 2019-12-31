@@ -397,4 +397,16 @@ class ContractController extends Controller
             return response()->json(['message' => 'success']);
         }
     }
+
+    public function details(Request $request){
+        $response = [];
+        $contract_id = $request->get('contract_id');
+        if( $contract_id > 0){
+            $model = Contracts::find($contract_id);
+            $response['building_name'] = $model->building->name;
+            $response['flat_name'] =  $model->flat->name;
+        }
+
+        return response()->json($response);
+    }
 }

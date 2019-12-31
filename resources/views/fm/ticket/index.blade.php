@@ -62,7 +62,7 @@
                                 <i class="material-icons">more_vert</i>
                             </a>
                             <ul class="dropdown-menu pull-right">
-                                <li><a href="/finance/payment/create"><i class="material-icons">add_circle</i> Create</a></li>
+                                <li><a href="/fm/ticket/create"><i class="material-icons">add_circle</i> Create</a></li>
                             </ul>
                         </li>
                     </ul>

@@ -17,11 +17,21 @@ class FmController extends Controller
     public function ticket_create($key = 0)
     {
         $id = UriEncode::decrypt($key);
-        $model = new Tenants;
+        $model = new Tickets;
         if ($id > 0)
-            $model = Tenants::find($id);
+            $model = Tickets::find($id);
 
-        return view('tenant.create', ['model' => $model, 'from' => 3]);
+        return view('fm.ticket.create', ['model' => $model, 'showTicket' => true, 'showJob' => false]);
+    }
+
+    public function job_create($key = 0)
+    {
+        $id = UriEncode::decrypt($key);
+        $model = new Tickets;
+        if ($id > 0)
+            $model = Tickets::find($id);
+
+        return view('fm.ticket.create', ['model' => $model, 'showTicket' => true, 'showJob' => true]);
     }
 
 
@@ -39,7 +49,9 @@ class FmController extends Controller
             2 => 'tenants.name',
             3 => 'ticket.contract_id',
             4 => 'ticket.details',
-            5 => 'ticket.id'
+            5 => 'ticket.remarks',
+            6 => 'ticket.is_active',
+            7 => 'ticket.id'
         ];
 
         $filterColumn = $columns[$_POST['order'][0]['column']];
@@ -52,8 +64,8 @@ class FmController extends Controller
             ->leftJoin('tenants', 'tenants.id', 'ticket.tenant_id')
             ->where('job_type', $jobType);
 
-        if ($status >= 0) {
-            $query->where('is_active', $status);
+        if ($keyword == "") {
+            $query->where('is_active', 1);
         }
 
         if ($keyword != "") {
@@ -64,7 +76,7 @@ class FmController extends Controller
         }
 
         $result = $query
-            ->select('ticket.id', 'ticket.date', 'tenants.name', 'ticket.contract_id', 'ticket.details', 'ticket.job_type')
+            ->select('ticket.id', 'ticket.date', 'tenants.name', 'ticket.contract_id', 'ticket.details', 'ticket.job_type', 'ticket.is_active', 'ticket.remarks')
             ->skip($offset)
             ->take($limit)
             ->orderBy($filterColumn, $filterOrder)
@@ -78,16 +90,19 @@ class FmController extends Controller
         $eachItemData = array();
 
         foreach ($result as $eachItem) {
-            //Edit Button
-            $actions = '<a title="Edit" href="/tenant/create/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
-            if ($eachItem->job_type == 1) {
-                $actions .= ' <a title="Convert to Job" href="#" onclick="convertJob(' . $eachItem->id . ', 2);"><i class="material-icons" >fast_forward</i></a>';
+            $actions = '';
+            if ($eachItem->isTicket()) {
+                if (boolval($eachItem->is_active))
+                    $actions .= '<a title="Edit" href="/fm/ticket/create/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
+                $actions .= ' <a title="Convert to Job" href="/fm/job/create/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >fast_forward</i></a>';
+            } else {
+                if (boolval($eachItem->is_active)) {
+                    $actions .= ' <a title="Edit" href="/fm/job/create/' . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';
+                    $actions .= ' <a title="Revert to Ticket" href="#" onclick="updateJob(' . $eachItem->id . ', 1);"><i class="material-icons" >fast_rewind</i></a>';
+                    $actions .= ' <a title="Mark as Finished" href="#" onclick="updateJob(' . $eachItem->id . ', 2);"><i class="material-icons" >check_circle</i></a>';
+                }
             }
-            if ($eachItem->job_type == 2) {
-                $actions .= ' <a title="Revert to Ticket" href="#" onclick="block_tenant(' . $eachItem->id . ', 1);"><i class="material-icons" >fast_rewind</i></a>';
-            }
-
-            $eachItemData[] = [$eachItem->id, $eachItem->formated_date(),  $eachItem->name, $eachItem->contract_id, $eachItem->details, '<div class="text-center">' . $actions . '</div>'];
+            $eachItemData[] = [$eachItem->id, $eachItem->formated_date(),  $eachItem->name, $eachItem->contract_id, nl2br($eachItem->details), nl2br($eachItem->remarks), $eachItem->is_active, '<div class="text-center">' . $actions . '</div>'];
         }
         $data['data'] = $eachItemData;
 
@@ -96,44 +111,75 @@ class FmController extends Controller
 
     public function ticket_save(Request $request)
     {
-        //Input Data
         $data = $request->all();
 
-        //Validation of Request
+        if ($data['date'] != '')
+            $data['date'] = date('Y-m-d', strtotime(str_replace('/', '-', $data['date'])));
+
         $validator = \Validator::make($data, [
-            'name' => ['required', \Illuminate\Validation\Rule::unique('tenants')->ignore((int) $data['id']), 'max:255'],
-            'mobile' => ['required', \Illuminate\Validation\Rule::unique('tenants')->ignore((int) $data['id'])],
-            'emirates_id' => ['required', \Illuminate\Validation\Rule::unique('tenants')->ignore((int) $data['id'])]
+            'tenant_id' => ['required', 'integer', 'gt:0'],
+            'contract_id' => ['required', 'integer', 'gt:0'],
+            'date' => ['required', 'date'],
+            'priority' => ['required', 'integer', 'gt:0'],
+            'details' => ['required'],
+        ], [
+            'tenant_id.required' => 'Select a Tenant',
+            'contract_id.required' => 'Select a Contract'
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->messages(), 200);
         } else {
 
-            $model = new Tenants();
+            $model = new Tickets();
             if ($data['id'] > 0) {
-                $model = Tenants::find($data['id']);
+                $model = Tickets::find($data['id']);
             }
             $model->fill($data);
             $model->save();
 
-            return response()->json(['tenant_id' => $model->id, 'message' => 'success', 'tenant_id_encrypted' => $model->encoded_key()]);
+            return response()->json(['ticket_id' => $model->id, 'message' => 'success']);
         }
     }
 
-    public function status(Request $request)
+    public function jobs_save(Request $request)
     {
-        //Input Data
         $data = $request->all();
 
-        if ($data['_ref'] > 0) {
-            $model = Tenants::find($data['_ref']);
-            if ($model->id > 0 && $model->is_available != 2) {
-                $model->is_available = $data['status'];
-                $model->save();
-                return response()->json(['message' => 'success'], 200);
+        $validator = \Validator::make($data, [
+            'id' => ['required', 'integer', 'gt:0'],
+            'job_category' => ['required'],
+        ], [
+            'id.required' => 'Save Ticket First!'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), 200);
+        } else {
+
+            $model = new Tickets();
+            if ($data['id'] > 0) {
+                $model = Tickets::find($data['id']);
+            }
+            $model->fill($data);
+            $model->save();
+            $model->convertToJob();
+            // $model->inProgress();
+
+            return response()->json(['message' => 'success']);
+        }
+    }
+
+    public function update_job($action =0, $ticket_id =0){
+        if( $ticket_id > 0 ){
+            $model = Tickets::find($ticket_id);
+            if( $action == 1 ){ //Revert
+                $model->revertToTicket();
+            }
+            if( $action == 2 ){ //mark Finished
+                $model->markFinished();
             }
         }
-        return response()->json(['message' => 'failed']);
+        return response()->json(['message' => 'success']);
     }
 }

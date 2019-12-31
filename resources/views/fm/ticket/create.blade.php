@@ -11,24 +11,32 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/tenant/index">
-                        <i class="material-icons">record_voice_over</i> Tenants
+                    <a href="/fm/tickets">
+                        <i class="material-icons">subject</i> Tickets
                     </a>
                 </li>
+                @if(!$showJob)
                 <li class="active">
                     <i class="material-icons">add_circle</i> Create
                 </li>
+                @endif
+                @if($showJob)
+                <li class="active">
+                    <i class="material-icons">directions_run</i> Job
+                </li>
+                @endif
             </ol>
         </div>
     </div>
 
-    @include('tenant.basic')
-
-    <!-- Table -->
-    <div class="row clearfix">
-        @include('document.list')
-    </div>
-    <!-- end -->
 </div>
+
+@if($showTicket)
+    @include('fm.ticket.ticket_details')
+@endif
+
+@if($showJob)
+    @include('fm.ticket.job_details')
+@endif
 
 @endsection

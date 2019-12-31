@@ -19,51 +19,6 @@ Auth::routes();
 Route::get('/', 'HomeController@index')->middleware('auth');
 Route::get('/home', 'HomeController@index')->name('home')->middleware('auth');
 
-//Contracts 
-Route::get('/contract/index', ['as' => 'contract.index', 'uses' => 'ContractController@index'])->middleware('auth');
-Route::post('/contract/list', 'ContractController@list')->middleware('auth');
-Route::get('/contract/create', ['as' => 'contract.create', 'uses' => 'ContractController@create'])->middleware('auth');
-Route::get('/contract/create/{key}', ['as' => 'contract.create', 'uses' => 'ContractController@create'])->middleware('auth');
-Route::get('/contract/renew/{key}', ['as' => 'contract.create', 'uses' => 'ContractController@renew'])->middleware('auth');
-Route::get('/contract/settlement/{key}', ['as' => 'contract.create', 'uses' => 'ContractController@settlement'])->middleware('auth');
-Route::post('/contract/save', 'ContractController@save')->middleware('auth');
-Route::get('/contract/export/{key}', ['as' => 'contract.export', 'uses' => 'ContractController@export'])->middleware('auth');
-Route::post('/contract/fetch', 'ContractController@fetch')->middleware('auth');
-Route::get('/contract/cheques/{key}', ['as' => 'contract.create', 'uses' => 'ContractController@create_cheques'])->middleware('auth');
-Route::get('/contract/cheques/list/{key}', 'ContractController@cheques_list' )->middleware('auth');
-Route::post('/contract/cheques/save', 'ContractController@save_cheques')->middleware('auth');
-Route::post('/contract/settlement/early', 'ContractController@save_early_settlement')->middleware('auth');
-Route::post('/contract/settlement/expired', 'ContractController@save_expired_settlement')->middleware('auth');
-//end
-
-//Finance
-Route::get('/finance/receipt', ['as' => 'finance.receipt.index', 'uses' => 'FinanceController@receipt_index'])->middleware('auth');
-Route::post('/finance/receipt/list', 'FinanceController@list')->middleware('auth');
-Route::get('/finance/receipt/create', ['as' => 'finance.receipt.create', 'uses' => 'FinanceController@receipt_create'])->middleware('auth');
-Route::get('/finance/receipt/create/{key}', ['as' => 'finance.receipt.create', 'uses' => 'FinanceController@receipt_create'])->middleware('auth');
-Route::post('/finance/receipt/save', 'FinanceController@receipt_save')->middleware('auth');
-Route::get('/finance/cheques', ['as' => 'finance.cheque', 'uses' => 'FinanceController@cheque_management'])->middleware('auth');
-Route::post('/finance/cheques/list', 'FinanceController@cheque_list')->middleware('auth');
-Route::post('/finance/cheques/save', 'FinanceController@update_cheques')->middleware('auth');
-Route::post('/finance/cheques/revert', 'FinanceController@revert_cheques')->middleware('auth');
-
-Route::get('/finance/payment', ['as' => 'finance.payment.index', 'uses' => 'FinanceController@payment_index'])->middleware('auth');
-Route::post('/finance/payment/list', 'FinanceController@list')->middleware('auth');
-Route::get('/finance/payment/create', ['as' => 'finance.payment.create', 'uses' => 'FinanceController@payment_create'])->middleware('auth');
-Route::get('/finance/payment/create/{key}', ['as' => 'finance.payment.create', 'uses' => 'FinanceController@payment_create'])->middleware('auth');
-Route::post('/finance/payment/save', 'FinanceController@payment_save')->middleware('auth');
-
-Route::get('/finance/journal', ['as' => 'finance.journal.index', 'uses' => 'FinanceController@journal_index'])->middleware('auth');
-Route::post('/finance/journal/list', 'FinanceController@list')->middleware('auth');
-Route::get('/finance/journal/create', ['as' => 'finance.journal.create', 'uses' => 'FinanceController@journal_create'])->middleware('auth');
-Route::get('/finance/journal/create/{key}', ['as' => 'finance.journal.create', 'uses' => 'FinanceController@journal_create'])->middleware('auth');
-Route::post('/finance/journal/save', 'FinanceController@journal_save')->middleware('auth');
-
-Route::post('/finance/status', 'FinanceController@update_status')->middleware('auth');
-Route::get('/finance/export/{key}', ['as' => 'finance.export', 'uses' => 'FinanceController@export'])->middleware('auth');
-Route::get('/finance/export/invoice/{key}', ['as' => 'finance.export', 'uses' => 'FinanceController@export_invoice'])->middleware('auth');
-//end
-
 /**
  * Properties Route
  */
@@ -109,6 +64,8 @@ Route::post('/tenant/save', 'TenantController@save')->middleware('auth');
 Route::post('/tenant/status', 'TenantController@status')->middleware('auth');
 Route::post('/tenant/query', 'TenantController@query')->middleware('auth');
 Route::post('/tenant/fetch', 'TenantController@fetch')->middleware('auth');
+Route::get('/tenant/pdf', 'TenantController@pdf')->middleware('auth');
+Route::get('/tenant/excel', 'TenantController@excel')->middleware('auth');
 
 //Document Handler
 Route::post('/document/get_documents', 'DocumentController@get_documents')->middleware('auth');
@@ -135,6 +92,13 @@ Route::post('/theme', 'UserController@update_theme')->middleware('auth');
 //FM
 Route::get('/fm/tickets', ['as' => 'fm.tickets', 'uses' => 'FmController@tickets'])->middleware('auth');
 Route::post('/fm/tickets/list', 'FmController@ticket_list')->middleware('auth');
+Route::get('/fm/ticket/create', ['as' => 'fm.tickets.create', 'uses' => 'FmController@ticket_create'])->middleware('auth');
+Route::get('/fm/ticket/create/{key}', ['as' => 'fm.tickets.create', 'uses' => 'FmController@ticket_create'])->middleware('auth');
+Route::post('/fm/tickets/save', 'FmController@ticket_save')->middleware('auth');
+Route::get('/fm/job/create', ['as' => 'fm.tickets.create', 'uses' => 'FmController@job_create'])->middleware('auth');
+Route::get('/fm/job/create/{key}', ['as' => 'fm.tickets.create', 'uses' => 'FmController@job_create'])->middleware('auth');
+Route::post('/fm/jobs/save', 'FmController@jobs_save')->middleware('auth');
+Route::post('/fm/jobs/{action}/{ticket_id}', 'FmController@update_job')->middleware('auth');
 //FM End
 
 /**

@@ -28,13 +28,13 @@
 
     <!-- Table -->
     <div class="row clearfix">
-        @include('buildings.flats')
+        @include('buildings.flat.index')
     </div>
     <!-- end -->
 
     <!-- Table -->
     <div class="row clearfix">
-        @include('buildings.documents')
+        @include('document.list')
     </div>
     <!-- end -->
 </div>

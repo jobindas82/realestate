@@ -364,7 +364,11 @@ $.AdminBSB.input = {
 $.AdminBSB.select = {
     activate: function() {
         if ($.fn.selectpicker) {
-            $("select:not(.ms)").selectpicker();
+            $("select:not(.ms):not(.ajax-drop)").selectpicker({
+                liveSearch: true,
+                dropupAuto: false,
+                size: 5
+            });
         }
     }
 };
@@ -541,13 +545,39 @@ $(function() {
 
     //Textarea auto growth
     autosize($("textarea.auto-growth"));
+
+    //Tooltip
+    $('[data-toggle="tooltip"]').tooltip({
+        container: "body"
+    });
+
+    //Popover
+    $('[data-toggle="popover"]').popover();
+
+    //Email
+    $(".have-mask")
+        .find(".email")
+        .inputmask({ alias: "email" });
+    $(".have-mask")
+        .find(".mobile-phone-number")
+        .inputmask("+\\971 99 999 9999", { placeholder: "+___ __ ___ ____" });
+    $(".have-mask")
+        .find(".emirates-id")
+        .inputmask("999-9999-9999999-9", { placeholder: "___-____-_______-_" });
+    $(".have-mask")
+        .find(".trn-no")
+        .inputmask("999999999999999", { placeholder: "_______________" });
+
+    $('a[data-toggle="tab"]').on("shown.bs.tab", function(e) {
+        $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+    });
+
+    $('.count-to').countTo();
 });
 
-
-$(document).ajaxComplete(function () {
+$(document).ajaxComplete(function() {
     $(".datepicker").datepicker({
         autoclose: true,
         format: "dd/mm/yyyy"
     });
-
 });

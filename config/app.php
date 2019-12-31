@@ -176,6 +176,10 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Felixkiss\UniqueWithValidator\ServiceProvider::class,
+        Akaunting\Money\Provider::class,
+        niklasravnsborg\LaravelPdf\PdfServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
 
     ],
 
@@ -228,6 +232,8 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Image' => Intervention\Image\Facades\Image::class,
+        'PDF' => niklasravnsborg\LaravelPdf\Facades\Pdf::class,
+        'DOMPDF' => Barryvdh\DomPDF\Facade::class,
 
     ],
 

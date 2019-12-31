@@ -9,7 +9,7 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
     <!-- Favicon-->
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <!-- <link rel="icon" href="favicon.ico" type="image/x-icon"> -->
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
@@ -47,6 +47,9 @@
 
     <!-- Bootstrap DatePicker Css -->
     <link href="{{ asset('plugins/bootstrap-datepicker/css/bootstrap-datepicker.css') }}" rel="stylesheet" />
+
+    <!-- ajax select -->
+    <link href="{{ asset('plugins/ajaxSelect/css/ajax-bootstrap-select.min.css') }}" rel="stylesheet" />
 
     <!-- Jquery Core Js -->
     <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
@@ -106,6 +109,74 @@
     <!-- Dropzone Plugin Js -->
     <script src="{{ asset('plugins/dropzone/dropzone.js') }}"></script>
 
+    <!-- Input Mask Plugin Js -->
+    <script src="{{ asset('plugins/jquery-inputmask/jquery.inputmask.bundle.js') }}"></script>
+
+    <!-- Jquery Validation Plugin Css -->
+    <script src="{{ asset('plugins/jquery-validation/jquery.validate.js') }}"></script>
+
+    <!-- JQuery Steps Plugin Js -->
+    <script src="{{ asset('plugins/jquery-steps/jquery.steps.js') }}"></script>
+
+    <!--  Ajax Select -->
+    <script src="{{ asset('plugins/ajaxSelect/js/ajax-bootstrap-select.min.js') }}"></script>
+
+    <script>
+        function roundNumber(num, delimiter) {
+            return +(Math.round(num + "e+" + delimiter) + "e-" + delimiter);
+        }
+
+        function round_field(field_id) {
+            if (!isNaN($('#' + field_id).val())) {
+                var value = Number($('#' + field_id).val());
+                value = value >= 0 ? roundNumber(value, 6) : 0;
+                if (!$('#' + field_id).attr('readonly'))
+                    $('#' + field_id).val(value.toFixed(6));
+            }
+
+        }
+
+        function updateStatus(entry_id, status, type) {
+            var label = status == 0 ? 'Un-Post' : 'Post';
+            if(type == 1)
+                label = 'Cancel';
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you want '+ label + ' this!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, ' + label +' it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/finance/status',
+                        data: {
+                            _ref: entry_id,
+                            status : status,
+                            type : type
+                        },
+                        success: function(response) {
+                            $('.page-loader-wrapper').fadeOut();
+                            Swal.fire(
+                                'Updated!',
+                                'Entry '+ label +'ed!',
+                                'success'
+                            );
+                            reload_datatable('#receipt_list');
+                            reload_datatable('#journal_list');
+                            reload_datatable('#payment_list');
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+
+
+
     <!-- Pusher -->
     <!-- <script src="https://js.pusher.com/5.0/pusher.min.js"></script> -->
     <!-- <script>
@@ -126,7 +197,11 @@
 
 </head>
 
-<body class="{{ config('app.theme', 'theme-indigo') }}">
+@php
+$themeName = Auth::user()->theme;
+@endphp
+
+<body class="{{ 'theme-'.$themeName }}">
 
     <!-- Page Loader -->
     @include('layouts.loader')
@@ -195,7 +270,7 @@
 
     </section>
 
-    <section class="content">
+    <section class="content" id="main-render-section">
         @yield('content')
     </section>
 

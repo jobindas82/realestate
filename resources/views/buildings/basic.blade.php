@@ -80,7 +80,7 @@
                                 @endphp
 
                                 <div id="location_drop_down_div">
-                                    {{ Form::select('location_id', $locations, $model->location_id, [ 'class' => 'form-control show-tick']) }}
+                                    {{ Form::select('location_id', $locations, $model->location_id, [ 'class' => 'form-control show-tick simple-dropdown']) }}
                                 </div>
 
                                 <label class="form-label">Location</label>
@@ -137,6 +137,10 @@
 
                         $('#building_id').val(response.building_id);
                         $('#dep_building_id').val(response.building_id);
+                        $('#flat_building_id').val(response.building_id);
+                        $('#doc_parent_id').val(response.building_id);
+                        $('#flat_key').val(response.building_id_encrypted);
+                        $('#parent_key').val(response.building_id_encrypted);
 
                         $('.page-loader-wrapper').fadeOut();
                         Swal.fire(
@@ -163,6 +167,7 @@
             url: '/masters/locations/' + country_id,
             success: function(response) {
                 $('#location_drop_down_div').html(response);
+
             }
         });
     }

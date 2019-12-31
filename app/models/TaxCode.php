@@ -31,12 +31,15 @@ class TaxCode extends Model
         });
     }
 
-    public static function activeCodes($id = 0)
+    public static function activeCodes($id = 0, $prepend = false)
     {
         $query = self::query()->where('is_active', 'Y');
         if( $id > 0)
             $query->orWhere('id', $id);
-        
-        return $query->pluck('code', 'id')->prepend('None', 0);
+      
+        $response = $query->pluck('code', 'id');
+        if( $prepend )
+            $response = $response->prepend('None', 0);
+        return $response;
     }
 }

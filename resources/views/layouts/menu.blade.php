@@ -13,8 +13,8 @@
 
         <!-- Menu Item -->
         <li class="header">Contracts & Accounting</li>
-        <li class="{{ Route::is('leasing.index') ? 'active' : '' }}">
-            <a href="/">
+        <li class="{{ Route::is('contract.index') || Route::is('contract.create') ? 'active' : '' }}">
+            <a href="/contract/index">
                 <i class="material-icons">folder</i>
                 <span>Leasing & Contracts</span>
             </a>
@@ -26,9 +26,13 @@
             </a>
         </li>
         <li class="{{ 
-                            Route::is('finance.receipts') ||  
-                            Route::is('finance.payments') ||  
-                            Route::is('finance.journals') 
+                            Route::is('finance.receipt.index') ||  
+                            Route::is('finance.receipt.create') ||  
+                            Route::is('finance.payment.index') ||
+                            Route::is('finance.payment.create') ||  
+                            Route::is('finance.journal.index') ||
+                            Route::is('finance.journal.create') ||
+                            Route::is('finance.cheque')
                             ? 'active' : '' 
                         }}">
             <a href="javascript:void(0);" class="menu-toggle">
@@ -36,27 +40,33 @@
                 <span>Financial & Banking</span>
             </a>
             <ul class="ml-menu">
-                <li class="{{ Route::is('finance.receipts') ? 'active' : '' }}">
-                    <a href="/users/index">
+                <li class="{{ Route::is('finance.receipt.index') ||  Route::is('finance.receipt.create') ? 'active' : '' }}">
+                    <a href="/finance/receipt">
                         <span>Receipts</span>
                     </a>
                 </li>
-                <li class="{{ Route::is('finance.payments') ? 'active' : '' }}">
-                    <a href="/users/index">
+                <li class="{{ Route::is('finance.payment.index') ||  Route::is('finance.payment.create') ? 'active' : '' }}">
+                    <a href="/finance/payment">
                         <span>Payments</span>
                     </a>
                 </li>
-                <li class="{{ Route::is('finance.journals') ? 'active' : '' }}">
-                    <a href="/users/index">
+                <li class="{{ Route::is('finance.journal.index') ||  Route::is('finance.journal.create') ? 'active' : '' }}">
+                    <a href="/finance/journal">
                         <span>Journals</span>
+                    </a>
+                </li>
+                <li class="{{ Route::is('finance.cheque') ? 'active' : '' }}">
+                    <a href="/finance/cheques">
+                        <span>Cheque Management</span>
                     </a>
                 </li>
             </ul>
         </li>
         <li class="{{ 
-                            Route::is('ledger.groups') ||  
-                            Route::is('ledger.ledgers') ||  
-                            Route::is('ledger.employee')
+                            Route::is('ledger.group.index') ||  
+                            Route::is('ledger.group.create') ||
+                            Route::is('ledger.index') ||  
+                            Route::is('ledger.create')
                             ? 'active' : '' 
                         }}">
             <a href="javascript:void(0);" class="menu-toggle">
@@ -64,19 +74,14 @@
                 <span>Ledgers & Groups</span>
             </a>
             <ul class="ml-menu">
-                <li class="{{ Route::is('ledger.groups') ? 'active' : '' }}">
-                    <a href="/users/index">
+                <li class="{{ Route::is('ledger.group.index') || Route::is('ledger.group.create') ? 'active' : '' }}">
+                    <a href="/ledger/groups">
                         <span>Groups</span>
                     </a>
                 </li>
-                <li class="{{ Route::is('ledger.ledgers') ? 'active' : '' }}">
-                    <a href="/users/index">
+                <li class="{{ Route::is('ledger.index') || Route::is('ledger.create') ? 'active' : '' }}">
+                    <a href="/ledger">
                         <span>Ledgers</span>
-                    </a>
-                </li>
-                <li class="{{ Route::is('ledger.employee') ? 'active' : '' }}">
-                    <a href="/users/index">
-                        <span>Employee</span>
                     </a>
                 </li>
             </ul>
@@ -85,28 +90,17 @@
 
         <!-- Menu Item -->
         <li class="header">Tenants & Properties</li>
-        <li class="{{ Route::is('tenant.index') ? 'active' : '' }}">
-            <a href="/">
+        <li class="{{ Route::is('tenant.index') || Route::is('tenant.create') ? 'active' : '' }}">
+            <a href="/tenant/index">
                 <i class="material-icons">record_voice_over</i>
                 <span>Tenants</span>
             </a>
         </li>
-        <li class="{{ 
-                            Route::is('building.index') ||  
-                            Route::is('building.create') 
-                            ? 'active' : '' 
-                        }}">
-            <a href="javascript:void(0);" class="menu-toggle">
+        <li class="{{ Route::is('building.index') || Route::is('building.create') ? 'active' : '' }}">
+            <a href="/building/index">
                 <i class="material-icons">home</i>
-                <span>Properties</span>
+                <span>Buildings</span>
             </a>
-            <ul class="ml-menu">
-                <li class="{{ Route::is('building.index') || Route::is('building.create') ? 'active' : '' }}">
-                    <a href="/building/index">
-                        <span>Buildings</span>
-                    </a>
-                </li>
-            </ul>
         </li>
         <li class="{{ 
                             Route::is('masters.flat_type.index') ||  
@@ -159,28 +153,34 @@
                         <span>Tax Code</span>
                     </a>
                 </li>
-                <!-- <li class="{{ Route::is('masters.document_type_index') ? 'active' : '' }}">
-                    <a href="/users/index">
-                        <span>Document Type</span>
-                    </a>
-                </li> -->
             </ul>
         </li>
         <!-- End -->
 
         <!-- Menu Item -->
         <li class="header">Facility Management</li>
-        <li class="{{ Route::is('fm.tickets') ? 'active' : '' }}">
-            <a href="/">
+        <li class="{{ Route::is('fm.tickets') ||  Route::is('fm.tickets.create') ? 'active' : '' }}">
+            <a href="/fm/tickets">
                 <i class="material-icons">subject</i>
                 <span>Tickets</span>
             </a>
         </li>
-        <li class="{{ Route::is('fm.jobs') ? 'active' : '' }}">
-            <a href="/">
-                <i class="material-icons">build</i>
-                <span>Jobs</span>
+        <!-- End -->
+
+        <!-- Menu Item -->
+        <li class="header">Reports</li>
+        <li class="{{ Route::is('users.index') ||  Route::is('users.create') ||  Route::is('users.edit') ? 'active' : '' }}">
+            <a href="javascript:void(0);" class="menu-toggle">
+                <i class="material-icons">group</i>
+                <span>Users & Groups</span>
             </a>
+            <ul class="ml-menu">
+                <li class="{{ Route::is('users.index') ||  Route::is('users.create') ||  Route::is('users.edit') ? 'active' : '' }}">
+                    <a href="/users/index">
+                        <span>Users</span>
+                    </a>
+                </li>
+            </ul>
         </li>
         <!-- End -->
 

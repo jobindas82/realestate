@@ -6,7 +6,7 @@
             </h2>
             <ul class="header-dropdown m-r--5">
                 <li>
-                    <a href="javascript:void(0);" onclick="reload_datatable('#building_document_list');" title="Refresh">
+                    <a href="javascript:void(0);" onclick="reload_datatable('#document_list');" title="Refresh">
                         <i class="material-icons">loop</i>
                     </a>
                 </li>
@@ -15,14 +15,16 @@
                         <i class="material-icons">more_vert</i>
                     </a>
                     <ul class="dropdown-menu pull-right">
-                        <li><a href="#" onclick="window.open('/document/building/?_ref=__create_building&__uuid={{ $model->encoded_key() }}', '_blank');"><i class="material-icons">add_circle</i> Add</a></li>
+                        <input type="hidden" name="doc_parent_id" id="doc_parent_id" value="{{ $model->id }}">
+                        <input type="hidden" name="parent_key" id="parent_key" value="{{ $model->encoded_key() }}">
+                        <li><a href="#" onclick="goto_doc();"><i class="material-icons">add_circle</i> Add</a></li>
                     </ul>
                 </li>
             </ul>
         </div>
         <div class="body">
             <div class="table-responsive">
-                <table class="table table-bordered table-striped table-hover dataTable" id="building_document_list">
+                <table class="table table-bordered table-striped table-hover dataTable" id="document_list">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -39,8 +41,9 @@
 
 <script>
     $(document).ready(function() {
-        var table = $('#building_document_list').on("preXhr.dt", function(e, settings, data) {
-            data.parent = $('#building_id').val();
+        var table = $('#document_list').on("preXhr.dt", function(e, settings, data) {
+            data.parent = $('#doc_parent_id').val();
+            data.from= {{ $from }};
             return data;
         }).DataTable({
             responsive: true,
@@ -122,10 +125,15 @@
                             'Your file has been deleted.',
                             'success'
                         );
-                        reload_datatable('#building_document_list');
+                        reload_datatable('#document_list');
                     }
                 });
             }
         });
+    }
+
+    function goto_doc(){
+        var parent_key = $('#parent_key').val();
+        window.open('/document/create/?__uuid=' + parent_key + '&__from={{ $from }}', '_blank');
     }
 </script>

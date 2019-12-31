@@ -19,7 +19,7 @@ class AddLedgersTable extends Migration
             $table->string('name', 255);
             $table->integer('level')->default(0);
             $table->enum('type', ['A', 'L', 'I', 'E'])->default('A');
-            $table->string('class', 10);
+            $table->string('class', 10)->nullable();
             $table->enum('is_parent', ['Y', 'N'])->default('N');
             $table->enum('is_generated', ['Y', 'N'])->default('N');
             $table->enum('is_expandable', ['Y', 'N'])->default('Y');

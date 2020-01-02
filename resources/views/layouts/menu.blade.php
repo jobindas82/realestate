@@ -14,7 +14,7 @@
         <!-- Menu Item -->
         <li class="header">Contracts & Accounting</li>
         <li class="{{ Route::is('contract.index') || Route::is('contract.create') ? 'active' : '' }}">
-            <a href="/contract/index">
+            <a href="{{ url('contract/index') }}">
                 <i class="material-icons">folder</i>
                 <span>Leasing & Contracts</span>
             </a>

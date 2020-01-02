@@ -134,6 +134,15 @@ class Contracts extends Model
         return $this->id . ' | ' . $this->tenant->name;
     }
 
+    public static function allContractsFlat($flat_id = 0, $prepend = true)
+    {
+        $query = self::query()->where('flat_id', $flat_id);
+        $response = $query->get()->pluck('id', 'id');
+        if( $prepend )
+            $response = $response->prepend('None', 0);
+        return $response;
+    }
+
     public static function activeContracts($id = 0, $prepend = false)
     {
         $query = self::query()->where('is_active', 1);

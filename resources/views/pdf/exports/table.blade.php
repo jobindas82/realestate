@@ -20,8 +20,20 @@
                 @endif
                 @if( isset($props['date']) )
                 <tr>
-                    <td><b>Date</b></td>
+                    <td><b>From</b></td>
                     <td><b>{{ date('d/m/Y', strtotime($props['date'])) }}</b></td>
+                </tr>
+                @endif
+                @if( isset($props['from_date']) )
+                <tr>
+                    <td><b>To</b></td>
+                    <td><b>{{ date('d/m/Y', strtotime($props['from_date'])) }}</b></td>
+                </tr>
+                @endif
+                @if( isset($props['to_date']) )
+                <tr>
+                    <td><b>Date</b></td>
+                    <td><b>{{ date('d/m/Y', strtotime($props['to_date'])) }}</b></td>
                 </tr>
                 @endif
             </table>

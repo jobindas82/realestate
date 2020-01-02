@@ -73,9 +73,8 @@
                                     <option value="2">Have Contract</option>
                                     <option value="3">Blocked</option>
                                 </select>
-                                <label class="form-label">Name</label>
+                                <label class="form-label">Status</label>
                             </div>
-                            <label id="name-error" class="error" for="name"></label>
                         </div>
                     </div>
                 </div>

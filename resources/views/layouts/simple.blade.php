@@ -18,8 +18,20 @@
     <!-- Bootstrap Core Css -->
     <link href="{{ asset('plugins/bootstrap/css/bootstrap.css') }}" rel="stylesheet">
 
+    <!-- Waves Effect Css -->
+    <link href="{{ asset('plugins/node-waves/waves.css') }}" rel="stylesheet" />
+
+    <!-- Animation Css -->
+    <link href="{{ asset('plugins/animate-css/animate.css') }}" rel="stylesheet" />
+
     <!-- JQuery DataTable Css -->
     <link href="{{ asset('plugins/jquery-datatable/skin/bootstrap/css/dataTables.bootstrap.css') }}" rel="stylesheet">
+
+    <!-- Morris Chart Css-->
+    <link href="{{ asset('plugins/morrisjs/morris.css') }}" rel="stylesheet" />
+
+    <!-- Dropzone Css -->
+    <link href="{{ asset('plugins/dropzone/dropzone.css') }}" rel="stylesheet">
 
     <!-- Custom Css -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
@@ -29,6 +41,15 @@
 
     <!-- Sweetalert Css -->
     <link href="{{ asset('plugins/sweetalert/sweetalert.css') }}" rel="stylesheet" />
+
+    <!-- Bootstrap Select Css -->
+    <link href="{{ asset('plugins/bootstrap-select/css/bootstrap-select.css') }}" rel="stylesheet" />
+
+    <!-- Bootstrap DatePicker Css -->
+    <link href="{{ asset('plugins/bootstrap-datepicker/css/bootstrap-datepicker.css') }}" rel="stylesheet" />
+
+    <!-- ajax select -->
+    <link href="{{ asset('plugins/ajaxSelect/css/ajax-bootstrap-select.min.css') }}" rel="stylesheet" />
 
     <!-- Jquery Core Js -->
     <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
@@ -48,6 +69,26 @@
     <!-- Jquery DataTable Plugin Js -->
     <script src="{{ asset('plugins/jquery-datatable/jquery.dataTables.js') }}"></script>
     <script src="{{ asset('plugins/jquery-datatable/skin/bootstrap/js/dataTables.bootstrap.js') }}"></script>
+    <script src="{{ asset('plugins/jquery-datatable/extensions/export/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('plugins/jquery-datatable/extensions/export/buttons.flash.min.js') }}"></script>
+    <script src="{{ asset('plugins/jquery-datatable/extensions/export/jszip.min.js') }}"></script>
+    <script src="{{ asset('plugins/jquery-datatable/extensions/export/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('plugins/jquery-datatable/extensions/export/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('plugins/jquery-datatable/extensions/export/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('plugins/jquery-datatable/extensions/export/buttons.print.min.js') }}"></script>
+
+    <!-- Jquery CountTo Plugin Js -->
+    <script src="{{ asset('plugins/jquery-countto/jquery.countTo.js') }}"></script>
+
+    <!-- Morris Plugin Js -->
+    <script src="{{ asset('plugins/raphael/raphael.min.js') }}"></script>
+    <script src="{{ asset('plugins/morrisjs/morris.js') }}"></script>
+
+    <!-- ChartJs -->
+    <script src="{{ asset('plugins/chartjs/Chart.bundle.js') }}"></script>
+
+    <!-- Sparkline Chart Plugin Js -->
+    <script src="{{ asset('plugins/jquery-sparkline/jquery.sparkline.js') }}"></script>
 
     <!-- SweetAlert Plugin Js -->
     <script src="{{ asset('plugins/sweetalert/sweetalert2.all.min.js') }}"></script>
@@ -65,9 +106,20 @@
     <!-- Autosize Plugin Js -->
     <script src="{{ asset('plugins/autosize/autosize.js') }}"></script>
 
+    <!-- Dropzone Plugin Js -->
+    <script src="{{ asset('plugins/dropzone/dropzone.js') }}"></script>
 
     <!-- Input Mask Plugin Js -->
     <script src="{{ asset('plugins/jquery-inputmask/jquery.inputmask.bundle.js') }}"></script>
+
+    <!-- Jquery Validation Plugin Css -->
+    <script src="{{ asset('plugins/jquery-validation/jquery.validate.js') }}"></script>
+
+    <!-- JQuery Steps Plugin Js -->
+    <script src="{{ asset('plugins/jquery-steps/jquery.steps.js') }}"></script>
+
+    <!--  Ajax Select -->
+    <script src="{{ asset('plugins/ajaxSelect/js/ajax-bootstrap-select.min.js') }}"></script>
 
     <script>
         function updateStatus(entry_id, status, type) {

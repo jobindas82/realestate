@@ -169,19 +169,92 @@
 
         <!-- Menu Item -->
         <li class="header">Reports</li>
-        <li class="{{ Route::is('users.index') ||  Route::is('users.create') ||  Route::is('users.edit') ? 'active' : '' }}">
+
+        <li class="{{ Route::is('reports.building.summary') ||  Route::is('reports.flat.summary') ? 'active' : '' }}">
             <a href="javascript:void(0);" class="menu-toggle">
-                <i class="material-icons">group</i>
-                <span>Users & Groups</span>
+                <i class="material-icons">layers</i>
+                <span>Buildings & Flats</span>
             </a>
             <ul class="ml-menu">
-                <li class="{{ Route::is('users.index') ||  Route::is('users.create') ||  Route::is('users.edit') ? 'active' : '' }}">
-                    <a href="/users/index">
-                        <span>Users</span>
+                <li class="{{ Route::is('reports.building.summary') ? 'active' : '' }}">
+                    <a href="/report/filter/building">
+                        <span>Building Summary</span>
+                    </a>
+                </li>
+                <li class="{{ Route::is('reports.flat.summary') ? 'active' : '' }}">
+                    <a href="/report/filter/flat">
+                        <span>Flat Summary</span>
                     </a>
                 </li>
             </ul>
         </li>
+
+        <li class="{{ 'dd' }}">
+            <a href="javascript:void(0);" class="menu-toggle">
+                <i class="material-icons">group</i>
+                <span>Tenancy & Contracts</span>
+            </a>
+            <ul class="ml-menu">
+                <li class="{{ 'ss' }}">
+                    <a href="/users/index">
+                        <span>Contracts Expire Within</span>
+                    </a>
+                    <a href="/users/index">
+                        <span>Contract Summary</span>
+                    </a>
+                    <a href="/users/index">
+                        <span>Tenant Summary</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="{{ 'dd' }}">
+            <a href="javascript:void(0);" class="menu-toggle">
+                <i class="material-icons">group</i>
+                <span>Financial</span>
+            </a>
+            <ul class="ml-menu">
+                <li class="{{ 'ss' }}">
+                    <a href="/users/index">
+                        <span>General Ledger</span>
+                    </a>
+                    <a href="/users/index">
+                        <span>Tenant Receivable</span>
+                    </a>
+                    <a href="/users/index">
+                        <span>Cheques</span>
+                    </a>
+                    <a href="/users/index">
+                        <span>Trial balance</span>
+                    </a>
+                    <a href="/users/index">
+                        <span>Balance Sheet</span>
+                    </a>
+                    <a href="/users/index">
+                        <span>Profit & Loss</span>
+                    </a>
+                    <a href="/users/index">
+                        <span>Tax Payable</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="{{ 'dd' }}">
+            <a href="javascript:void(0);" class="menu-toggle">
+                <i class="material-icons">group</i>
+                <span>Tickets</span>
+            </a>
+            <ul class="ml-menu">
+                <li class="{{ 'ss' }}">
+                    <a href="/users/index">
+                        <span>Tickets Summary</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
         <!-- End -->
 
         <!-- Menu Item -->

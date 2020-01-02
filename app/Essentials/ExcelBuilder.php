@@ -36,12 +36,12 @@ class ExcelBuilder
     }
 
     //Set Cell Value
-    public function setCell($cell = NULL, $value = NULL, $cellProperties)
+    public function setCell($cell = NULL, $value = NULL, $cellProperties = [])
     {
         $row = $this->spreadsheet->getActiveSheet();
 
-        if ($cellProperties == NULL)
-            return $row->setCellValue($cell, $value);
+        //Setting Value
+        $row->setCellValue($cell, $value);
 
         //Text Bold
         if (isset($cellProperties['makeBold']) && $cellProperties['makeBold']) {
@@ -59,47 +59,16 @@ class ExcelBuilder
         }
 
         //set Auto width
-        if (isset($cellProperties['autoWidthIndex']) && $cellProperties['autoWidthIndex'] > 0 ) {
-            $this->setAutoWidth( $cellProperties['autoWidthIndex'] );
+        if (isset($cellProperties['autoWidthIndex']) && $cellProperties['autoWidthIndex'] > 0) {
+            $this->setAutoWidth($cellProperties['autoWidthIndex']);
         }
-        return $row;
-    }
 
+        //Background Color
+        if (isset($cellProperties['backgroundColor']) && $cellProperties['backgroundColor'] != NULL) {
+            $this->setBackgroundColor($cell, $cellProperties['backgroundColor']);
+        }
 
-    //set Column Width auto
-    public function setAutoWidth($columnIndex = 0)
-    {
-        $row = $this->spreadsheet->getActiveSheet();
-        if ($columnIndex > 0)
-            $row->getColumnDimensionByColumn($columnIndex)->setAutoSize(true);
-        return $row;
-    }
-
-    //Set Bold
-    public function setBold($cell = NULL)
-    {
-        $row = $this->spreadsheet->getActiveSheet();
-        if ($cell != NULL)
-            $row->getStyle($cell)->getFont()->setBold(true);
-        return $row;
-    }
-
-    //set ont Size
-    public function setFontSize($cell = NULL, $fontSize = 11)
-    {
-        $row = $this->spreadsheet->getActiveSheet();
-        if ($cell != NULL)
-            $row->getStyle($cell)->getFont()->setSize($fontSize);
-        return $row;
-    }
-
-    //Text Alignment
-    public function setTextAlignment($cell = NULL, $alignmentString = NULL)
-    {
-        $row = $this->spreadsheet->getActiveSheet();
-        if ($cell != NULL && in_array($alignmentString, $this->textAlignmentStrings))
-            $row->getStyle($cell)->getAlignment()->setHorizontal($alignmentString);
-        return $row;
+        return true;
     }
 
     //Set Multiple Cell Value
@@ -109,6 +78,85 @@ class ExcelBuilder
             $this->setCell($each[0], $each[1], isset($each[2]) && is_array($each[2]) ? $each[2] : []);
         }
         return $this->spreadsheet->getActiveSheet();
+    }
+
+    //set Background cell
+    public function setBackgroundColor($cell = NULL, $color = 'FFFFFF')
+    {
+        if ($cell != NULL)
+            $this->spreadsheet->getActiveSheet()
+                ->getStyle($cell)
+                ->getFill()
+                ->setFillType('solid')
+                ->getStartColor()
+                ->setARGB($color);
+        return;
+    }
+
+    //set Background Range
+    public function setBackgroundColorRange($from = NULL, $to = NULL, $color = 'FFFFFF')
+    {
+        if ($from != NULL && $to != NULL)
+            $this->spreadsheet->getActiveSheet()
+                ->getStyle($from.':'.$to)
+                ->getFill()
+                ->setFillType('solid')
+                ->getStartColor()
+                ->setARGB($color);
+        return;
+    }
+
+    //Merge Cells
+    public function mergeCells($from, $to)
+    {
+        $row = $this->spreadsheet->getActiveSheet();
+        $row->mergeCells($from . ':' . $to);
+        return true;
+    }
+
+    //Merge Cells
+    public function mergeCenterCells($from, $to)
+    {
+        $row = $this->spreadsheet->getActiveSheet();
+        $this->mergeCells($from, $to);
+        $row->getStyle($from . ':' . $to)->getAlignment()->setHorizontal('center');
+        return true;
+    }
+
+    //set Column Width auto
+    public function setAutoWidth($columnIndex = 0)
+    {
+        $row = $this->spreadsheet->getActiveSheet();
+        if ($columnIndex > 0)
+            $row->getColumnDimensionByColumn($columnIndex)->setAutoSize(true);
+        return true;
+    }
+
+    //Set Bold
+    public function setBold($cell = NULL)
+    {
+        $row = $this->spreadsheet->getActiveSheet();
+        if ($cell != NULL)
+            $row->getStyle($cell)->getFont()->setBold(true);
+        return true;
+    }
+
+    //set ont Size
+    public function setFontSize($cell = NULL, $fontSize = 11)
+    {
+        $row = $this->spreadsheet->getActiveSheet();
+        if ($cell != NULL)
+            $row->getStyle($cell)->getFont()->setSize($fontSize);
+        return true;
+    }
+
+    //Text Alignment
+    public function setTextAlignment($cell = NULL, $alignmentString = NULL)
+    {
+        $row = $this->spreadsheet->getActiveSheet();
+        if ($cell != NULL && in_array($alignmentString, $this->textAlignmentStrings))
+            $row->getStyle($cell)->getAlignment()->setHorizontal($alignmentString);
+        return true;
     }
 
     //setWorkSheetTitle

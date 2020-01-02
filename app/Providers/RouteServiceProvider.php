@@ -44,6 +44,8 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapFinanceRoutes();
 
         $this->mapContractRoutes();
+
+        $this->mapReportRoutes();
     }
 
     /**
@@ -103,4 +105,10 @@ class RouteServiceProvider extends ServiceProvider
             ->group(base_path('routes/contracts.php'));
     }
     
+    protected function mapReportRoutes()
+    {
+        Route::middleware('web')
+            ->namespace('App\Http\Controllers\Reports')
+            ->group(base_path('routes/reports.php'));
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Input;
 use App\Essentials\UriEncode;
 
 use App\models\Contracts;
@@ -408,5 +409,158 @@ class ContractController extends Controller
         }
 
         return response()->json($response);
+    }
+
+    public function pdf()
+    {
+        $filter = Input::get('filter');
+        $from = Input::get('from');
+        $to = Input::get('to');
+
+        $table = '<div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered ">
+                        <thead>
+                            <tr>
+                                <th style="width:10%">Contract #</th>
+                                <th style="width:20%">Tenant</th>
+                                <th style="width:10%">Building</th>
+                                <th style="width:10%">Flat</th>
+                                <th style="width:15%">From</th>
+                                <th style="width:15%">To</th>
+                                <th style="width:15%">Gross Amt.</th>
+                                <th style="width:10%">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>';
+
+        $statusConditionFilter = [
+            0 => ['field' => 'is_active', 'value' => 0, 'alias' => 'Active'],
+            1 => ['field' => 'is_active', 'value' => 1, 'alias' => 'Closed'],
+        ];
+
+        $model = Contracts::query();
+
+        //Date Conversion
+        $from = $from != '' && count(explode('/', $from)) ==3 ? date('Y-m-d', strtotime(str_replace('/', '-', $from))) : date('Y-01-01');
+        $to = $to != '' && count(explode('/', $to)) ==3 ? date('Y-m-d', strtotime(str_replace('/', '-', $to))) : date('Y-12-31');
+
+        $model->whereBetween('from_date', [$from, $to]);
+        //End
+
+        $statusCondition = array_key_exists($filter, $statusConditionFilter) ? $statusConditionFilter[$filter] : NULL;
+
+        if ($statusCondition != NULL) {
+            $model->where($statusCondition['field'], $statusCondition['value']);
+        }
+
+        $items = $model->orderBy('from_date', 'ASC')->get();
+
+        if ($items->count() > 0) {
+            foreach ($items as $i => $eachItem) {
+                $table .= '  <tr>
+                               <td>' . $eachItem->id . '</td>
+                               <td>' . $eachItem->tenant->name . '</td>
+                               <td>' . $eachItem->building->name . '</td>
+                               <td>' . $eachItem->flat->name . '</td>
+                               <td>' . $eachItem->formated_from_date() . '</td>
+                               <td>' . $eachItem->formated_to_date() . '</td>
+                               <td>' . $eachItem->grossAmount() . '</td>
+                               <td>' . $eachItem->status() . '</td>
+                            </tr>';
+            }
+        } else {
+            $table .= ' <tr>
+                            <td colspan="8">No data</th>
+                        </tr>';
+        }
+
+
+
+        $table .= '</tbody>
+                </table>
+            </div>';
+
+        $props = [
+            'title' => 'Contracts',
+            'table' => $table,
+            'from_date' => $from,
+            'to_date'=> $to
+        ];
+
+        $statusCondition != NULL ? $props['customField'] = ['name' => 'Filter', 'value' => $statusCondition['alias']] : '';
+
+        return \PDF::loadView('pdf.exports.table', ['props' => $props])->download('contracts.pdf');
+    }
+
+    public function excel()
+    {
+        $filter = Input::get('filter');
+        $from = Input::get('from');
+        $to = Input::get('to');
+
+        $statusConditionFilter = [
+            0 => ['field' => 'is_active', 'value' => 0, 'alias' => 'Active'],
+            1 => ['field' => 'is_active', 'value' => 1, 'alias' => 'Closed'],
+        ];
+
+        $model = Contracts::query();
+
+        //Date Conversion
+        $from = $from != '' && count(explode('/', $from)) ==3 ? date('Y-m-d', strtotime(str_replace('/', '-', $from))) : date('Y-01-01');
+        $to = $to != '' && count(explode('/', $to)) ==3 ? date('Y-m-d', strtotime(str_replace('/', '-', $to))) : date('Y-12-31');
+
+        $model->whereBetween('from_date', [$from, $to]);
+        //End
+
+        $statusCondition = array_key_exists($filter, $statusConditionFilter) ? $statusConditionFilter[$filter] : NULL;
+
+        if ($statusCondition != NULL) {
+            $model->where($statusCondition['field'], $statusCondition['value']);
+        }
+
+        $items = $model->orderBy('from_date', 'ASC')->get();
+
+        $excelFile = new \App\Essentials\ExcelBuilder('contracts_list');
+        $excelFile->mergeCenterCells('B1', 'G1');
+        $excelFile->setCell('B1', 'Contracts List', ['makeBold' => true, 'fontSize' => 20 ]);
+        $excelFile->setCell('B2', 'From', ['makeBold' => true]);
+        $excelFile->setCell('B3', 'To', ['makeBold' => true]);
+        $excelFile->setCell('C2', $from);
+        $excelFile->setCell('C3', $to);
+        
+        if( $statusCondition != NULL ){
+            $excelFile->setCell('B4', 'Filter', ['makeBold' => true]);
+            $excelFile->setCell('C4', $statusCondition['alias']);
+        }
+
+        $row = 6;
+        $excelFile->setCellMultiple([
+            ['A' . $row, 'Contract #', ['makeBold' => true, 'autoWidthIndex' => 0]],
+            ['B' . $row, 'Tenant', ['makeBold' => true, 'autoWidthIndex' => 1]],
+            ['C' . $row, 'Building', ['makeBold' => true, 'autoWidthIndex' => 2]],
+            ['D' . $row, 'Flat', ['makeBold' => true, 'autoWidthIndex' => 3]],
+            ['E' . $row, 'From', ['makeBold' => true, 'autoWidthIndex' => 4]],
+            ['F' . $row, 'To', ['makeBold' => true, 'autoWidthIndex' => 5]],
+            ['G' . $row, 'Gross Amount', ['makeBold' => true, 'autoWidthIndex' => 6]],
+            ['H' . $row, 'Status', ['makeBold' => true, 'autoWidthIndex' => 7]]
+        ]);
+
+        $excelFile->setBackgroundColorRange('A' . $row, 'H' . $row, 'A9DEFB');
+        if ($items->count() > 0) {
+            foreach ($items as $eachItem) {
+                $row++;
+                $excelFile->setCellMultiple([
+                    ['A' . $row, $eachItem->id],
+                    ['B' . $row, $eachItem->tenant->name],
+                    ['C' . $row, $eachItem->building->name],
+                    ['D' . $row, $eachItem->flat->name],
+                    ['E' . $row, $eachItem->formated_from_date()],
+                    ['F' . $row, $eachItem->formated_to_date()],
+                    ['G' . $row, $eachItem->grossAmount()],
+                    ['H' . $row, $eachItem->status()]
+                ]);
+            }
+        }
+        $excelFile->output();
     }
 }

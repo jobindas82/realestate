@@ -263,16 +263,18 @@ class TenantController extends Controller
 
         $items = $model->get();
 
-        $row = 4;
         $excelFile = new \App\Essentials\ExcelBuilder('tenants_list');
+        $excelFile->mergeCenterCells('B1', 'E1');
+        $excelFile->setCell('B1', 'Tenant List', ['makeBold' => true]);
+        $row = 4;
         $excelFile->setCellMultiple([
-            ['A' . $row, 'Name'],
-            ['B' . $row, 'Email'],
-            ['C' . $row, 'Emirates ID'],
-            ['D' . $row, 'Phone'],
-            ['E' . $row, 'Mobile'],
-            ['F' . $row, 'Passport'],
-            ['G' . $row, 'TRN']
+            ['A' . $row, 'Name', ['makeBold' => true, 'autoWidthIndex' => 0]],
+            ['B' . $row, 'Email', ['makeBold' => true, 'autoWidthIndex' => 1]],
+            ['C' . $row, 'Emirates ID', ['makeBold' => true, 'autoWidthIndex' => 2]],
+            ['D' . $row, 'Phone', ['makeBold' => true, 'autoWidthIndex' => 3]],
+            ['E' . $row, 'Mobile', ['makeBold' => true, 'autoWidthIndex' => 4]],
+            ['F' . $row, 'Passport', ['makeBold' => true, 'autoWidthIndex' => 5]],
+            ['G' . $row, 'TRN', ['makeBold' => true, 'autoWidthIndex' => 6]]
         ]);
         if ($items->count() > 0) {
             foreach ($items as $eachItem) {

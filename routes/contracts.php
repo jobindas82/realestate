@@ -15,4 +15,6 @@ Route::get('/contract/cheques/list/{key}', 'ContractController@cheques_list' )->
 Route::post('/contract/cheques/save', 'ContractController@save_cheques')->middleware('auth');
 Route::post('/contract/settlement/early', 'ContractController@save_early_settlement')->middleware('auth');
 Route::post('/contract/settlement/expired', 'ContractController@save_expired_settlement')->middleware('auth');
+Route::get('/contract/pdf', 'ContractController@pdf')->middleware('auth');
+Route::get('/contract/excel', 'ContractController@excel')->middleware('auth');
 //end

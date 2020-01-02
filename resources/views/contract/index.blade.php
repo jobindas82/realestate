@@ -42,6 +42,7 @@
                             <ul class="dropdown-menu pull-right">
                                 <input type="hidden" name="contact_status" id="contact_status" value="1">
                                 <li><a href="/contract/create"><i class="material-icons">add_circle</i> Create</a></li>
+                                <li><a href="#" data-toggle="modal" data-target="#contractExportModal"><i class="material-icons">archive</i> Export</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -56,7 +57,7 @@
                                     <th style="width: 10%">Building</th>
                                     <th style="width: 10%">Flat</th>
                                     <th style="width: 10%">From</th>
-                                    <th style="width: 10%">Date</th>
+                                    <th style="width: 10%">To</th>
                                     <th style="width: 10%">Gross Amt.</th>
                                     <th style="width: 5%">Status</th>
                                     <th style="width: 10%">Actions</th>
@@ -70,6 +71,56 @@
     </div>
     <!-- #END# Basic Examples -->
 </div>
+
+
+
+<div class="modal fade" id="contractExportModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Export</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row clearfix">
+                    <div class="col-sm-4">
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <input type="text" name="contracts_from" id="contracts_from" class="form-control datepicker" value="{{ date('01/01/Y') }}">
+                                <label class="form-label">Contracts From</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <input type="text" name="contracts_to" id="contracts_to" class="form-control datepicker" value="{{ date('31/12/Y') }}">
+                                <label class="form-label">Contracts To</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <select name="contract_status" id="contract_status" class="form-control">
+                                    <option value="2">All</option>
+                                    <option value="1">Active</option>
+                                    <option value="0">Closed</option>
+                                </select>
+                                <label class="form-label">Status</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link waves-effect" onclick="window.open('/contract/pdf/?filter=' + $('#contract_status').val() + '&from=' + $('#contracts_from').val() + '&to=' + $('#contracts_to').val() , '_blank')">PDF</button>
+                <button type="button" class="btn btn-link waves-effect" onclick="window.open('/contract/excel/?filter=' + $('#contract_status').val() + '&from=' + $('#contracts_from').val() + '&to=' + $('#contracts_to').val(), '_blank')">EXCEL</button>
+                <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script>
     $(function() {

@@ -63,6 +63,12 @@ class Flats extends Model
             return 'Blocked';
     }
 
+    public static function allFlats($building_id = 0)
+    {
+        $query = self::query()->where('building_id', $building_id);
+        return $query->pluck('name', 'id')->prepend('None', 0);
+    }
+
     public static function activeFlats($building_id = 0, $id = 0)
     {
         $query = self::query()->where('is_available', 1)->where('building_id', $building_id);

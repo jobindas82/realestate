@@ -219,7 +219,7 @@ class TenantController extends Controller
                                <td>' . $eachItem->phone . '</td>
                                <td>' . $eachItem->mobile . '</td>
                                <td>' . $eachItem->passport . '</td>
-                               <td>' . $eachItem->trn_no . '</td>
+                               <td>' . $eachItem->trn_number . '</td>
                             </tr>';
             }
         } else {
@@ -286,7 +286,7 @@ class TenantController extends Controller
                     ['D' . $row, $eachItem->phone,],
                     ['E' . $row, $eachItem->mobile,],
                     ['F' . $row, $eachItem->passport,],
-                    ['G' . $row, $eachItem->trn_no,]
+                    ['G' . $row, $eachItem->trn_number,]
                 ]);
             }
         }

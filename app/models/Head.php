@@ -237,4 +237,18 @@ class Head extends Model
         } 
         return $methodDetails;
     }
+
+    public function chequeStatus(){
+        $status = 'N/A';
+        if( $this->method == 2 ){
+            $status = 'Not Cleared';
+            if( $this->cheque_status == 2 ){
+                $status = 'Returned';
+            }
+            if( $this->cheque_status == 1 ){
+                $status = 'Cleared';
+            }
+        }
+        return $status;
+    }
 }

@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 
 class Tickets extends Model
 {
-    const PRIORITIES = [1 => 'Low', 2 => 'Medium', 4 => 'High', 5 => 'Critical'];
+    const PRIORITIES = [1 => 'Low', 2 => 'Medium', 3 => 'High', 4 => 'Critical'];
     const STATUS = [0 => 'Closed', 1 => 'Active', 2 => 'In Progress'];
     const JOB_CATEGORIES = [
         1 => 'Carpentry',
@@ -67,6 +67,11 @@ class Tickets extends Model
     public function whichPriority()
     {
         return self::PRIORITIES[$this->priority];
+    }
+
+    public function whichCategory()
+    {
+        return self::JOB_CATEGORIES[$this->job_category];
     }
 
     public function ticketStatus()

@@ -7,15 +7,14 @@
             <thead>
                 <tr>
                     <th style="width: 5%">Con. #</th>
-                    <th style="width: 20%">Tenant</th>
-                    <th style="width: 15%">building</th>
+                    <th style="width: 25%">Tenant</th>
                     <th style="width: 10%">Flat</th>
-                    <th style="width: 9%">From Date</th>
-                    <th style="width: 9%">To Date</th>
+                    <th style="width: 10%">From Date</th>
+                    <th style="width: 10%">To Date</th>
                     <th style="width: 5%">Renewed</th>
-                    <th style="width: 8%">Prev. Con.</th>
-                    <th style="width: 9%">Tax</th>
-                    <th style="width: 10%">Gross Amt.</th>
+                    <th style="width: 10%">Prev. Con.</th>
+                    <th style="width: 10%">Tax</th>
+                    <th style="width: 15%">Gross Amt.</th>
                     <th style="width: 0%">Status</th>
                 </tr>
             </thead>
@@ -44,14 +43,14 @@
                 [0, "desc"]
             ],
             columnDefs: [{
-                targets: [10],
+                targets: [9],
                 visible: false
             }],
             rowCallback: function(row, data) {
-                if (data[10] == 1) {
-                    $(row).addClass("success");
+                if (data[9] == 0) {
+                    $(row).addClass("danger");
                 }
             },
         });
-    });
+    }); 
 </script>

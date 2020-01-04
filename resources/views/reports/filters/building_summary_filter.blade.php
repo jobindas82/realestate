@@ -79,11 +79,6 @@
                         </a>
                     </li>
                     <li role="presentation">
-                        <a href="#documentsLink" data-toggle="tab">
-                            <i class="material-icons">library_books</i> Documents
-                        </a>
-                    </li>
-                    <li role="presentation">
                         <a href="#ticketsLink" data-toggle="tab">
                             <i class="material-icons">build</i> Tickets
                         </a>
@@ -112,9 +107,6 @@
                     <div role="tabpanel" class="tab-pane fade" id="paymentsLink">
                         @include('reports.results.payments_table')
                     </div>
-                    <div role="tabpanel" class="tab-pane fade" id="documentsLink">
-                        @include('reports.results.documents_table')
-                    </div>
                     <div role="tabpanel" class="tab-pane fade" id="ticketsLink">
                         @include('reports.results.tickets_table')
                     </div>
@@ -130,22 +122,45 @@
 <script>
     function updateBuildingFilter(value) {
         $('#flat_form_building_id').val(value);
-        reload_datatable('#flat_building_list');
+        $('#contracts_form_building_id').val(value);
+        $('#tenant_form_building_id').val(value);
+        $('#receipts_form_building_id').val(value);
+        $('#payments_form_building_id').val(value);
+        $('#tickets_form_building_id').val(value);
+
         populateFlats(value);
+        populateContracts(0);
+        reloadData_tables();
 
         //reset
-        $('#flat_form_flat_id').val(0);
+        resetFlats();
+        resetContracts();
     }
 
     function updateFlatFilter(value) {
         $('#flat_form_flat_id').val(value);
-        reload_datatable('#flat_building_list');
+        $('#contract_form_flat_id').val(value);
+        $('#tenant_form_flat_id').val(value);
+        $('#receipts_form_flat_id').val(value);
+        $('#payments_form_flat_id').val(value);
+        $('#tickets_form_flat_id').val(value);
+
+        reloadData_tables();
 
         populateContracts(value);
+
+        //reset
+        resetContracts();
     }
 
     function updateContractFilter(value) {
-        reload_datatable('#flat_building_list');
+        $('#contract_form_contract_id').val(value);
+        $('#tenant_form_contract_id').val(value);
+        $('#receipts_form_contract_id').val(value);
+        $('#payments_form_contract_id').val(value);
+        $('#tickets_form_contract_id').val(value);
+
+        reloadData_tables();
     }
 
     function populateFlats(building_id = 0) {
@@ -176,6 +191,32 @@
                 });
             }
         });
+    }
+
+    function reloadData_tables() {
+        reload_datatable('#flat_building_list');
+        reload_datatable('#contracts_list');
+        reload_datatable('#tenant_list');
+        reload_datatable('#receipts_list');
+        reload_datatable('#payments_list');
+        reload_datatable('#tickets_list');
+    }
+
+    function resetFlats(){
+        $('#flat_form_flat_id').val(0);
+        $('#contract_form_flat_id').val(0);
+        $('#tenant_form_flat_id').val(0);
+        $('#receipts_form_flat_id').val(0);
+        $('#payments_form_flat_id').val(0);
+        $('#tickets_form_flat_id').val(0);
+    }
+
+    function resetContracts(){
+        $('#contract_form_contract_id').val(0);
+        $('#tenant_form_contract_id').val(0);
+        $('#receipts_form_contract_id').val(0);
+        $('#payments_form_contract_id').val(0);
+        $('#tickets_form_contract_id').val(0);
     }
 </script>
 

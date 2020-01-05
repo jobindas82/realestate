@@ -6,9 +6,10 @@
         <table class="table table-condensed table-hover" id="ledgers_list">
             <thead>
                 <tr>
-                    <th style="width: 5%;">#</th>
-                    <th style="width: 70%;">Ledger</th>
-                    <th style="width: 25%;">Balance</th>
+                    <th style="width: 1%;">#</th>
+                    <th style="width: 50%;">Ledger</th>
+                    <th style="width: 20%;">Type</th>
+                    <th style="width: 20%;">Balance</th>
                 </tr>
             </thead>
         </table>
@@ -34,7 +35,8 @@
             processing: true,
             order: [
                 [1, "desc"]
-            ]
+            ],
+            bSort : false
         });
     });
 </script>

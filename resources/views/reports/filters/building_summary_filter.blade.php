@@ -7,7 +7,7 @@
         <div class="card">
             <div class="header">
                 <h2>
-                    Building Summary
+                    All-in-One Summary
                 </h2>
             </div>
             <div class="body have-mask">
@@ -15,7 +15,7 @@
                     <div class="col-sm-4">
                         <div class="form-group form-float">
                             <div class="form-line">
-                                {{ Form::select('building_id', \App\models\Buildings::allBuildings(), '', [ 'class' => 'form-control show-tick', 'onchange' => 'updateBuildingFilter(this.value)' ]) }}
+                                {{ Form::select('building_id', \App\models\Buildings::allBuildings(), '', [ 'class' => 'form-control show-tick', 'onchange' => 'updateBuildingFilter(this.value)', 'id' => 'summary_building_id' ]) }}
                                 <label class="form-label">Building</label>
                             </div>
                         </div>
@@ -24,7 +24,7 @@
                         <div class="form-group form-float">
                             <div class="form-line">
                                 <div id="flat_div_drop">
-                                    {{ Form::select('flat_id',[], '', [ 'class' => 'form-control show-tick', 'onchange' => 'updateFlatFilter(this.value)' ]) }}
+                                    {{ Form::select('flat_id',[], '', [ 'class' => 'form-control show-tick', 'onchange' => 'updateFlatFilter(this.value)', 'id' => 'summary_flat_id' ]) }}
                                 </div>
                                 <label class="form-label">Flat</label>
                             </div>
@@ -34,7 +34,7 @@
                         <div class="form-group form-float">
                             <div class="form-line">
                                 <div id="contract_div_drop">
-                                    {{ Form::select('contract_id',[], '', [ 'class' => 'form-control show-tick', 'onchange' => 'updateContractFilter(this.value)' ]) }}
+                                    {{ Form::select('contract_id',[], '', [ 'class' => 'form-control show-tick', 'onchange' => 'updateContractFilter(this.value)', 'id' => 'summary_contract_id' ]) }}
                                 </div>
                                 <label class="form-label">Contracts</label>
                             </div>
@@ -127,6 +127,7 @@
         $('#receipts_form_building_id').val(value);
         $('#payments_form_building_id').val(value);
         $('#tickets_form_building_id').val(value);
+        $('#ledgers_form_building_id').val(value);
 
         populateFlats(value);
         populateContracts(0);
@@ -144,6 +145,7 @@
         $('#receipts_form_flat_id').val(value);
         $('#payments_form_flat_id').val(value);
         $('#tickets_form_flat_id').val(value);
+        $('#ledgers_form_flat_id').val(value);
 
         reloadData_tables();
 
@@ -159,6 +161,7 @@
         $('#receipts_form_contract_id').val(value);
         $('#payments_form_contract_id').val(value);
         $('#tickets_form_contract_id').val(value);
+        $('#ledgers_form_contract_id').val(value);
 
         reloadData_tables();
     }
@@ -200,6 +203,7 @@
         reload_datatable('#receipts_list');
         reload_datatable('#payments_list');
         reload_datatable('#tickets_list');
+        reload_datatable('#ledgers_list');
     }
 
     function resetFlats(){
@@ -209,6 +213,7 @@
         $('#receipts_form_flat_id').val(0);
         $('#payments_form_flat_id').val(0);
         $('#tickets_form_flat_id').val(0);
+        $('#ledgers_form_flat_id').val(0);
     }
 
     function resetContracts(){
@@ -217,6 +222,7 @@
         $('#receipts_form_contract_id').val(0);
         $('#payments_form_contract_id').val(0);
         $('#tickets_form_contract_id').val(0);
+        $('#ledgers_form_contract_id').val(0);
     }
 </script>
 

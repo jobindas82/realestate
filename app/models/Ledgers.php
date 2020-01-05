@@ -144,4 +144,13 @@ class Ledgers extends Model
     public static function findClass($class = NULL){
         return self::where('class', $class)->first();
     }
+
+    public static function onBaseFormat($amount=0, $ledger=0){
+        $multipliers = ['A' => 1, 'E' => 1, 'L' => -1, 'I' => -1];
+        if( $ledger > 0 ){
+            $ledgerType = self::find($ledger)->type;
+            return $amount * $multipliers[ $ledgerType ];
+        }
+        return 0;
+    }
 }

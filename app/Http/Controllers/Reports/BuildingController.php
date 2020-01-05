@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers\Reports;
 
+use App\models\Buildings;
 use App\models\Flats;
 use App\models\Contracts;
 use App\models\Head;
 use App\models\Tickets;
+use App\models\Entries;
 
 use Collective\Html\FormFacade as Form;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Input;
 
 class BuildingController extends \App\Http\Controllers\Controller
 {
@@ -88,12 +92,12 @@ class BuildingController extends \App\Http\Controllers\Controller
 
     public function flats_drop($building_id = 0)
     {
-        return Form::select('flat_id', \App\models\Flats::allFlats($building_id), '', ['class' => 'form-control show-tick', 'onchange' => 'updateFlatFilter(this.value)']);
+        return Form::select('flat_id', \App\models\Flats::allFlats($building_id), '', ['class' => 'form-control show-tick', 'onchange' => 'updateFlatFilter(this.value)', 'id' => 'summary_flat_id']);
     }
 
     public function contracts_drop($flat_id = 0)
     {
-        return Form::select('contract_id', \App\models\Contracts::allContractsFlat($flat_id), '', ['class' => 'form-control show-tick', 'onchange' => 'updateContractFilter(this.value)']);
+        return Form::select('contract_id', \App\models\Contracts::allContractsFlat($flat_id), '', ['class' => 'form-control show-tick', 'onchange' => 'updateContractFilter(this.value)', 'id' => 'summary_contract_id']);
     }
 
     public function contract_response()
@@ -388,49 +392,31 @@ class BuildingController extends \App\Http\Controllers\Controller
         $limit  = $_POST['length'];
         $keyword = trim($_POST['search']['value']);
 
-        $columns = [
-            0 => 'ticket.id',
-            1 => 'ticket.date',
-            2 => 'tenants.name',
-            3 => 'ticket.contract_id',
-            4 => 'ticket.job_category',
-            5 => 'ticket.priority',
-            6 => 'ticket.details',
-            7 => 'ticket.remarks',
-            8 => 'ticket.is_active'
-        ];
-
-        $filterColumn = $columns[$_POST['order'][0]['column']];
-        $filterOrder  = $_POST['order'][0]['dir'];
-
         $building_id = (int) $_POST['building_id'];
         $flat_id = (int) $_POST['flat_id'];
         $contract_id = (int) $_POST['contract_id'];
 
-        $query = Tickets::query()
-            ->leftJoin('tenants', 'tenants.id', 'ticket.tenant_id')
-            ->leftJoin('contracts', 'contracts.id', 'ticket.contract_id')
-            ->where('contracts.building_id', $building_id);
+        $query = Entries::query()
+            ->leftJoin('ledgers', 'ledgers.id', 'entries.ledger_id')
+            ->where('entries.building_id', $building_id);
 
         if ($flat_id > 0)
-            $query->where('contracts.flat_id', $flat_id);
+            $query->where('entries.flat_id', $flat_id);
 
         if ($contract_id > 0)
-            $query->where('ticket.contract_id', $contract_id);
+            $query->where('entries.contract_id', $contract_id);
 
         if ($keyword != "") {
             $query->where(function ($q) use ($keyword) {
-                $q->where('ticket.contract_id', 'LIKE', '%' . $keyword . '%')
-                    ->orWhere('tenants.name', 'LIKE', '%' . $keyword . '%')
-                    ->orWhere('ticket.contract_id', 'LIKE', '%' . $keyword . '%');
+                $q->where('ledgers.name', 'LIKE', '%' . $keyword . '%');
             });
         }
 
         $result = $query
-            ->select('ticket.id', 'ticket.date', 'tenants.name', 'ticket.contract_id', 'ticket.details', 'ticket.job_type', 'ticket.is_active', 'ticket.remarks', 'ticket.job_category', 'ticket.priority')
+            ->select('ledgers.name', 'ledgers.type', DB::raw('SUM(entries.amount) as amount'), 'ledgers.id')
             ->skip($offset)
             ->take($limit)
-            ->orderBy($filterColumn, $filterOrder)
+            ->groupBy('ledgers.id')
             ->get();
 
         $recordsTotal = $result->count();
@@ -440,11 +426,97 @@ class BuildingController extends \App\Http\Controllers\Controller
         $data['recordsFiltered'] = $recordsFiltered;
         $eachItemData = array();
 
-        foreach ($result as $eachItem) {
-            $eachItemData[] = [$eachItem->id, $eachItem->formated_date(),  $eachItem->name, $eachItem->contract_id, $eachItem->whichCategory(), $eachItem->whichPriority(), nl2br($eachItem->details), nl2br($eachItem->remarks), $eachItem->ticketStatus()];
+        foreach ($result as $i => $eachItem) {
+            $eachItemData[] = [($i + $offset + 1), $eachItem->name, $eachItem->accountBase(), \App\Essentials\FormatAmount::format($eachItem->amount, $eachItem->id)->onBase()];
         }
         $data['data'] = $eachItemData;
 
         return response()->json($data);
+    }
+
+    public function export_flat()
+    {
+        $building_id = (int) Input::get('building');
+        $flat_id = (int) Input::get('flat');
+        $keyword =  trim(Input::get('query'));
+
+        $query = Flats::query()
+            ->leftJoin('buildings', 'flats.building_id', 'buildings.id')
+            ->leftJoin('flat_types', 'flats.flat_type_id', 'flat_types.id')
+            ->leftJoin('construction_type', 'flats.construction_type_id', 'construction_type.id')
+            ->where('flats.building_id', $building_id);
+
+        if ($flat_id > 0) {
+            $query->where('flats.id', $flat_id);
+        }
+        if ($keyword != "") {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('flats.name', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('flats.premise_id', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('flats.id', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('flats.plot_no', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('flats.landlord_name', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('flats.owner_name', 'LIKE', '%' . $keyword . '%');
+            });
+        }
+
+        $items = $query
+            ->select('flats.name as flat_name', 'flats.premise_id', 'flats.plot_no', 'flats.floor', 'flats.minimum_value', 'flats.square_feet', 'flats.owner_name', 'flats.landlord_name', 'construction_type.name as construction_type', 'flat_types.name as flat_types', 'flats.is_available')
+            ->get();
+
+        $excelFile = new \App\Essentials\ExcelBuilder('flat_list');
+        $excelFile->mergeCenterCells('B1', 'G1');
+        $excelFile->setCell('B1', 'Flat List', ['makeBold' => true, 'fontSize' => 20]);
+        $excelFile->setCell('B2', 'Building', ['makeBold' => true]);
+        $buildingModel= Buildings::find($building_id);
+        $buildingName =  isset($buildingModel->id) && $buildingModel->id > 0 ? $buildingModel->name : '';
+        $excelFile->setCell('C2', $buildingName);
+        $row = 3;
+
+        if( $flat_id > 0 ){
+            $excelFile->setCell('B'. $row, 'Flat', ['makeBold' => true]);
+            $excelFile->setCell('C'. $row, Flats::find($flat_id)->name);
+            $row++;
+        }
+
+        if( $keyword != '' ){
+            $excelFile->setCell('B'. $row, 'Filter', ['makeBold' => true]);
+            $excelFile->setCell('C'. $row, '%'.$keyword.'%');
+            $row++;
+        }
+
+        $row++;
+        $excelFile->setCellMultiple([
+            ['A' . $row, 'Contract #', ['makeBold' => true, 'autoWidthIndex' => 0]],
+            ['B' . $row, 'Tenant', ['makeBold' => true, 'autoWidthIndex' => 1]],
+            ['C' . $row, 'Building', ['makeBold' => true, 'autoWidthIndex' => 2]],
+            ['D' . $row, 'Flat', ['makeBold' => true, 'autoWidthIndex' => 3]],
+            ['E' . $row, 'From', ['makeBold' => true, 'autoWidthIndex' => 4]],
+            ['F' . $row, 'To', ['makeBold' => true, 'autoWidthIndex' => 5]],
+            ['G' . $row, 'Gross Amount', ['makeBold' => true, 'autoWidthIndex' => 6]],
+            ['H' . $row, 'Status', ['makeBold' => true, 'autoWidthIndex' => 7]]
+        ]);
+
+        $excelFile->setBackgroundColorRange('A' . $row, 'H' . $row, 'A9DEFB');
+        if ($items->count() > 0) {
+            foreach ($items as $eachItem) {
+                $row++;
+                $excelFile->setCellMultiple([
+                    ['A' . $row, $eachItem->flat_name], 
+                    ['B' . $row, $eachItem->premise_id],
+                    ['C' . $row, $eachItem->plot_no],
+                    ['D' . $row, $eachItem->floor],
+                    ['E' . $row, $eachItem->square_feet], 
+                    ['F' . $row, $eachItem->minimum_value], 
+                    ['G' . $row, $eachItem->owner_name], 
+                    ['H' . $row, $eachItem->landlord_name], 
+                    ['I' . $row, $eachItem->construction_type], 
+                    ['J' . $row, $eachItem->flat_types], 
+                    ['K' . $row, $eachItem->is_available]
+                ]);
+            }
+        }
+        $excelFile->output();
+
     }
 }

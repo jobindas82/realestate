@@ -14,6 +14,8 @@ class Entries extends Model
         'head_id', 'ledger_id', 'amount', 'code', 'contract_id', 'building_id', 'flat_id', 'tenant_id', 'visible', 'date'
     ];
 
+    const ACCOUNT_BASE = ['A' => 'Asset', 'L' => 'Liability', 'I' => 'Income', 'E' => "Expense"];
+
     protected static function boot()
     {
         parent::boot();
@@ -59,5 +61,9 @@ class Entries extends Model
     public function tenant()
     {
         return $this->belongsTo(Tenants::class, 'tenant_id');
+    }
+
+    public function accountBase(){
+        return self::ACCOUNT_BASE[$this->type];
     }
 }

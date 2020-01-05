@@ -20,6 +20,14 @@
             </thead>
         </table>
     </div>
+    <div class="col-sm-12">
+        <div class="form-group align-center">
+            <button class="btn btn-danger" href="#" 
+                onclick="window.open('/report/export/flat?building=' + $('#summary_building_id').val() + '&flat=' + $('#summary_flat_id').val() + '&query=' + $('#flat_building_list').DataTable().search() , '_block');">
+                Export
+            </button>
+        </div>
+    </div>
 </div>
 <script>
     $(function() {

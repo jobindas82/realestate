@@ -9,3 +9,4 @@ Route::post('/report/response/tickets', 'BuildingController@ticket_response')->m
 Route::post('/report/response/ledgers', 'BuildingController@ledger_response')->middleware('auth');
 Route::get('/report/drop/flat/{building_id}', 'BuildingController@flats_drop')->middleware('auth');
 Route::get('/report/drop/contracts/{flat_id}', 'BuildingController@contracts_drop')->middleware('auth');
+Route::get('/report/export/flat', 'BuildingController@export_flat')->middleware('auth');

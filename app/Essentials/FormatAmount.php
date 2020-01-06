@@ -22,11 +22,11 @@ class FormatAmount
     }
 
     function _text_notation(){
-        return $this->amount > 0 ? 'Dr' : 'Cr';
+        return $this->amount > 0 ? ' Dr' : ' Cr';
     }
 
     public function outText(){
-        return $this->amount.$this->_text_notation();
+        return number_format(round(abs($this->amount), 2),  2, '.', ',').$this->_text_notation();
     }
 
     public function onBase(){

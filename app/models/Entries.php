@@ -30,6 +30,7 @@ class Entries extends Model
                 $fieldName = 'lv'.$ledgerLevel;
                 $model->$fieldName = $model->ledger_id;
             }
+            $model->is_posted = $model->head->is_posted;
         });
     }
 
@@ -65,5 +66,10 @@ class Entries extends Model
 
     public function accountBase(){
         return self::ACCOUNT_BASE[$this->type];
+    }
+
+    public function formated_date()
+    {
+        return $this->exists && $this->date != NULL &&   $this->date != '0000-00-00' ? date('d/m/Y', strtotime($this->date)) : '';
     }
 }

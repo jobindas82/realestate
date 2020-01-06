@@ -53,6 +53,11 @@ class Ledgers extends Model
         return $response;
     }
 
+    public static function allChildren()
+    {
+        return self::query()->where('is_parent', 'N')->pluck('name', 'id');
+    }
+
     public static function children($id = 0)
     {
         $query = self::query()->where('is_active', 'Y')->where('is_parent', 'N');

@@ -123,6 +123,15 @@ class ExcelBuilder
         return true;
     }
 
+    //Merge Cells & RIght align
+    public function mergeRightCells($from, $to)
+    {
+        $row = $this->spreadsheet->getActiveSheet();
+        $this->mergeCells($from, $to);
+        $row->getStyle($from . ':' . $to)->getAlignment()->setHorizontal('right');
+        return true;
+    }
+
     //set Column Width auto
     public function setAutoWidth($columnIndex = 0)
     {

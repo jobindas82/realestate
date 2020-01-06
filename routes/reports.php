@@ -19,4 +19,8 @@ Route::get('/report/export/all', 'BuildingController@export_all')->middleware('a
 
 
 //Finance reports
-Route::get('/report/finance/gl', 'FinanceController@general_ledger')->middleware('auth');
+Route::get('/report/finance/gl', ['as' => 'reports.finance.gl', 'uses' => 'FinanceController@general_ledger'] )->middleware('auth');
+Route::post('/report/finance/gl', 'FinanceController@general_ledger_list')->middleware('auth');
+Route::get('/report/export/gl', 'FinanceController@general_ledger_excel')->middleware('auth');
+Route::get('/report/finance/tb', ['as' => 'reports.finance.tb', 'uses' => 'FinanceController@trial_balance'] )->middleware('auth');
+Route::post('/report/finance/tb', 'FinanceController@trial_balance_list')->middleware('auth');

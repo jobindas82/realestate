@@ -185,33 +185,20 @@
         </li>
 
        
-        <li class="{{ Route::is('reports.finance.gl')  }}">
+        <li class="{{ Route::is('reports.finance.gl') || Route::is('reports.finance.tb') ? 'active' : '' }}">
             <a href="javascript:void(0);" class="menu-toggle">
                 <i class="material-icons">assessment</i>
                 <span>Financial</span>
             </a>
             <ul class="ml-menu">
-                <li class="{{ Route::is('reports.finance.gl') }}">
+                <li class="{{ Route::is('reports.finance.gl') ? 'active' : '' }}">
                     <a href="/report/finance/gl">
                         <span>General Ledger</span>
                     </a>
-                    <a href="/users/index">
-                        <span>Tenant Receivable</span>
-                    </a>
-                    <a href="/users/index">
-                        <span>Cheques</span>
-                    </a>
-                    <a href="/users/index">
+                </li>
+                <li class="{{ Route::is('reports.finance.tb') ? 'active' : '' }}">
+                    <a href="/report/finance/tb">
                         <span>Trial balance</span>
-                    </a>
-                    <a href="/users/index">
-                        <span>Balance Sheet</span>
-                    </a>
-                    <a href="/users/index">
-                        <span>Profit & Loss</span>
-                    </a>
-                    <a href="/users/index">
-                        <span>Tax Payable</span>
                     </a>
                 </li>
             </ul>

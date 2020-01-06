@@ -64,24 +64,26 @@ class Head extends Model
     {
         $this->is_posted = 1;
         $this->save();
+        $this->entries()->update(['is_posted' => 1]);
     }
 
     public function unPost()
     {
         $this->is_posted = 0;
         $this->save();
+        $this->entries()->update(['is_posted' => 0]);
     }
 
     public function cancel()
     {
-        $this->is_posted = 0;
+        $this->unPost();
         $this->is_cancelled = 1;
         $this->save();
     }
 
     public function revertCancel()
     {
-        $this->is_posted = 1;
+        $this->post();
         $this->is_cancelled = 0;
         $this->save();
     }
@@ -225,27 +227,30 @@ class Head extends Model
         }
     }
 
-    public function paymentMethod(){
+    public function paymentMethod()
+    {
         return self::METHOD[$this->method];
     }
 
-    public function paymentMethodDetails(){
-        $methodDetails ='';
-        if( $this->method == 2 ){ //Cheque
-            $methodDetails .= 'Cheque No : '. $this->cheque_no.'<br>';
-            $methodDetails .= 'Cheque Date :'. $this->formated_cheque_date().'<br>';
-        } 
+    public function paymentMethodDetails()
+    {
+        $methodDetails = '';
+        if ($this->method == 2) { //Cheque
+            $methodDetails .= 'Cheque No : ' . $this->cheque_no . '<br>';
+            $methodDetails .= 'Cheque Date :' . $this->formated_cheque_date() . '<br>';
+        }
         return $methodDetails;
     }
 
-    public function chequeStatus(){
+    public function chequeStatus()
+    {
         $status = 'N/A';
-        if( $this->method == 2 ){
+        if ($this->method == 2) {
             $status = 'Not Cleared';
-            if( $this->cheque_status == 2 ){
+            if ($this->cheque_status == 2) {
                 $status = 'Returned';
             }
-            if( $this->cheque_status == 1 ){
+            if ($this->cheque_status == 1) {
                 $status = 'Cleared';
             }
         }

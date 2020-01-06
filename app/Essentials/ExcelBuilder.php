@@ -163,8 +163,9 @@ class ExcelBuilder
     public function setWorkSheetTitle($title = 'default')
     {
         $this->spreadsheet->getActiveSheet()->setTitle($title);
-        return $this->spreadsheet->getActiveSheet();
+        return true;
     }
+
 
     //Initializing Properties
     public function setProperties()

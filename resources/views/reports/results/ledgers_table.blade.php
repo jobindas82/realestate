@@ -3,16 +3,26 @@
     <input type="hidden" name="ledgers_form_flat_id" id="ledgers_form_flat_id">
     <input type="hidden" name="ledgers_form_contract_id" id="ledgers_form_contract_id">
     <div class="col-sm-12">
-        <table class="table table-condensed table-hover" id="ledgers_list">
-            <thead>
-                <tr>
-                    <th style="width: 1%;">#</th>
-                    <th style="width: 50%;">Ledger</th>
-                    <th style="width: 20%;">Type</th>
-                    <th style="width: 20%;">Balance</th>
-                </tr>
-            </thead>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-condensed table-hover" id="ledgers_list">
+                <thead>
+                    <tr>
+                        <th style="width: 1%;">#</th>
+                        <th style="width: 50%;">Ledger</th>
+                        <th style="width: 20%;">Type</th>
+                        <th style="width: 20%;">Balance</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="form-group align-center">
+            <button class="btn btn-danger" href="#" 
+                onclick="window.open('/report/export/ledger?building=' + $('#summary_building_id').val() + '&flat=' + $('#summary_flat_id').val() + '&query=' + $('#flat_building_list').DataTable().search() , '_block');">
+                Export
+            </button>
+        </div>
     </div>
 </div>
 <script>

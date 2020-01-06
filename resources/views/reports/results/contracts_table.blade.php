@@ -3,22 +3,32 @@
     <input type="hidden" name="contract_form_flat_id" id="contract_form_flat_id">
     <input type="hidden" name="contract_form_contract_id" id="contract_form_contract_id">
     <div class="col-sm-12">
-        <table class="table table-condensed table-hover" id="contracts_list">
-            <thead>
-                <tr>
-                    <th style="width: 5%">Con. #</th>
-                    <th style="width: 25%">Tenant</th>
-                    <th style="width: 10%">Flat</th>
-                    <th style="width: 10%">From Date</th>
-                    <th style="width: 10%">To Date</th>
-                    <th style="width: 5%">Renewed</th>
-                    <th style="width: 10%">Prev. Con.</th>
-                    <th style="width: 10%">Tax</th>
-                    <th style="width: 15%">Gross Amt.</th>
-                    <th style="width: 0%">Status</th>
-                </tr>
-            </thead>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-condensed table-hover" id="contracts_list">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">Con. #</th>
+                        <th style="width: 25%">Tenant</th>
+                        <th style="width: 10%">Flat</th>
+                        <th style="width: 10%">From Date</th>
+                        <th style="width: 10%">To Date</th>
+                        <th style="width: 5%">Renewed</th>
+                        <th style="width: 10%">Prev. Con.</th>
+                        <th style="width: 10%">Tax</th>
+                        <th style="width: 15%">Gross Amt.</th>
+                        <th style="width: 0%">Status</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="form-group align-center">
+            <button class="btn btn-danger" href="#" 
+                onclick="window.open('/report/export/contract?building=' + $('#summary_building_id').val() + '&flat=' + $('#summary_flat_id').val() + '&query=' + $('#contracts_list').DataTable().search() , '_block');">
+                Export
+            </button>
+        </div>
     </div>
 </div>
 <script>

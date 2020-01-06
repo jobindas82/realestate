@@ -10,3 +10,13 @@ Route::post('/report/response/ledgers', 'BuildingController@ledger_response')->m
 Route::get('/report/drop/flat/{building_id}', 'BuildingController@flats_drop')->middleware('auth');
 Route::get('/report/drop/contracts/{flat_id}', 'BuildingController@contracts_drop')->middleware('auth');
 Route::get('/report/export/flat', 'BuildingController@export_flat')->middleware('auth');
+Route::get('/report/export/contract', 'BuildingController@export_contract')->middleware('auth');
+Route::get('/report/export/tenant', 'BuildingController@export_tenant')->middleware('auth');
+Route::get('/report/export/finance', 'BuildingController@export_finance')->middleware('auth');
+Route::get('/report/export/ticket', 'BuildingController@export_ticket')->middleware('auth');
+Route::get('/report/export/ledger', 'BuildingController@export_ledger')->middleware('auth');
+Route::get('/report/export/all', 'BuildingController@export_all')->middleware('auth');
+
+
+//Finance reports
+Route::get('/report/finance/gl', 'FinanceController@general_ledger')->middleware('auth');

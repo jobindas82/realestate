@@ -185,14 +185,14 @@
         </li>
 
        
-        <li class="{{ 'dd' }}">
+        <li class="{{ Route::is('reports.finance.gl')  }}">
             <a href="javascript:void(0);" class="menu-toggle">
                 <i class="material-icons">assessment</i>
                 <span>Financial</span>
             </a>
             <ul class="ml-menu">
-                <li class="{{ 'ss' }}">
-                    <a href="/users/index">
+                <li class="{{ Route::is('reports.finance.gl') }}">
+                    <a href="/report/finance/gl">
                         <span>General Ledger</span>
                     </a>
                     <a href="/users/index">

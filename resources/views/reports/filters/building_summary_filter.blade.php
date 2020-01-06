@@ -40,6 +40,13 @@
                             </div>
                         </div>
                     </div>
+                    <!-- <div class="col-sm-3">
+                        <div class="form-group align-center">
+                            <button class="btn btn-danger" href="#" onclick="window.open('/report/export/all?building=' + $('#summary_building_id').val() + '&flat=' + $('#summary_flat_id').val() + '&query=' + $('#flat_building_list').DataTable().search() , '_block');">
+                                Export All
+                            </button>
+                        </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -206,7 +213,7 @@
         reload_datatable('#ledgers_list');
     }
 
-    function resetFlats(){
+    function resetFlats() {
         $('#flat_form_flat_id').val(0);
         $('#contract_form_flat_id').val(0);
         $('#tenant_form_flat_id').val(0);
@@ -216,7 +223,7 @@
         $('#ledgers_form_flat_id').val(0);
     }
 
-    function resetContracts(){
+    function resetContracts() {
         $('#contract_form_contract_id').val(0);
         $('#tenant_form_contract_id').val(0);
         $('#receipts_form_contract_id').val(0);

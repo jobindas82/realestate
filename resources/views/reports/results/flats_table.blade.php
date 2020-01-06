@@ -2,23 +2,25 @@
     <input type="hidden" name="flat_form_building_id" id="flat_form_building_id">
     <input type="hidden" name="flat_form_flat_id" id="flat_form_flat_id">
     <div class="col-sm-12">
-        <table class="table table-condensed table-hover" id="flat_building_list">
-            <thead>
-                <tr>
-                    <th style="width: 5%">Flat</th>
-                    <th style="width: 10%">Premise #</th>
-                    <th style="width: 10%">Plot #</th>
-                    <th style="width: 5%">Floor</th>
-                    <th style="width: 5%">f<sup>2</sup></th>
-                    <th style="width: 5%">Min Value</th>
-                    <th style="width: 15%">Owner</th>
-                    <th style="width: 15%">Landlord</th>
-                    <th style="width: 10%">Type</th>
-                    <th style="width: 10%">Spacing</th>
-                    <th style="width: 0%">Status</th>
-                </tr>
-            </thead>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-condensed table-hover" id="flat_building_list">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">Flat</th>
+                        <th style="width: 10%">Premise #</th>
+                        <th style="width: 10%">Plot #</th>
+                        <th style="width: 5%">Floor</th>
+                        <th style="width: 5%">f<sup>2</sup></th>
+                        <th style="width: 5%">Min Value</th>
+                        <th style="width: 15%">Owner</th>
+                        <th style="width: 15%">Landlord</th>
+                        <th style="width: 10%">Type</th>
+                        <th style="width: 10%">Spacing</th>
+                        <th style="width: 0%">Status</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
     </div>
     <div class="col-sm-12">
         <div class="form-group align-center">

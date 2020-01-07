@@ -14,9 +14,13 @@ class Ledgers extends Model
     const CASH_CHILD = 'CASH_C';
     const BANK_CHILD = 'BANK_C';
     const SALES_VAT = 'VAT_S';
+    const PURCHASE_VAT = 'VAT_P';
+    const EXPENSE_VAT = 'VAT_E';
     const UNBALANCED_AMT = 'UBL';
     const SECURITY_DEPOSIT = 'SE_D';
     const RENT = 'RNT';
+    const CURRENT_PROFIT = 'CPR';
+    const RETAINED_EARNINGS = 'EAR';
 
     protected $table = 'ledgers';
 

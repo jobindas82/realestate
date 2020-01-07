@@ -62,7 +62,7 @@
                             <table class="table table-condensed table-hover" id="liability_table_list">
                                 <thead>
                                     <tr>
-                                        <td colspan="2" class="align-center font-bold success">Total Liabilities</td>
+                                        <td colspan="2" class="align-center font-bold success">Total Equity & Liabilities</td>
                                     </tr>
                                     <tr>
                                         <th style="width: 60%;">Ledger</th>
@@ -80,7 +80,7 @@
                     </div>
                     <div class="col-sm-12">
                         <div class="form-group align-center">
-                            <button class="btn btn-danger" href="#" onclick="window.open('/report/export/bs?from=' + $('#entry_from').val() + '&to=' + $('#entry_to').val(), '_block');">
+                            <button class="btn btn-danger" href="#" onclick="window.open('/report/export/bs?to=' + $('#entry_to').val(), '_block');">
                                 Export
                             </button>
                         </div>
@@ -106,7 +106,7 @@
                 cache: false
             },
             drawCallback: function(settings) {
-                // $('#asset_total').text(settings.json.current_debit);
+                $('#asset_total').text(settings.json.asset_total);
             },
             serverSide: true,
             fixedColumns: true,
@@ -129,7 +129,7 @@
                 cache: false
             },
             drawCallback: function(settings) {
-                // $('#liability_total').text(settings.json.current_credit);
+                $('#liability_total').text(settings.json.liability_total);
             },
             serverSide: true,
             fixedColumns: true,

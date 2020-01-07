@@ -31,3 +31,7 @@ Route::get('/report/finance/bs', ['as' => 'reports.finance.bs', 'uses' => 'Finan
 Route::post('/report/finance/bs_asset', 'FinanceController@balance_sheet_asset_list')->middleware('auth');
 Route::post('/report/finance/bs_liability', 'FinanceController@balance_sheet_liability_list')->middleware('auth');
 Route::get('/report/export/bs', 'FinanceController@balance_sheet_excel')->middleware('auth');
+
+Route::get('/report/finance/tax', ['as' => 'reports.finance.tax', 'uses' => 'FinanceController@tax'] )->middleware('auth');
+Route::post('/report/finance/tax', 'FinanceController@tax_list')->middleware('auth');
+Route::get('/report/export/tax', 'FinanceController@tax_excel')->middleware('auth');

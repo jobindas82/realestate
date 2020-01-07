@@ -30,6 +30,6 @@ class FormatAmount
     }
 
     public function onBase(){
-        return  number_format(Ledgers::onBaseFormat($this->amount, $this->ledger),  $this->roundOff, '.', '');
+        return number_format(Ledgers::onBaseFormat($this->amount, $this->ledger),  $this->roundOff, '.', '');
     }
 }

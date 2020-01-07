@@ -187,7 +187,8 @@
        
         <li class="{{ Route::is('reports.finance.gl') || 
                       Route::is('reports.finance.tb') ||
-                      Route::is('reports.finance.bs')
+                      Route::is('reports.finance.bs') ||
+                      Route::is('reports.finance.tax')
                       ? 'active' : '' }}">
             <a href="javascript:void(0);" class="menu-toggle">
                 <i class="material-icons">assessment</i>
@@ -207,6 +208,11 @@
                 <li class="{{ Route::is('reports.finance.bs') ? 'active' : '' }}">
                     <a href="/report/finance/bs">
                         <span>Balance Sheet</span>
+                    </a>
+                </li>
+                <li class="{{ Route::is('reports.finance.tax') ? 'active' : '' }}">
+                    <a href="/report/finance/tax">
+                        <span>Tax Report</span>
                     </a>
                 </li>
             </ul>

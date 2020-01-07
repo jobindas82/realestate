@@ -20,14 +20,14 @@ class Entries extends Model
     {
         parent::boot();
         static::saving(function ($model) {
-            if( $model->ledger_id > 0 ){
+            if ($model->ledger_id > 0) {
                 $ledgerLevel = $model->ledger->level;
                 $roots = explode(',', $model->ledger->root);
-                foreach( $roots as $i => $eachRoot){
-                    $fieldName = 'lv'.( $i + 1 );
+                foreach ($roots as $i => $eachRoot) {
+                    $fieldName = 'lv' . ($i + 1);
                     $model->$fieldName = $eachRoot;
                 }
-                $fieldName = 'lv'.$ledgerLevel;
+                $fieldName = 'lv' . $ledgerLevel;
                 $model->$fieldName = $model->ledger_id;
             }
             $model->is_posted = $model->head->is_posted;
@@ -64,12 +64,28 @@ class Entries extends Model
         return $this->belongsTo(Tenants::class, 'tenant_id');
     }
 
-    public function accountBase(){
+    public function accountBase()
+    {
         return self::ACCOUNT_BASE[$this->type];
     }
 
     public function formated_date()
     {
         return $this->exists && $this->date != NULL &&   $this->date != '0000-00-00' ? date('d/m/Y', strtotime($this->date)) : '';
+    }
+
+    public static function salesTax($from_date, $to_date)
+    {
+        return -1 * self::whereBetween('entries.date', [$from_date, $to_date])->where('entries.is_posted', 1)->where('entries.ledger_id', Ledgers::findClass(Ledgers::SALES_VAT)->id)->sum('entries.amount');
+    }
+
+    public static function purchaseTax($from_date, $to_date)
+    {
+        return self::whereBetween('entries.date', [$from_date, $to_date])->where('entries.is_posted', 1)->where('entries.ledger_id', Ledgers::findClass(Ledgers::PURCHASE_VAT)->id)->sum('entries.amount');
+    }
+
+    public static function expenseTax($from_date, $to_date)
+    {
+        return  self::whereBetween('entries.date', [$from_date, $to_date])->where('entries.is_posted', 1)->where('entries.ledger_id', Ledgers::findClass(Ledgers::EXPENSE_VAT)->id)->sum('entries.amount');
     }
 }

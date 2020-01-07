@@ -287,6 +287,19 @@ class DefaultSeeder extends Seeder
                     'is_active' => 'Y',
                     'created_by' => 0
                 ],
+                [
+                    'parent_id' => 6,
+                    'name' => 'Current Profit',
+                    'level' => 2,
+                    'root' => 6,
+                    'type' => 'L',
+                    'class' => 'CPR',
+                    'is_parent' => 'N',
+                    'is_generated' => 'Y',
+                    'is_contract_item' => 'N',
+                    'is_active' => 'Y',
+                    'created_by' => 0
+                ]
             ]
         );
 

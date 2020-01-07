@@ -231,7 +231,7 @@ class FinanceController extends \App\Http\Controllers\Controller
 
     public function createTrialBalance($from, $to, $previousFrom, $previousTo, $params = [])
     {
-        DB::raw(
+        DB::update(
             '       CREATE OR REPLACE VIEW current_year AS 
                     SELECT L.id, L.name, L.level, SUM(E.amount) AS balance FROM entries E LEFT JOIN ledgers L ON E.lv1=L.id WHERE L.id IS NOT NULL AND E.is_posted=1 AND E.date BETWEEN "' . $from . '" AND "' . $to . '" GROUP BY L.id
                     UNION ALL
@@ -244,7 +244,7 @@ class FinanceController extends \App\Http\Controllers\Controller
                     SELECT L.id, L.name, L.level, SUM(E.amount) AS balance FROM entries E LEFT JOIN ledgers L ON E.lv5=L.id WHERE L.id IS NOT NULL AND E.is_posted=1 AND E.date BETWEEN "' . $from . '" AND "' . $to . '" GROUP BY L.id'
         );
 
-        DB::raw(
+        DB::update(
             '       CREATE OR REPLACE VIEW previous_year AS 
                     SELECT L.id, L.name, L.level, SUM(E.amount) AS balance FROM entries E LEFT JOIN ledgers L ON E.lv1=L.id WHERE L.id IS NOT NULL AND E.is_posted=1 AND E.date BETWEEN "' . $previousFrom . '" AND "' . $previousTo . '" GROUP BY L.id
                     UNION ALL
@@ -257,7 +257,7 @@ class FinanceController extends \App\Http\Controllers\Controller
                     SELECT L.id, L.name, L.level, SUM(E.amount) AS balance FROM entries E LEFT JOIN ledgers L ON E.lv5=L.id WHERE L.id IS NOT NULL AND E.is_posted=1 AND E.date BETWEEN "' . $previousFrom . '" AND "' . $previousTo . '" GROUP BY L.id'
         );
 
-        DB::raw(
+        DB::update(
             '       CREATE OR REPLACE VIEW trial_balance AS 
                     SELECT ledger_id, ledger_name, parent_id, level, is_parent, SUM(current_balance) AS current_balance, SUM(previous_balance) AS previous_balance FROM ( SELECT L.id AS ledger_id, L.name AS ledger_name, L.parent_id AS parent_id, L.level AS level, L.is_parent AS is_parent, C.balance AS current_balance, NULL AS previous_balance  FROM ledgers L LEFT JOIN current_year C ON L.id = C.id
                     UNION

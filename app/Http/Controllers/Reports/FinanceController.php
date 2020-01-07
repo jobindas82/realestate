@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Reports;
 use App\models\Head;
 use App\models\Entries;
 use App\models\Ledgers;
+use App\models\TrialBalance;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Carbon;
+use Akaunting\Money\Money;
 
 class FinanceController extends \App\Http\Controllers\Controller
 {
@@ -257,9 +259,9 @@ class FinanceController extends \App\Http\Controllers\Controller
 
         DB::select(
             '       CREATE OR REPLACE VIEW trial_balance AS 
-                    SELECT ledger_id, ledger_name, parent_id, level, SUM(current_balance) AS current_balance, SUM(previous_balance) AS previous_balance FROM ( SELECT L.id AS ledger_id, L.name AS ledger_name, L.parent_id AS parent_id, L.level AS level, C.balance AS current_balance, NULL AS previous_balance  FROM ledgers L LEFT JOIN current_year C ON L.id = C.id
+                    SELECT ledger_id, ledger_name, parent_id, level, is_parent, SUM(current_balance) AS current_balance, SUM(previous_balance) AS previous_balance FROM ( SELECT L.id AS ledger_id, L.name AS ledger_name, L.parent_id AS parent_id, L.level AS level, L.is_parent AS is_parent, C.balance AS current_balance, NULL AS previous_balance  FROM ledgers L LEFT JOIN current_year C ON L.id = C.id
                     UNION
-                    SELECT L.id AS ledger_id, L.name AS ledger_name, L.parent_id AS parent_id, L.level AS level, NULL AS current_balance, P.balance AS previous_balance  FROM ledgers L LEFT JOIN previous_year P ON L.id = P.id) AS A GROUP BY A.ledger_id'
+                    SELECT L.id AS ledger_id, L.name AS ledger_name, L.parent_id AS parent_id, L.is_parent AS is_parent, L.level AS level, NULL AS current_balance, P.balance AS previous_balance  FROM ledgers L LEFT JOIN previous_year P ON L.id = P.id) AS A GROUP BY A.ledger_id'
         );
     }
 
@@ -271,18 +273,174 @@ class FinanceController extends \App\Http\Controllers\Controller
     public function trial_balance_list()
     {
 
-        $from = '2020-01-01';
-        $to = '2020-12-31';
+        $from_date =  $_POST['from_date'];
+        $to_date = $_POST['to_date'];
+
+        $from = Carbon::createFromFormat('d/m/Y', $from_date)->format('Y-m-d');
+        $to =  Carbon::createFromFormat('d/m/Y', $to_date)->format('Y-m-d');
 
         $previousFrom = date('Y-m-d', strtotime($from . ' -1 year'));
         $previousTo = date('Y-m-d', strtotime($to . ' -1 year'));
 
         $this->createTrialBalance($from, $to, $previousFrom, $previousTo);
-        
+
         $data['draw'] = $_POST['draw']; //Draw
         $eachItemData = [];
 
-        //Level One
+        //level 1
+        foreach (TrialBalance::levelOne() as $eachOne) {
+            $eachItemData[] = [$eachOne->ledgerName(), $eachOne->currentDebit(), $eachOne->currentCredit(), $eachOne->ledgerName(), $eachOne->previousDebit(), $eachOne->previousCredit()];
+            //Level 2
+            foreach (TrialBalance::levelTwo($eachOne->ledger_id) as $eachTwo) {
+                $eachItemData[] = [$eachTwo->ledgerName(), $eachTwo->currentDebit(), $eachTwo->currentCredit(), $eachTwo->ledgerName(), $eachTwo->previousDebit(), $eachTwo->previousCredit()];
+                //Level 3
+                foreach (TrialBalance::levelThree($eachTwo->ledger_id) as $eachThree) {
+                    $eachItemData[] = [$eachThree->ledgerName(), $eachThree->currentDebit(), $eachThree->currentCredit(), $eachThree->ledgerName(), $eachThree->previousDebit(), $eachThree->previousCredit()];
+                    //Level 4
+                    foreach (TrialBalance::levelFour($eachThree->ledger_id) as $eachFour) {
+                        $eachItemData[] = [$eachFour->ledgerName(), $eachFour->currentDebit(), $eachFour->currentCredit(), $eachFour->ledgerName(), $eachFour->previousDebit(), $eachFour->previousCredit()];
+                        //level 5
+                        foreach (TrialBalance::levelFive($eachFour->ledger_id) as $eachFive) {
+                            $eachItemData[] = [$eachFive->ledgerName(), $eachFive->currentDebit(), $eachFive->currentCredit(), $eachFive->ledgerName(), $eachFive->previousDebit(), $eachFive->previousCredit()];
+                        }
+                    }
+                }
+            }
+        }
 
+        $data['data'] = $eachItemData;
+        $data['current_year'] = 'Current Year (' . $from_date . ' - ' . $to_date . ')';
+        $data['previous_year'] = 'Previous Year (' . date('d/m/Y', strtotime($previousFrom)) . ' - ' .  date('d/m/Y', strtotime($previousTo)) . ')';
+        $data['current_debit'] = Money::AED(TrialBalance::currentDebitSum(), true)->format();
+        $data['current_credit'] = Money::AED(abs(TrialBalance::currentCreditSum()), true)->format();
+        $data['previous_debit'] =  Money::AED(TrialBalance::previousDebitSum(), true)->format();
+        $data['previous_credit'] = Money::AED(abs(TrialBalance::previousCreditSum()), true)->format();
+        return response()->json($data);
     }
+
+    public function trial_balance_excel()
+    {
+        $from_date =  Input::get('from');
+        $to_date = Input::get('to');
+
+        $from = Carbon::createFromFormat('d/m/Y', $from_date)->format('Y-m-d');
+        $to =  Carbon::createFromFormat('d/m/Y', $to_date)->format('Y-m-d');
+
+        $previousFrom = date('Y-m-d', strtotime($from . ' -1 year'));
+        $previousTo = date('Y-m-d', strtotime($to . ' -1 year'));
+
+        $this->createTrialBalance($from, $to, $previousFrom, $previousTo);
+
+        $excelFile = new \App\Essentials\ExcelBuilder('trial_balance');
+        $excelFile->setWorkSheetTitle('Trial balance');
+        $excelFile->mergeCenterCells('A1', 'F1');
+        $excelFile->setCell('A1', 'Trial balance', ['makeBold' => true, 'fontSize' => 20]);
+
+        $excelFile->mergeCenterCells('A2', 'C2');
+        $excelFile->setCell('A2', 'Current Year (' . $from_date . ' - ' . $to_date . ')', ['makeBold' => true, 'fontSize' => 14]);
+
+        $excelFile->mergeCenterCells('D2', 'F2');
+        $excelFile->setCell('D2', 'Previous Year (' . date('d/m/Y', strtotime($previousFrom)) . ' - ' .  date('d/m/Y', strtotime($previousTo)) . ')', ['makeBold' => true, 'fontSize' => 14]);
+
+        $row = 3;
+        $excelFile->setCellMultiple([
+            ['A' . $row, 'Ledger', ['makeBold' => true, 'autoWidthIndex' => 0]],
+            ['B' . $row, 'Debit', ['makeBold' => true, 'autoWidthIndex' => 1]],
+            ['C' . $row, 'Credit', ['makeBold' => true, 'autoWidthIndex' => 2]],
+            ['D' . $row, 'Ledger', ['makeBold' => true, 'autoWidthIndex' => 3]],
+            ['E' . $row, 'Debit', ['makeBold' => true, 'autoWidthIndex' => 4]],
+            ['F' . $row, 'Credit', ['makeBold' => true, 'autoWidthIndex' => 5]],
+        ]);
+
+        $excelFile->setBackgroundColorRange('A' . $row, 'C' . $row, 'A9DEFB');
+        $excelFile->setBackgroundColorRange('D' . $row, 'F' . $row, 'CAF9BE');
+
+        //level 1
+        foreach (TrialBalance::levelOne() as $eachOne) {
+            $row++;
+            $excelFile->setCellMultiple([
+                ['A' . $row, $eachOne->ledgerNameExcel(), ['makeBold' => $eachOne->isParent()]],
+                ['B' . $row, $eachOne->currentDebit()],
+                ['C' . $row, $eachOne->currentCredit()],
+                ['D' . $row, $eachOne->ledgerNameExcel(), ['makeBold' => $eachOne->isParent()]],
+                ['E' . $row, $eachOne->previousDebit()],
+                ['F' . $row, $eachOne->previousCredit()]
+            ]);
+            //Level 2
+            foreach (TrialBalance::levelTwo($eachOne->ledger_id) as $eachTwo) {
+                $row++;
+                $excelFile->setCellMultiple([
+                    ['A' . $row, $eachTwo->ledgerNameExcel(), ['makeBold' => $eachTwo->isParent()]],
+                    ['B' . $row, $eachTwo->currentDebit()],
+                    ['C' . $row, $eachTwo->currentCredit()],
+                    ['D' . $row, $eachTwo->ledgerNameExcel(), ['makeBold' => $eachTwo->isParent()]],
+                    ['E' . $row, $eachTwo->previousDebit()],
+                    ['F' . $row, $eachTwo->previousCredit()]
+                ]);
+                //Level 3
+                foreach (TrialBalance::levelThree($eachTwo->ledger_id) as $eachThree) {
+                    $row++;
+                    $excelFile->setCellMultiple([
+                        ['A' . $row, $eachThree->ledgerNameExcel(), ['makeBold' => $eachThree->isParent()]],
+                        ['B' . $row, $eachThree->currentDebit()],
+                        ['C' . $row, $eachThree->currentCredit()],
+                        ['D' . $row, $eachThree->ledgerNameExcel(), ['makeBold' => $eachThree->isParent()]],
+                        ['E' . $row, $eachThree->previousDebit()],
+                        ['F' . $row, $eachThree->previousCredit()]
+                    ]);
+                    //Level 4
+                    foreach (TrialBalance::levelFour($eachThree->ledger_id) as $eachFour) {
+                        $row++;
+                        $excelFile->setCellMultiple([
+                            ['A' . $row, $eachFour->ledgerNameExcel(), ['makeBold' => $eachFour->isParent()]],
+                            ['B' . $row, $eachFour->currentDebit()],
+                            ['C' . $row, $eachFour->currentCredit()],
+                            ['D' . $row, $eachFour->ledgerNameExcel(), ['makeBold' => $eachFour->isParent()]],
+                            ['E' . $row, $eachFour->previousDebit()],
+                            ['F' . $row, $eachFour->previousCredit()]
+                        ]);
+                        //level 5
+                        foreach (TrialBalance::levelFive($eachFour->ledger_id) as $eachFive) {
+                            $row++;
+                            $excelFile->setCellMultiple([
+                                ['A' . $row, $eachFive->ledgerNameExcel(), ['makeBold' => $eachFive->isParent()]],
+                                ['B' . $row, $eachFive->currentDebit()],
+                                ['C' . $row, $eachFive->currentCredit()],
+                                ['D' . $row, $eachFive->ledgerNameExcel(), ['makeBold' => $eachFive->isParent()]],
+                                ['E' . $row, $eachFive->previousDebit()],
+                                ['F' . $row, $eachFive->previousCredit()]
+                            ]);
+                        }
+                    }
+                }
+            }
+        }
+
+        $row++;
+        $excelFile->setCell('A' . $row, 'Total', ['makeBold' => true]);
+        $excelFile->setCell('B' . $row, Money::AED(TrialBalance::currentDebitSum(), true)->format(), ['makeBold' => true]);
+        $excelFile->setCell('C' . $row, Money::AED(abs(TrialBalance::currentCreditSum()), true)->format(), ['makeBold' => true]);
+
+        $excelFile->setCell('D' . $row, 'Total', ['makeBold' => true]);
+        $excelFile->setCell('E' . $row, Money::AED(TrialBalance::previousDebitSum(), true)->format(), ['makeBold' => true]);
+        $excelFile->setCell('F' . $row, Money::AED(abs(TrialBalance::previousCreditSum()), true)->format(), ['makeBold' => true]);
+
+        $excelFile->output();
+    }
+
+    public function balance_sheet()
+    {
+        return view('reports.finance.filters.bs');
+    }
+
+    public function balance_sheet_asset_list(){
+        $to_date =  Carbon::createFromFormat('d/m/Y', $_POST['to_date'])->format('Y-m-d');
+        $this->createBalanceSheetAsset($to_date);
+    }
+
+    public function balance_sheet_liability_list(){
+        $to_date =  Carbon::createFromFormat('d/m/Y', $_POST['to_date'])->format('Y-m-d');
+        $this->createBalanceSheetLia($to_date);
+    }
+    
 }

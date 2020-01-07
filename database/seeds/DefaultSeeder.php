@@ -81,7 +81,7 @@ class DefaultSeeder extends Seeder
                 ],
                 [
                     'parent_id' => 0,
-                    'name' => 'Opening Balance A/C',
+                    'name' => 'Equity',
                     'level' => 1,
                     'root' => NULL,
                     'type' => 'L',

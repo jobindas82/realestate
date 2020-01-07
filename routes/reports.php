@@ -22,5 +22,12 @@ Route::get('/report/export/all', 'BuildingController@export_all')->middleware('a
 Route::get('/report/finance/gl', ['as' => 'reports.finance.gl', 'uses' => 'FinanceController@general_ledger'] )->middleware('auth');
 Route::post('/report/finance/gl', 'FinanceController@general_ledger_list')->middleware('auth');
 Route::get('/report/export/gl', 'FinanceController@general_ledger_excel')->middleware('auth');
+
 Route::get('/report/finance/tb', ['as' => 'reports.finance.tb', 'uses' => 'FinanceController@trial_balance'] )->middleware('auth');
 Route::post('/report/finance/tb', 'FinanceController@trial_balance_list')->middleware('auth');
+Route::get('/report/export/tb', 'FinanceController@trial_balance_excel')->middleware('auth');
+
+Route::get('/report/finance/bs', ['as' => 'reports.finance.bs', 'uses' => 'FinanceController@balance_sheet'] )->middleware('auth');
+Route::post('/report/finance/bs_asset', 'FinanceController@balance_sheet_asset_list')->middleware('auth');
+Route::post('/report/finance/bs_liability', 'FinanceController@balance_sheet_liability_list')->middleware('auth');
+Route::get('/report/export/bs', 'FinanceController@balance_sheet_excel')->middleware('auth');

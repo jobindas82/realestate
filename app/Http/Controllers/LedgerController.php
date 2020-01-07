@@ -104,6 +104,7 @@ class LedgerController extends Controller
 
             if ($model->is_reached_maximum_level()) {
                 $model->save();
+                $model->updateEntries();
             } else {
                 return response()->json(['message' => 'failed', 'name' => 'Maximum allowable Level is ' . Ledgers::MAX_LEVEL]);
             }

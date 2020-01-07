@@ -24,7 +24,6 @@
                         <div class="form-group form-float">
                             <div class="form-line tenant-set ">
                                 {{ Form::text('to_date', date('d/m/Y'), [ 'class' => 'form-control datepicker', 'id' => 'entry_to']) }}
-                                <input type="hidden" name="contract_id" id="contract_id" value="0">
                                 <label class="form-label"> To</label>
                             </div>
                         </div>
@@ -50,8 +49,8 @@
                             <table class="table table-condensed table-hover" id="tb_table_list">
                                 <thead>
                                     <tr>
-                                        <td colspan="3" class="align-center font-bold success">Current Year</td>
-                                        <td colspan="3" class="align-center font-bold info">Previous Year</td>
+                                        <td colspan="3" class="align-center font-bold success" id="current_head">Current Year</td>
+                                        <td colspan="3" class="align-center font-bold info" id="previous_head">Previous Year</td>
                                     </tr>
                                     <tr>
                                         <th style="width: 30%;">Ledger</th>
@@ -64,12 +63,12 @@
                                 </thead>
                                 <tfoot>
                                     <tr class="warning">
-                                        <td class="align-right font-bold"></td>
-                                        <td class="font-bold" id="debit_sum">0.00</td>
-                                        <td class="font-bold" id="credit_sum">0.00</td>
-                                        <td class="align-right font-bold"></td>
-                                        <td class="font-bold" id="debit_sum">0.00</td>
-                                        <td class="font-bold" id="credit_sum">0.00</td>
+                                        <td class="align-right font-bold">Total</td>
+                                        <td class="font-bold" id="cr_debit_sum">0.00</td>
+                                        <td class="font-bold" id="cr_credit_sum">0.00</td>
+                                        <td class="align-right font-bold">Total</td>
+                                        <td class="font-bold" id="pr_debit_sum">0.00</td>
+                                        <td class="font-bold" id="pr_credit_sum">0.00</td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -77,7 +76,7 @@
                     </div>
                     <div class="col-sm-12">
                         <div class="form-group align-center">
-                            <button class="btn btn-danger" href="#" onclick="window.open('/report/export/gl?from=' + $('#entry_from').val() + '&to=' + $('#entry_to').val() + '&ledger=' + $('#ledger_id').val() + '&contract=' + $('#contract_id').val(), '_block');">
+                            <button class="btn btn-danger" href="#" onclick="window.open('/report/export/tb?from=' + $('#entry_from').val() + '&to=' + $('#entry_to').val(), '_block');">
                                 Export
                             </button>
                         </div>
@@ -92,10 +91,8 @@
 <script>
     $(function() {
         $('#tb_table_list').on("preXhr.dt", function(e, settings, data) {
-            data.ledger_id = $('#ledger_id').val();
             data.from_date = $('#entry_from').val();
             data.to_date = $('#entry_to').val();
-            data.contract_id = $('#contract_id').val();
             return data;
         }).DataTable({
             responsive: true,
@@ -106,15 +103,20 @@
                 cache: false
             },
             drawCallback: function(settings) {
-                // $('#closing_balance').text(settings.json.closing_balance);
-                // $('#debit_sum').text(settings.json.debit_sum);
-                // $('#credit_sum').text(settings.json.credit_sum);
+                $('#cr_debit_sum').text(settings.json.current_debit);
+                $('#cr_credit_sum').text(settings.json.current_credit);
+                $('#pr_debit_sum').text(settings.json.previous_debit);
+                $('#pr_credit_sum').text(settings.json.previous_credit);
+                $('#current_head').text(settings.json.current_year);
+                $('#previous_head').text(settings.json.previous_year);
             },
             serverSide: true,
             fixedColumns: true,
             processing: true,
             bSort: false,
             paging: false,
+            searching: false,
+            info:false
         });
     });
 </script>

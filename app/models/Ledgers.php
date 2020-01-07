@@ -17,7 +17,7 @@ class Ledgers extends Model
     const UNBALANCED_AMT = 'UBL';
     const SECURITY_DEPOSIT = 'SE_D';
     const RENT = 'RNT';
-    
+
     protected $table = 'ledgers';
 
     protected $fillable = [
@@ -40,6 +40,11 @@ class Ledgers extends Model
     public function group()
     {
         return $this->belongsTo(Ledgers::class, 'parent_id');
+    }
+
+    public function entries()
+    {
+        return $this->hasMany(Entries::class, 'ledger_id');
     }
 
     public static function parents($dontShowId = 0, $prepend = false)
@@ -73,15 +78,15 @@ class Ledgers extends Model
 
     public function rootNames()
     {
-       $root = '/';
-       if( $this->root != NULL){
-           foreach(explode(',', $this->root) as $i => $each ){
-               if( $i > 0 )
-                $root .='/';
-               $root .= self::find($each)->name;
-           }
-       }
-       return $root;
+        $root = '/';
+        if ($this->root != NULL) {
+            foreach (explode(',', $this->root) as $i => $each) {
+                if ($i > 0)
+                    $root .= '/';
+                $root .= self::find($each)->name;
+            }
+        }
+        return $root;
     }
 
     public function addLevel()
@@ -122,7 +127,8 @@ class Ledgers extends Model
         }
     }
 
-    public function is_reached_maximum_level($lessThanOne = false){
+    public function is_reached_maximum_level($lessThanOne = false)
+    {
         $maxLevel = $lessThanOne ? self::MAX_LEVEL - 1 : self::MAX_LEVEL;
         return $this->level > $maxLevel ? false : true;
     }
@@ -135,27 +141,52 @@ class Ledgers extends Model
         return $query->pluck('name', 'id');
     }
 
-    public function currentBalance(){
+    public function currentBalance()
+    {
         return 100;
     }
 
-    public static function childrenHaveClass($id =0, $class = NULL){
+    public static function childrenHaveClass($id = 0, $class = NULL)
+    {
         $query = self::query()->where('is_active', 'Y')->where('is_parent', 'N')->where('class', $class);
         if ($id > 0)
             $query->orWhere('id', $id);
         return $query->pluck('name', 'id')->prepend('None', 0);
     }
 
-    public static function findClass($class = NULL){
+    public static function findClass($class = NULL)
+    {
         return self::where('class', $class)->first();
     }
 
-    public static function onBaseFormat($amount=0, $ledger=0){
+    public static function onBaseFormat($amount = 0, $ledger = 0)
+    {
         $multipliers = ['A' => 1, 'E' => 1, 'L' => -1, 'I' => -1];
-        if( $ledger > 0 ){
+        if ($ledger > 0) {
             $ledgerType = self::find($ledger)->type;
-            return $amount * $multipliers[ $ledgerType ];
+            return $amount * $multipliers[$ledgerType];
         }
         return 0;
+    }
+
+    public function updateEntries()
+    {
+
+        $ledgerLevel = $this->level;
+        $roots = explode(',', $this->root);
+        $fields = [
+            'lv1' => NULL,
+            'lv2' => NULL,
+            'lv3' => NULL,
+            'lv4' => NULL,
+            'lv5' => NULL
+        ];
+        foreach ($roots as $i => $eachRoot) {
+            $fieldName = 'lv' . ($i + 1);
+            $fields[$fieldName] = $eachRoot;
+        }
+        $fieldName = 'lv' . $ledgerLevel;
+        $fields[$fieldName] = $this->id;
+        $this->entries()->update($fields);
     }
 }

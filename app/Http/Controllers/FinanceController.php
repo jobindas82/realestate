@@ -93,6 +93,8 @@ class FinanceController extends Controller
             $cancelledOrReturned = $eachItem->is_cancelled;
             if ($eachItem->cheque_status == 2)
                 $cancelledOrReturned = 100; ///////////////////////// Override |||| Cheque returns
+            if ($eachItem->cheque_status == 1)
+                $cancelledOrReturned = 99; ///////////////////////// Override |||| Cheque Cleared
             $actions = '';
             if (!$eachItem->isCancelled() && $contract_id == 0) {
                 $actions .= '<a title="Edit" href="' . $routes[$type] . UriEncode::encrypt($eachItem->id) . '"><i class="material-icons" >create</i></a>';

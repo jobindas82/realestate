@@ -737,6 +737,7 @@ class FinanceController extends \App\Http\Controllers\Controller
             $eachItemData[] = [
                 ($i + $offset + 1),
                 $eachItem->head->entry_type->name,
+                $eachItem->head->formated_date(),
                 $eachItem->head->number,
                 $eachItem->head->contract_id,
                 $eachItem->head->tenant->name,
@@ -758,5 +759,254 @@ class FinanceController extends \App\Http\Controllers\Controller
         $data['tax_payable'] =  number_format(round($taxPayable, 2),  2, '.', ',');
 
         return response()->json($data);
+    }
+
+    public function tax_excel()
+    {
+        $from_date = Carbon::createFromFormat('d/m/Y', Input::get('from'))->format('Y-m-d');
+        $to_date = Carbon::createFromFormat('d/m/Y', Input::get('to'))->format('Y-m-d');
+
+        $query = Entries::query()
+            ->leftJoin('buildings', 'entries.building_id', 'buildings.id')
+            ->leftJoin('tenants', 'tenants.id', 'entries.tenant_id')
+            ->leftJoin('flats', 'flats.id', 'entries.flat_id')
+            ->whereBetween('entries.date', [$from_date, $to_date])
+            ->where('entries.is_posted', 1)
+            ->where('entries.ledger_id', Ledgers::findClass(Ledgers::SALES_VAT)->id);
+
+        $result = $query
+            ->select('entries.date', 'entries.head_id', 'entries.amount', 'entries.ledger_id')
+            ->orderBy('entries.date', 'ASC')
+            ->get();
+
+        $excelFile = new \App\Essentials\ExcelBuilder('tax_report');
+        $excelFile->setWorkSheetTitle('Tax Payable');
+        $excelFile->mergeCenterCells('A1', 'I1');
+        $excelFile->setCell('A1', 'Tax Report', ['makeBold' => true, 'fontSize' => 20]);
+
+        $excelFile->setCell('A2', 'From', ['makeBold' => true]);
+        $excelFile->setCell('B2', $from_date);
+        $excelFile->setCell('A3', 'To', ['makeBold' => true]);
+        $excelFile->setCell('B3', $to_date);
+
+        $row = 5;
+        $excelFile->setCellMultiple([
+            ['A' . $row, '#', ['makeBold' => true, 'autoWidthIndex' => 0]],
+            ['B' . $row, 'Type', ['makeBold' => true, 'autoWidthIndex' => 1]],
+            ['C' . $row, 'Date', ['makeBold' => true, 'autoWidthIndex' => 2]],
+            ['D' . $row, 'Number', ['makeBold' => true, 'autoWidthIndex' => 3]],
+            ['E' . $row, 'Contract #', ['makeBold' => true, 'autoWidthIndex' => 4]],
+            ['F' . $row, 'Tenant', ['makeBold' => true, 'autoWidthIndex' => 5]],
+            ['G' . $row, 'Building', ['makeBold' => true, 'autoWidthIndex' => 6]],
+            ['H' . $row, 'Flat', ['makeBold' => true, 'autoWidthIndex' => 7]],
+            ['I' . $row, 'Tax Amount', ['makeBold' => true, 'autoWidthIndex' => 8]]
+        ]);
+
+        $excelFile->setBackgroundColorRange('A' . $row, 'I' . $row, 'A9DEFB');
+
+        foreach ($result as $i => $eachItem) {
+            $row++;
+            $excelFile->setCellMultiple([
+                ['A' . $row, ($i + 1)],
+                ['B' . $row, $eachItem->head->entry_type->name],
+                ['C' . $row, $eachItem->head->formated_date()],
+                ['D' . $row, $eachItem->head->number],
+                ['E' . $row, $eachItem->head->contract_id],
+                ['F' . $row, $eachItem->head->tenant->name],
+                ['G' . $row, $eachItem->head->building->name],
+                ['H' . $row, $eachItem->head->flat->name],
+                ['I' . $row, \App\Essentials\FormatAmount::format($eachItem->amount, $eachItem->ledger_id)->onBase()]
+
+            ]);
+        }
+
+        $taxOnSales = Entries::salesTax($from_date, $to_date);
+        $taxOnPurchase = Entries::purchaseTax($from_date, $to_date);
+        $taxOnExpense =  Entries::expenseTax($from_date, $to_date);
+        $taxPayable = $taxOnSales - $taxOnPurchase - $taxOnExpense;
+
+        $row++;
+        $excelFile->mergeRightCells('A' . $row, 'H' . $row);
+        $excelFile->setCell('A' . $row, 'Tax on Sales', ['makeBold' => true]);
+        $excelFile->setCell('I' . $row, number_format(round($taxOnSales, 2),  2, '.', ','), ['makeBold' => true]);
+
+        $row++;
+        $excelFile->mergeRightCells('A' . $row, 'H' . $row);
+        $excelFile->setCell('A' . $row, 'Tax on Purchase', ['makeBold' => true]);
+        $excelFile->setCell('I' . $row, number_format(round($taxOnPurchase, 2),  2, '.', ','), ['makeBold' => true]);
+
+        $row++;
+        $excelFile->mergeRightCells('A' . $row, 'H' . $row);
+        $excelFile->setCell('A' . $row, 'Tax on Expense', ['makeBold' => true]);
+        $excelFile->setCell('I' . $row, number_format(round($taxOnExpense, 2),  2, '.', ','), ['makeBold' => true]);
+
+        $row++;
+        $excelFile->mergeRightCells('A' . $row, 'H' . $row);
+        $excelFile->setCell('A' . $row, 'Tax on Expense', ['makeBold' => true]);
+        $excelFile->setCell('I' . $row, number_format(round($taxPayable, 2),  2, '.', ','), ['makeBold' => true]);
+
+        $excelFile->output();
+    }
+
+    public function cheque()
+    {
+        return view('reports.finance.filters.cheque');
+    }
+
+    public function cheque_list()
+    {
+        $draw   = $_POST['draw'];
+        $offset = $_POST['start'];
+        $limit  = $_POST['length'];
+        $keyword = trim($_POST['search']['value']);
+
+        $columns = [
+            0 => 'finance.number',
+            1 => 'finance.cheque_date',
+            2 => 'finance.cheque_no',
+            3 => 'finance.contract_id',
+            4 => 'tenants.name',
+            5 => 'finance.narration',
+            6 => 'finance.id',
+            7 => 'finance.cheque_status'
+        ];
+
+        $filterColumn = $columns[$_POST['order'][0]['column']];
+        $filterOrder  = $_POST['order'][0]['dir'];
+
+        $type = (int) $_POST['type'];
+        $status = (int) $_POST['status'];
+
+        $from_date = Carbon::createFromFormat('d/m/Y', $_POST['from_date'])->format('Y-m-d');
+        $to_date = Carbon::createFromFormat('d/m/Y', $_POST['to_date'])->format('Y-m-d');
+
+        $query = Head::query()
+            ->leftJoin('tenants', 'tenants.id', 'finance.tenant_id')
+            ->whereBetween('finance.cheque_date', [$from_date, $to_date])
+            ->where('finance.type', $type)
+            ->where('finance.method', 2);
+
+        if ($status > 0) {
+            $query->where('finance.cheque_status', $status);
+        } else {
+            $query->where(function ($q) use ($status) {
+                $q->where('finance.is_posted', 1)
+                    ->orWhere('finance.cheque_status', 2);
+            });
+        }
+
+        if ($keyword != "") {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('finance.cheque_no', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('finance.number', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('finance.contract_id', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('tenants.name', 'LIKE', '%' . $keyword . '%');
+            });
+        }
+
+        $result = $query
+            ->select('finance.id', 'finance.number', 'finance.cheque_no', 'finance.cheque_date', 'finance.tenant_id', 'finance.narration', 'finance.cheque_status', 'finance.method', 'finance.contract_id')
+            ->skip($offset)
+            ->take($limit)
+            ->orderBy($filterColumn, $filterOrder)
+            ->get();
+
+        $recordsTotal = $result->count();
+        $recordsFiltered = $recordsTotal;
+        $data['draw'] = $draw;
+        $data['recordsTotal'] = $recordsTotal;
+        $data['recordsFiltered'] = $recordsFiltered;
+        $eachItemData = array();
+
+        foreach ($result as  $eachItem) {
+
+            $eachItemData[] = [
+                $eachItem->number,
+                $eachItem->formated_cheque_date(),
+                $eachItem->cheque_no,
+                $eachItem->contract_id,
+                $eachItem->tenant->name,
+                $eachItem->narration,
+                $eachItem->debitSum(true),
+                $eachItem->chequeStatus(),
+            ];
+        }
+        $data['data'] = $eachItemData;
+
+        return response()->json($data);
+    }
+
+    public function cheque_export()
+    {
+        $from_date = Carbon::createFromFormat('d/m/Y', Input::get('from'))->format('Y-m-d');
+        $to_date = Carbon::createFromFormat('d/m/Y', Input::get('to'))->format('Y-m-d');
+        $type = (int) Input::get('type');
+        $status = (int) Input::get('status');
+
+        $query = Head::query()
+            ->leftJoin('tenants', 'tenants.id', 'finance.tenant_id')
+            ->whereBetween('finance.cheque_date', [$from_date, $to_date])
+            ->where('finance.type', $type)
+            ->where('finance.method', 2);
+
+        if ($status > 0) {
+            $query->where('finance.cheque_status', $status);
+        } else {
+            $query->where(function ($q) use ($status) {
+                $q->where('finance.is_posted', 1)
+                    ->orWhere('finance.cheque_status', 2);
+            });
+        }
+
+        $result = $query
+            ->select('finance.id', 'finance.number', 'finance.cheque_no', 'finance.cheque_date', 'finance.tenant_id', 'finance.narration', 'finance.cheque_status', 'finance.method', 'finance.contract_id')
+            ->get();
+
+        $excelFile = new \App\Essentials\ExcelBuilder('cheque_report');
+        $excelFile->setWorkSheetTitle('Cheque Report');
+        $excelFile->mergeCenterCells('A1', 'H1');
+        $excelFile->setCell('A1', 'Cheque Report', ['makeBold' => true, 'fontSize' => 20]);
+        $excelFile->setCell('A2', 'From', ['makeBold' => true]);
+        $excelFile->setCell('B2', $from_date);
+        $excelFile->setCell('A3', 'To', ['makeBold' => true]);
+        $excelFile->setCell('B3', $to_date);
+        $excelFile->setCell('A4', 'Type', ['makeBold' => true]);
+        $typeArr = [0 => NULL, 1 => 'Receivable', 2 => 'Payable'];
+        $typeLabel = $typeArr[$type];
+        $excelFile->setCell('B4', $typeLabel);
+        $excelFile->setCell('A5', 'Status', ['makeBold' => true]);
+        $statusArr =[ 0 => 'All', 1 => 'Cleared', 2 => 'Returned' ];
+        $statusLabel = $statusArr[$status];
+        $excelFile->setCell('B5', $statusLabel);
+
+        $row = 7;
+        $excelFile->setCellMultiple([
+            ['A' . $row, '#', ['makeBold' => true, 'autoWidthIndex' => 0]],
+            ['B' . $row, 'Cheque Date', ['makeBold' => true, 'autoWidthIndex' => 1]],
+            ['C' . $row, 'Cheque No', ['makeBold' => true, 'autoWidthIndex' => 2]],
+            ['D' . $row, 'Contract #', ['makeBold' => true, 'autoWidthIndex' => 3]],
+            ['E' . $row, 'Tenant', ['makeBold' => true, 'autoWidthIndex' => 4]],
+            ['F' . $row, 'Narration', ['makeBold' => true, 'autoWidthIndex' => 5]],
+            ['G' . $row, 'Amount', ['makeBold' => true, 'autoWidthIndex' => 6]],
+            ['H' . $row, 'Status', ['makeBold' => true, 'autoWidthIndex' => 7]]
+        ]);
+
+        $excelFile->setBackgroundColorRange('A' . $row, 'H' . $row, 'A9DEFB');
+
+        foreach ($result as $eachItem) {
+            $row++;
+            $excelFile->setCellMultiple([
+                ['A' . $row, $eachItem->number],
+                ['B' . $row, $eachItem->formated_cheque_date()],
+                ['C' . $row, $eachItem->cheque_no],
+                ['D' . $row, $eachItem->contract_id],
+                ['E' . $row, $eachItem->tenant->name],
+                ['F' . $row, $eachItem->narration],
+                ['G' . $row, $eachItem->debitSum(true)],
+                ['H' . $row, $eachItem->chequeStatus()],
+            ]);
+        }
+
+        $excelFile->output();
     }
 }

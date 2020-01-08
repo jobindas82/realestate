@@ -35,3 +35,7 @@ Route::get('/report/export/bs', 'FinanceController@balance_sheet_excel')->middle
 Route::get('/report/finance/tax', ['as' => 'reports.finance.tax', 'uses' => 'FinanceController@tax'] )->middleware('auth');
 Route::post('/report/finance/tax', 'FinanceController@tax_list')->middleware('auth');
 Route::get('/report/export/tax', 'FinanceController@tax_excel')->middleware('auth');
+
+Route::get('/report/finance/cheque', ['as' => 'reports.finance.cheque', 'uses' => 'FinanceController@cheque'] )->middleware('auth');
+Route::post('/report/finance/cheque', 'FinanceController@cheque_list')->middleware('auth');
+Route::get('/report/export/cheque', 'FinanceController@cheque_export')->middleware('auth');

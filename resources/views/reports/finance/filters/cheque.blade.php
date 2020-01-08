@@ -7,12 +7,12 @@
         <div class="card">
             <div class="header">
                 <h2>
-                    Tax Report
+                    Cheque Report
                 </h2>
             </div>
             <div class="body">
                 <div class="row clearfix">
-                    <div class="col-sm-3">
+                    <div class="col-sm-2">
                         <div class="form-group form-float">
                             <div class="form-line tenant-set ">
                                 {{ Form::text('from_date', date('01/01/Y'), [ 'class' => 'form-control datepicker', 'id' => 'entry_from']) }}
@@ -20,7 +20,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-2">
                         <div class="form-group form-float">
                             <div class="form-line tenant-set ">
                                 {{ Form::text('to_date', date('d/m/Y'), [ 'class' => 'form-control datepicker', 'id' => 'entry_to']) }}
@@ -29,8 +29,24 @@
                         </div>
                     </div>
                     <div class="col-sm-3">
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                {{ Form::select('type', [ 1 => 'Receivable', 2 => 'Payable'], 0, [ 'class' => 'form-control show-tick', 'id' => 'type' ]) }}
+                                <label class="form-label">Type</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                {{ Form::select('status', [ 0 => 'All', 1 => 'Cleared', 2 => 'Returned' ], 0, [ 'class' => 'form-control show-tick', 'id' => 'status' ]) }}
+                                <label class="form-label">Status</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
                         <div class="form-group">
-                            <button class="btn btn-danger" onclick="reload_datatable('#tax_report')">Load</button>
+                            <button class="btn btn-danger" onclick="reload_datatable('#cheque_table_list')">Load</button>
                         </div>
                     </div>
                 </div>
@@ -46,44 +62,25 @@
                 <div class="row clearfix">
                     <div class="col-sm-12">
                         <div class="table-responsive">
-                            <table class="table table-condensed table-hover" id="tax_report">
+                            <table class="table table-condensed table-hover" id="cheque_table_list">
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Type</th>
-                                        <th>Date</th>
-                                        <th>Number</th>
+                                        <th>Cheque Date</th>
+                                        <th>Cheque No.</th>
                                         <th>Contract #</th>
                                         <th>Tenant</th>
-                                        <th>Building</th>
-                                        <th>Flat</th>
-                                        <th>Tax Amount</th>
+                                        <th>Narration</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
                                     </tr>
                                 </thead>
-                                <tfoot>
-                                    <tr class="warning">
-                                        <td class="align-right font-bold" colspan="8">Tax on Sales</td>
-                                        <td class="font-bold" id="tax_on_sales">0.00</td>
-                                    </tr>
-                                    <tr class="warning">
-                                        <td class="align-right font-bold" colspan="8">Tax on Purchase</td>
-                                        <td class="font-bold" id="tax_on_purchase">0.00</td>
-                                    </tr>
-                                    <tr class="warning">
-                                        <td class="align-right font-bold" colspan="8">Tax on Expense</td>
-                                        <td class="font-bold" id="tax_on_expense">0.00</td>
-                                    </tr>
-                                    <tr class="warning">
-                                        <td class="align-right font-bold" colspan="8">Tax Payable</td>
-                                        <td class="font-bold" id="tax_payable">0.00</td>
-                                    </tr>
-                                </tfoot>
                             </table>
                         </div>
                     </div>
                     <div class="col-sm-12">
                         <div class="form-group align-center">
-                            <button class="btn btn-danger" href="#" onclick="window.open('/report/export/tax?from=' + $('#entry_from').val() + '&to=' + $('#entry_to').val(), '_block');">
+                            <button class="btn btn-danger" href="#" onclick="window.open('/report/export/cheque?from=' + $('#entry_from').val() + '&to=' + $('#entry_to').val() + '&status=' + $('#status').val() + '&type=' + $('#type').val(), '_block');">
                                 Export
                             </button>
                         </div>
@@ -97,23 +94,19 @@
 
 <script>
     $(function() {
-        $('#tax_report').on("preXhr.dt", function(e, settings, data) {
+        $('#cheque_table_list').on("preXhr.dt", function(e, settings, data) {
             data.from_date = $('#entry_from').val();
             data.to_date = $('#entry_to').val();
+            data.status = $('#status').val();
+            data.type = $('#type').val();
             return data;
         }).DataTable({
             responsive: true,
             pageLength: 100,
             ajax: {
-                url: "/report/finance/tax",
+                url: "/report/finance/cheque",
                 type: "POST",
                 cache: false
-            },
-            drawCallback: function(settings) {
-                $('#tax_on_sales').text(settings.json.tax_sales);
-                $('#tax_on_purchase').text(settings.json.tax_purchase);
-                $('#tax_on_expense').text(settings.json.tax_expense);
-                $('#tax_payable').text(settings.json.tax_payable);
             },
             serverSide: true,
             fixedColumns: true,

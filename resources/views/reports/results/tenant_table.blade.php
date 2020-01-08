@@ -8,6 +8,7 @@
                 <thead>
                     <tr>
                         <th style="width: 2%;">#</th>
+                        <th style="width: 15%;">Contract #</th>
                         <th style="width: 15%;">Name</th>
                         <th style="width: 10%;">Mobile</th>
                         <th style="width: 10%;">Phone</th>
@@ -52,17 +53,17 @@
                 [0, "desc"]
             ],
             columnDefs: [{
-                targets: [8],
+                targets: [9],
                 visible: false
             }],
-            rowCallback: function(row, data) {
-                if (data[8] == 2) {
-                    $(row).addClass("warning");
-                }
-                if (data[8] == 3) {
-                    $(row).addClass("danger");
-                }
-            },
+            // rowCallback: function(row, data) {
+            //     if (data[9] == 2) {
+            //         $(row).addClass("warning");
+            //     }
+            //     if (data[9] == 3) {
+            //         $(row).addClass("danger");
+            //     }
+            // },
         });
     });
 </script>

@@ -90,6 +90,9 @@
                 if (data[9] == 100) {
                     $(row).addClass("warning");
                 }
+                if (data[9] == 99) {
+                    $(row).addClass("success");
+                }
             },
         });
     });

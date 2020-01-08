@@ -190,14 +190,15 @@ class BuildingController extends \App\Http\Controllers\Controller
 
         $columns = [
             0 => 'tenants.id',
-            1 => 'tenants.name',
-            2 => 'tenants.mobile',
-            3 => 'tenants.land_phone',
-            4 => 'tenants.email',
-            5 => 'tenants.emirates_id',
-            6 => 'tenants.passport_number',
-            7 => 'tenants.trn_number',
-            8 => 'tenants.is_available',
+            1 => 'contracts.id',
+            2 => 'tenants.name',
+            3 => 'tenants.mobile',
+            4 => 'tenants.land_phone',
+            5 => 'tenants.email',
+            6 => 'tenants.emirates_id',
+            7 => 'tenants.passport_number',
+            8 => 'tenants.trn_number',
+            9 => 'tenants.is_available',
         ];
 
         $filterColumn = $columns[$_POST['order'][0]['column']];
@@ -221,6 +222,7 @@ class BuildingController extends \App\Http\Controllers\Controller
         if ($keyword != "") {
             $query->where(function ($q) use ($keyword) {
                 $q->where('tenants.name', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('contracts.id', 'LIKE', '%' . $keyword . '%')
                     ->orWhere('tenants.email', 'LIKE', '%' . $keyword . '%')
                     ->orWhere('tenants.mobile', 'LIKE', '%' . $keyword . '%')
                     ->orWhere('tenants.trn_number', 'LIKE', '%' . $keyword . '%')
@@ -229,7 +231,7 @@ class BuildingController extends \App\Http\Controllers\Controller
             });
         }
 
-        $result = $query->select('contracts.tenant_id')->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->groupBy('contracts.tenant_id')->get();
+        $result = $query->select('contracts.tenant_id', DB::raw('GROUP_CONCAT(contracts.id) as contracts_id'))->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->groupBy('contracts.tenant_id')->get();
 
         $recordsTotal = $result->count();
         $recordsFiltered = $recordsTotal;
@@ -239,7 +241,7 @@ class BuildingController extends \App\Http\Controllers\Controller
         $eachItemData = array();
 
         foreach ($result as $eachItem) {
-            $eachItemData[] = [$eachItem->tenant_id, $eachItem->tenant->name,  $eachItem->tenant->mobile, $eachItem->tenant->land_phone, $eachItem->tenant->email, $eachItem->tenant->emirates_id, $eachItem->tenant->passport_number, $eachItem->tenant->trn_number, $eachItem->tenant->is_available];
+            $eachItemData[] = [$eachItem->tenant_id, $eachItem->contracts_id, $eachItem->tenant->name,  $eachItem->tenant->mobile, $eachItem->tenant->land_phone, $eachItem->tenant->email, $eachItem->tenant->emirates_id, $eachItem->tenant->passport_number, $eachItem->tenant->trn_number, $eachItem->tenant->is_available];
         }
         $data['data'] = $eachItemData;
 

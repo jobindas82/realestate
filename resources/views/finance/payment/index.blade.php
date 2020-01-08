@@ -85,6 +85,12 @@
                 if (data[7] == 1) {
                     $(row).addClass("danger");
                 }
+                if (data[7] == 100) {
+                    $(row).addClass("warning");
+                }
+                if (data[7] == 99) {
+                    $(row).addClass("success");
+                }
             },
         });
     });

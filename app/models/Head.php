@@ -246,7 +246,7 @@ class Head extends Model
     {
         $status = 'N/A';
         if ($this->method == 2) {
-            $status = 'Not Cleared';
+            $status = 'Pending';
             if ($this->cheque_status == 2) {
                 $status = 'Returned';
             }

@@ -21,6 +21,8 @@ class Ledgers extends Model
     const RENT = 'RNT';
     const CURRENT_PROFIT = 'CPR';
     const RETAINED_EARNINGS = 'EAR';
+    const INCOME_PARENT = 'IN_P';
+    const EXPENSE_PARENT = 'EX_P';
 
     protected $table = 'ledgers';
 
@@ -145,9 +147,18 @@ class Ledgers extends Model
         return $query->pluck('name', 'id');
     }
 
-    public function currentBalance()
+    public function currentBalance($format = true)
     {
-        return 100;
+        $fieldName = 'lv'.$this->level;
+        $balance = Entries::where('is_posted', 1)->where($fieldName, $this->id)->sum('amount');
+        return $format ? Ledgers::onBaseFormat($balance, $this->id) : $balance;
+    }
+
+    public function currentYearBalance($format = true)
+    {
+        $fieldName = 'lv'.$this->level;
+        $balance = Entries::where('is_posted', 1)->whereBetween('date', [date('Y').'-01-01', date('Y-m-d')])->where($fieldName, $this->id)->sum('amount');
+        return $format ? Ledgers::onBaseFormat($balance, $this->id) : $balance;
     }
 
     public static function childrenHaveClass($id = 0, $class = NULL)

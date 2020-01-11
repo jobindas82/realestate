@@ -87,6 +87,9 @@ Route::get('/masters/locations/{country_id}', ['as' => 'masters.locations', 'use
 
 //Helpers
 Route::post('/theme', 'UserController@update_theme')->middleware('auth');
+Route::get('/expiring_contracts', 'HomeController@expiring_contracts')->middleware('auth');
+Route::get('/uncleared_payments', 'HomeController@uncleared_payments')->middleware('auth');
+Route::get('/uncleared_receipts', 'HomeController@uncleared_receipts')->middleware('auth');
 
 
 //FM

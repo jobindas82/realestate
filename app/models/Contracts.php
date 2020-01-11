@@ -191,4 +191,8 @@ class Contracts extends Model
             }
         }
     }
+
+    public static function activeContractsCount(){
+        return self::where('is_active', 1)->count();
+    }
 }

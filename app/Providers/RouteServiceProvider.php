@@ -46,6 +46,8 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapContractRoutes();
 
         $this->mapReportRoutes();
+
+        $this->mapExternalRoutes();
     }
 
     /**
@@ -110,5 +112,12 @@ class RouteServiceProvider extends ServiceProvider
         Route::middleware('web')
             ->namespace('App\Http\Controllers\Reports')
             ->group(base_path('routes/reports.php'));
+    }
+
+    protected function mapExternalRoutes()
+    {
+        Route::middleware('web')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/external.php'));
     }
 }

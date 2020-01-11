@@ -72,7 +72,7 @@ class DefaultSeeder extends Seeder
                     'level' => 1,
                     'root' => NULL,
                     'type' => 'E',
-                    'class' => NULL,
+                    'class' => 'EX_P',
                     'is_parent' => 'Y',
                     'is_generated' => 'Y',
                     'is_contract_item' => 'N',

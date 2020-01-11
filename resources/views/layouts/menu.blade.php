@@ -19,12 +19,12 @@
                 <span>Leasing & Contracts</span>
             </a>
         </li>
-        <li class="{{ Route::is('purchase.index') ? 'active' : '' }}">
+        <!-- <li class="{{ Route::is('purchase.index') ? 'active' : '' }}">
             <a href="/">
                 <i class="material-icons">history</i>
                 <span>Purchase</span>
             </a>
-        </li>
+        </li> -->
         <li class="{{ 
                             Route::is('finance.receipt.index') ||  
                             Route::is('finance.receipt.create') ||  

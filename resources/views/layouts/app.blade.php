@@ -51,6 +51,13 @@
     <!-- ajax select -->
     <link href="{{ asset('plugins/ajaxSelect/css/ajax-bootstrap-select.min.css') }}" rel="stylesheet" />
 
+    <!-- Full calandar -->
+    <link href="{{ asset('plugins/fullcalendar/core/main.css') }}" rel='stylesheet' />
+    <link href="{{ asset('plugins/fullcalendar/daygrid/main.css') }}" rel='stylesheet' />
+    <link href="{{ asset('plugins/fullcalendar/bootstrap/main.css') }}" rel='stylesheet' />
+    <link href="{{ asset('plugins/fullcalendar/list/main.css') }}" rel='stylesheet' />
+    <link href="{{ asset('plugins/fullcalendar/timegrid/main.css') }}" rel='stylesheet' />
+
     <!-- Jquery Core Js -->
     <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
 
@@ -120,6 +127,15 @@
 
     <!--  Ajax Select -->
     <script src="{{ asset('plugins/ajaxSelect/js/ajax-bootstrap-select.min.js') }}"></script>
+
+    <!-- full Calendar -->
+    <script src="{{ asset('plugins/fullcalendar/core/main.js') }}"></script>
+    <script src="{{ asset('plugins/fullcalendar/daygrid/main.js') }}"></script>
+    <script src="{{ asset('plugins/fullcalendar/bootstrap/main.js') }}"></script>
+    <script src="{{ asset('plugins/fullcalendar/google-calendar/main.js') }}"></script>
+    <script src="{{ asset('plugins/fullcalendar/interaction/main.js') }}"></script>
+    <script src="{{ asset('plugins/fullcalendar/list/main.js') }}"></script>
+    <script src="{{ asset('plugins/fullcalendar/timegrid/main.js') }}"></script>
 
     <script>
         function roundNumber(num, delimiter) {

@@ -324,13 +324,28 @@ class DefaultSeeder extends Seeder
         DB::table('countries')->insert(['code' => 'AE', 'name' => 'United Arab Emirates']);
 
         DB::table('tax_code')->insert(
-            ['code' => 'T5', 'percentage' => 5],
-            ['code' => 'T0', 'percentage' => 0]
+            [
+                ['code' => 'T5', 'percentage' => 5],
+                ['code' => 'T0', 'percentage' => 0]
+            ]
         );
 
         DB::table('construction_type')->insert(
-            ['name' => 'Commercial', 'tax_code' => 1],
-            ['name' => 'Residential', 'tax_code' => 2]
+            [
+                ['name' => 'Commercial', 'tax_code' => 1],
+                ['name' => 'Residential', 'tax_code' => 2]
+            ]
+        );
+
+        DB::table('users')->insert(
+
+            [
+                'name' => 'Jobin',
+                'email' => 'jobin@mailbluesky.com',
+                'password' => '$2y$10$9BMy0qX5wV1wLRyMnFHkKOzem8qDF3MyQ3AZUUvKseQ1BymjwIKb.',
+                'theme' => 'indigo'
+            ]
+
         );
     }
 }

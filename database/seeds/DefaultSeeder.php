@@ -323,6 +323,16 @@ class DefaultSeeder extends Seeder
 
         DB::table('countries')->insert(['code' => 'AE', 'name' => 'United Arab Emirates']);
 
+        DB::table('locations')->insert([
+            ['name' => 'Ajman', 'country_id' => 1],
+            ['name' => 'Sharjah', 'country_id' => 1],
+            ['name' => 'Ras Al-Khaimah', 'country_id' => 1],
+            ['name' => 'Umm Al Quawain', 'country_id' => 1],
+            ['name' => 'Abu Dhabi', 'country_id' => 1],
+            ['name' => 'Dubai', 'country_id' => 1],
+            ['name' => 'Fujairah', 'country_id' => 1]
+        ]);
+
         DB::table('tax_code')->insert(
             [
                 ['code' => 'T5', 'percentage' => 5],

@@ -244,13 +244,13 @@
         <!-- End -->
 
         <!-- Menu Item -->
-        <li class="header">System Info</li>
+        <!-- <li class="header">System Info</li>
         <li>
             <a href="configuration/changelog">
                 <i class="material-icons">update</i>
                 <span>Changelog</span>
             </a>
-        </li>
+        </li> -->
         <!-- End -->
 
     </ul>

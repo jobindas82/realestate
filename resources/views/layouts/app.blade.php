@@ -272,9 +272,9 @@ $themeName = Auth::user()->theme;
                 <div class="copyright">
                     &copy; <a href="https://bluesky.ae">{{ config('app.dev', 'Bluesky Technologies') }}</a>.
                 </div>
-                <div class="version">
-                    <b>Version: </b> {{ config('app.dev', '0.01alpha') }}
-                </div>
+                <!-- <div class="version">
+                    <b>Version: </b> {{ config('app.dev', '1.0') }}
+                </div> -->
             </div>
             <!-- #Footer -->
         </aside>

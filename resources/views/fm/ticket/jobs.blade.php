@@ -58,18 +58,16 @@
             if (result.value) {
                 $.ajax({
                     type: "POST",
-                    url: '/document/remove_with_ref',
-                    data: {
-                        _ref: document_id
-                    },
+                    url: '/fm/jobs/'+ action +'/' +ticket_id,
                     success: function(response) {
                         $('.page-loader-wrapper').fadeOut();
                         Swal.fire(
-                            'Deleted!',
-                            'Your file has been deleted.',
+                            'Updated!',
+                            'Job Updated!',
                             'success'
                         );
-                        reload_datatable('#document_list');
+                        reload_datatable('#jobs_list');
+                        reload_datatable('#ticket_list');
                     }
                 });
             }

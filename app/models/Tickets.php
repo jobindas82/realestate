@@ -3,7 +3,6 @@
 namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 
 class Tickets extends Model
@@ -29,14 +28,6 @@ class Tickets extends Model
         'date', 'tenant_id', 'contract_id', 'job_type', 'details', 'is_active', 'priority', 'remarks', 'amount', 'job_category'
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
-        static::saving(function ($model) {
-            $model->created_by =  Auth::user()->id;
-        });
-    }
-
     public function contract()
     {
         return $this->belongsTo(Contracts::class, 'contract_id');
@@ -56,6 +47,12 @@ class Tickets extends Model
     public function revertToTicket()
     {
         $this->job_type = 1;
+        $this->save();
+    }
+
+    public function markFinished()
+    {
+        $this->is_active = 0;
         $this->save();
     }
 

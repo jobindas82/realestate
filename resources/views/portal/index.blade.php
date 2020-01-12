@@ -1,8 +1,8 @@
-@extends('layouts.portal')
+@extends('layouts.portal.login')
 
 @section('content')
 <div class="body have-mask">
-    <form id="sign_in" method="POST" action="{{ route('login') }}">
+    <form id="sign_in" method="POST" action="{{ route('portal') }}">
         @csrf
         <div class="input-group">
             <span class="input-group-addon">
@@ -11,7 +11,9 @@
             <div class="form-line">
                 <input id="emirates_id" type="emirates_id" class="form-control emirates-id" name="emirates_id" required>
             </div>
-            <label id="emirates_id-error" class="error" for="emirates_id"></label>
+            @error('emirates_id')
+            <label id="emirates_id-error" class="error" for="emirates_id">{{ $message }}</label>
+            @enderror
         </div>
         <div class="input-group">
             <span class="input-group-addon">
@@ -20,7 +22,9 @@
             <div class="form-line">
                 <input id="mobile_no" type="mobile_no" class="mobile-phone-number form-control" name="mobile_no" required>
             </div>
-            <label id="mobile_no-error" class="error" for="mobile_no"></label>
+            @error('password')
+            <label id="mobile_no-error" class="error" for="mobile_no">{{ $message }}</label>
+            @enderror
         </div>
         <div class="row">
             <div class="col-xs-12 align-center">

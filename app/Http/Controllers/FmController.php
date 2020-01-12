@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Essentials\UriEncode;
 
 use \App\models\Tickets;
+use Illuminate\Support\Facades\Auth;
 
 class FmController extends Controller
 {
@@ -136,6 +137,7 @@ class FmController extends Controller
                 $model = Tickets::find($data['id']);
             }
             $model->fill($data);
+            $model->created_by =  Auth::user()->id;
             $model->save();
 
             return response()->json(['ticket_id' => $model->id, 'message' => 'success']);

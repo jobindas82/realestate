@@ -322,5 +322,15 @@ class DefaultSeeder extends Seeder
         ]);
 
         DB::table('countries')->insert(['code' => 'AE', 'name' => 'United Arab Emirates']);
+
+        DB::table('tax_code')->insert(
+            ['code' => 'T5', 'percentage' => 5],
+            ['code' => 'T0', 'percentage' => 0]
+        );
+
+        DB::table('construction_type')->insert(
+            ['name' => 'Commercial', 'tax_code' => 1],
+            ['name' => 'Residential', 'tax_code' => 2]
+        );
     }
 }

@@ -116,7 +116,13 @@
                             'SUCCESS',
                             'Ticket Saved!',
                             'success'
-                        );
+                        ).then(function() {
+                            // when click ok then redirect back
+                            @if(!$showJob)
+                                location.href = "/fm/tickets";
+                            @endif;
+                            return;
+                        });
 
                     } else {
                         $('.page-loader-wrapper').fadeOut();

@@ -35,12 +35,12 @@
                         <table class="table table-bordered table-striped table-hover dataTable" id="payment_list">
                             <thead>
                                 <tr>
-                                    <th style="width: 5%">#</th>
-                                    <th style="width: 10%">Date</th>
-                                    <th style="width: 15%">Cheque #</th>
-                                    <th style="width: 15%">Cheque Date</th>
-                                    <th style="width: 15%;">Amount</th>
-                                    <th style="width: 15%">Actions</th>
+                                    <th>#</th>
+                                    <th>Date</th>
+                                    <th>Cheque #</th>
+                                    <th>Cheque Date</th>
+                                    <th>Amount</th>
+                                    <th>Actions</th>
                                     <th>Posted</th>
                                     <th>Cancelled</th>
                                 </tr>

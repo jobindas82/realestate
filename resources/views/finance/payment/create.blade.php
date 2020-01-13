@@ -195,7 +195,9 @@
                             'SUCCESS',
                             'Payment Saved!',
                             'success'
-                        );
+                        ).then((response) => {
+                            location.href = "/finance/payment";
+                        });
 
                     } else {
                         $('.page-loader-wrapper').fadeOut();

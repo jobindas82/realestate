@@ -143,7 +143,9 @@
                                 'SUCCESS',
                                 'Journal Saved!',
                                 'success'
-                            );
+                            ).then((response) => {
+                                location.href = "/finance/journal";
+                            });
 
                         } else {
                             $('.page-loader-wrapper').fadeOut();

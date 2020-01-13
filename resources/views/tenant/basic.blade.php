@@ -116,7 +116,9 @@
                             'SUCCESS',
                             'Tenant Saved!',
                             'success'
-                        );
+                        ).then((response) => {
+                            location.href = "/tenant/index";
+                        });
 
                     } else {
                         $('.page-loader-wrapper').fadeOut();

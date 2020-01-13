@@ -7,16 +7,16 @@
             <table class="table table-condensed table-hover" id="contracts_list">
                 <thead>
                     <tr>
-                        <th style="width: 5%">Con. #</th>
-                        <th style="width: 25%">Tenant</th>
-                        <th style="width: 10%">Flat</th>
-                        <th style="width: 10%">From Date</th>
-                        <th style="width: 10%">To Date</th>
-                        <th style="width: 5%">Renewed</th>
-                        <th style="width: 10%">Prev. Con.</th>
-                        <th style="width: 10%">Tax</th>
-                        <th style="width: 15%">Gross Amt.</th>
-                        <th style="width: 0%">Status</th>
+                        <th>Con. #</th>
+                        <th>Tenant</th>
+                        <th>Flat</th>
+                        <th>From Date</th>
+                        <th>To Date</th>
+                        <th>Renewed</th>
+                        <th>Prev. Con.</th>
+                        <th>Tax</th>
+                        <th>Gross Amt.</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
             </table>

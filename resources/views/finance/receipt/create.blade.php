@@ -94,7 +94,7 @@
                             <div class="form-group form-float">
                                 <div class="form-line">
                                     @php
-                                        $debitLedger = $model->exists ? $model->entries()->where('amount', '>', 0)->first()->ledger_id : 0;
+                                    $debitLedger = $model->exists ? $model->entries()->where('amount', '>', 0)->first()->ledger_id : 0;
                                     @endphp
                                     {{ Form::select('cash_account_id', \App\models\Ledgers::childrenHaveClass(0,  \App\models\Ledgers::CASH_CHILD), $debitLedger, [ 'class' => 'form-control show-tick', 'data-live-search' => true]) }}
                                     <label class="form-label">Cash A/C</label>
@@ -157,12 +157,12 @@
                             </thead>
                             <tbody id="receipt-tbody">
                                 @php
-                                        $totalAmount = 0;
+                                $totalAmount = 0;
                                 @endphp
                                 @foreach( $model->exists ? $model->entries()->where('amount', '<', 0)->get() : [new \App\models\Entries()] as $i => $each )
                                     @php
-                                        $amount = number_format((float)abs($each->amount), 6, '.', '');
-                                        $totalAmount += $amount;
+                                    $amount = number_format((float)abs($each->amount), 6, '.', '');
+                                    $totalAmount += $amount;
                                     @endphp
                                     <tr>
                                         <th><label>{{ $i+1 }}</label></th>
@@ -214,7 +214,9 @@
                             'SUCCESS',
                             'Receipt Saved!',
                             'success'
-                        );
+                        ).then((response) => {
+                            location.href = "/finance/receipt";
+                        });
 
                     } else {
                         $('.page-loader-wrapper').fadeOut();

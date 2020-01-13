@@ -53,12 +53,12 @@
                                         <td colspan="3" class="align-center font-bold info" id="previous_head">Previous Year</td>
                                     </tr>
                                     <tr>
-                                        <th style="width: 30%;">Ledger</th>
-                                        <th style="width: 10%;">Debit</th>
-                                        <th style="width: 10%;">Credit</th>
-                                        <th style="width: 30%;">Ledger</th>
-                                        <th style="width: 10%;">Debit</th>
-                                        <th style="width: 10%;">Credit</th>
+                                        <th>Ledger</th>
+                                        <th>Debit</th>
+                                        <th>Credit</th>
+                                        <th>Ledger</th>
+                                        <th>Debit</th>
+                                        <th>Credit</th>
                                     </tr>
                                 </thead>
                                 <tfoot>

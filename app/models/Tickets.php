@@ -68,7 +68,7 @@ class Tickets extends Model
 
     public function whichCategory()
     {
-        return self::JOB_CATEGORIES[$this->job_category];
+        return $this->job_category > 0 ? self::JOB_CATEGORIES[$this->job_category] : NULL;
     }
 
     public function ticketStatus()

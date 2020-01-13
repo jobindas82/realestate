@@ -8,6 +8,7 @@ use App\Essentials\UriEncode;
 use App\models\Session;
 use App\models\Contracts;
 use App\models\Tickets;
+use App\models\Head;
 
 class PortalController extends Controller
 {
@@ -180,6 +181,69 @@ class PortalController extends Controller
 
         foreach ($result as $eachItem) {
             $eachItemData[] = [$eachItem->id, $eachItem->formated_date(), $eachItem->contract_id, nl2br($eachItem->details), $eachItem->ticketStatus()];
+        }
+        $data['data'] = $eachItemData;
+
+        return response()->json($data);
+    }
+
+    public function receipts()
+    {
+        return view('portal.receipts');
+    }
+
+    public function receipts_list()
+    {
+        $draw   = $_POST['draw'];
+        $offset = $_POST['start'];
+        $limit  = $_POST['length'];
+        $keyword = trim($_POST['search']['value']);
+
+        $columns = [
+            0 => 'finance.number',
+            1 => 'finance.date',
+            2 => 'finance.contract_id',
+            3 => 'finance.cheque_no',
+            4 => 'finance.cheque_date',
+            5 => 'finance.id',
+            6 => 'finance.cheque_status'
+        ];
+
+        $filterColumn = $columns[$_POST['order'][0]['column']];
+        $filterOrder  = $_POST['order'][0]['dir'];
+
+        $query = Head::query()
+            ->leftJoin('contracts', 'contracts.id', 'finance.contract_id')
+            ->where('finance.type', 1)
+            ->where('finance.is_posted', 1)
+            ->where('finance.tenant_id', request()->tenantModel->id)
+            ->where('contracts.is_active', 1);
+
+
+        if ($keyword != "") {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('finance.number', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('finance.contract_id', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('finance.cheque_no', 'LIKE', '%' . $keyword . '%');
+            });
+        }
+
+        $result = $query
+            ->select('finance.type', 'finance.method', 'finance.cheque_status', 'finance.number', 'finance.date', 'finance.contract_id', 'finance.cheque_no', 'finance.cheque_date', 'finance.id', 'finance.is_posted', 'finance.is_cancelled')
+            ->skip($offset)
+            ->take($limit)
+            ->orderBy($filterColumn, $filterOrder)
+            ->get();
+
+        $recordsTotal = $result->count();
+        $recordsFiltered = $recordsTotal;
+        $data['draw'] = $draw;
+        $data['recordsTotal'] = $recordsTotal;
+        $data['recordsFiltered'] = $recordsFiltered;
+        $eachItemData = array();
+
+        foreach ($result as $eachItem) {
+            $eachItemData[] = [$eachItem->number, $eachItem->formated_date(),  $eachItem->contract_id, $eachItem->cheque_no, $eachItem->formated_cheque_date(), $eachItem->debitSum(true), $eachItem->chequeStatus() ];
         }
         $data['data'] = $eachItemData;
 

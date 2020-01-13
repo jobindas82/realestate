@@ -6,17 +6,17 @@
             <table class="table table-condensed table-hover" id="flat_building_list">
                 <thead>
                     <tr>
-                        <th style="width: 5%">Flat</th>
-                        <th style="width: 10%">Premise #</th>
-                        <th style="width: 10%">Plot #</th>
-                        <th style="width: 5%">Floor</th>
-                        <th style="width: 5%">f<sup>2</sup></th>
-                        <th style="width: 5%">Min Value</th>
-                        <th style="width: 15%">Owner</th>
-                        <th style="width: 15%">Landlord</th>
-                        <th style="width: 10%">Type</th>
-                        <th style="width: 10%">Spacing</th>
-                        <th style="width: 0%">Status</th>
+                        <th>Flat</th>
+                        <th>Premise #</th>
+                        <th>Plot #</th>
+                        <th>Floor</th>
+                        <th>f<sup>2</sup></th>
+                        <th>Min Value</th>
+                        <th>Owner</th>
+                        <th>Landlord</th>
+                        <th>Type</th>
+                        <th>Spacing</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
             </table>

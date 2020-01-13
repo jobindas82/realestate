@@ -126,7 +126,9 @@
                                         'SUCCESS',
                                         'Contract Saved!',
                                         'success'
-                                    );
+                                    ).then((response)=>{
+                                        location.href="/contract/index";
+                                    });
 
                                 } else {
                                     $('.page-loader-wrapper').fadeOut();

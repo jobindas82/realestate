@@ -98,7 +98,9 @@
                                 'SUCCESS',
                                 'Ledger Saved!',
                                 'success'
-                            );
+                            ).then((response) => {
+                                location.href = "/ledger";
+                            });
 
                         } else {
                             $('.page-loader-wrapper').fadeOut();

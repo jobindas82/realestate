@@ -7,15 +7,15 @@
             <table class="table table-condensed table-hover" id="tickets_list">
                 <thead>
                     <tr>
-                        <th style="width: 1%">#</th>
-                        <th style="width: 5%">Date</th>
-                        <th style="width: 10%">Tenant</th>
-                        <th style="width: 8%">Contract #</th>
-                        <th style="width: 8%">Category</th>
-                        <th style="width: 10%">Priority</th>
-                        <th style="width: 25%">Details</th>
-                        <th style="width: 25%">Remarks</th>
-                        <th style="width: 8%">Status</th>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Tenant</th>
+                        <th>Contract #</th>
+                        <th>Category</th>
+                        <th>Priority</th>
+                        <th>Details</th>
+                        <th>Remarks</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
             </table>

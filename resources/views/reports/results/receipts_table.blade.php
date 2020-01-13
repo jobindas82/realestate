@@ -25,16 +25,16 @@
             <table class="table table-condensed table-hover" id="receipts_list">
                 <thead>
                     <tr>
-                        <th style="width: 5%;">#</th>
-                        <th style="width: 5%;">Date</th>
-                        <th style="width: 7%;">Contract #</th>
-                        <th style="width: 8%;">Method</th>
-                        <th style="width: 6%;">Cheque #</th>
-                        <th style="width: 8%;">Cheque Date</th>
-                        <th style="width: 15%;">Tenant</th>
-                        <th style="width: 17%;">Narration</th>
-                        <th style="width: 12%;">Amount</th>
-                        <th style="width: 8%;">Status</th>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Contract #</th>
+                        <th>Method</th>
+                        <th>Cheque #</th>
+                        <th>Cheque Date</th>
+                        <th>Tenant</th>
+                        <th>Narration</th>
+                        <th>Amount</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
             </table>

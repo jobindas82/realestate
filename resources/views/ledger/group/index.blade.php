@@ -35,10 +35,10 @@
                         <table class="table table-bordered table-striped table-hover dataTable" id="ledger_group_list">
                             <thead>
                                 <tr>
-                                    <th style="width: 2%">#</th>
-                                    <th style="width: 20%">Name</th>
-                                    <th style="width: 45%">Group</th>
-                                    <th style="width: 25%">Actions</th>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Group</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                         </table>

@@ -70,7 +70,9 @@
                             'SUCCESS',
                             'Job Saved!',
                             'success'
-                        );
+                        ).then((response) => {
+                            location.href = "/fm/tickets";
+                        });
 
                     } else {
                         $('.page-loader-wrapper').fadeOut();

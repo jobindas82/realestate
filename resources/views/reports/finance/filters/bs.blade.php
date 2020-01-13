@@ -44,8 +44,8 @@
                                         <td colspan="2" class="align-center font-bold success">Total Assets</td>
                                     </tr>
                                     <tr>
-                                        <th style="width: 60%;">Ledger</th>
-                                        <th style="width: 40%;">Amount</th>
+                                        <th>Ledger</th>
+                                        <th>Amount</th>
                                     </tr>
                                 </thead>
                                 <tfoot>

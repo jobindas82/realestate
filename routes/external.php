@@ -8,4 +8,5 @@ Route::get('/portal/tickets', ['as' => 'portal.tickets', 'uses' => 'PortalContro
 Route::post('/portal/tickets/list', 'PortalController@ticket_list')->middleware('portal');
 Route::get('portal/create/ticket/{key}', ['as' => 'portal.create.ticket', 'uses' => 'PortalController@create_ticket'])->middleware('portal');
 Route::post('/portal/ticket/save', 'PortalController@save_ticket')->middleware('portal');
-
+Route::get('/portal/receipts', ['as' => 'portal.receipts', 'uses' => 'PortalController@receipts'])->middleware('portal');
+Route::post('/portal/receipts', 'PortalController@receipts_list')->middleware('portal');

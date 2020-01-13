@@ -7,21 +7,21 @@
             <div class="card">
                 <div class="header">
                     <h2>
-                        Leasing & Contracts
+                        Receipts
                     </h2>
                 </div>
                 <div class="body">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover dataTable" id="contract_list">
+                        <table class="table table-bordered table-striped table-hover dataTable" id="receipt_list">
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Building</th>
-                                    <th>Flat</th>
-                                    <th>From</th>
-                                    <th>To</th>
-                                    <th>Gross Amt.</th>
-                                    <th>Actions</th>
+                                    <th>Date</th>
+                                    <th>Contract #</th>
+                                    <th>Cheque #</th>
+                                    <th>Cheque Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                         </table>
@@ -33,26 +33,22 @@
     <!-- #END# Basic Examples -->
 </div>
 
-
 <script>
     $(function() {
-        $('#contract_list').on("preXhr.dt", function(e, settings, data) {
-            return data;
-        }).DataTable({
+        $('#receipt_list').DataTable({
             responsive: true,
             pageLength: 50,
             ajax: {
-                url: "/portal/list",
+                url: "/portal/receipts",
                 type: "POST",
                 cache: false,
             },
             serverSide: true,
             fixedColumns: true,
             processing: true,
-            paging: false,
-            ordering: false,
-            info: false,
-            bFilter: false
+            order: [
+                [1, "desc"]
+            ]
         });
     });
 </script>

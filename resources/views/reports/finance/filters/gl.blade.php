@@ -58,15 +58,15 @@
                             <table class="table table-condensed table-hover" id="general_ledger_details">
                                 <thead>
                                     <tr>
-                                        <th style="width: 5%;">Date</th>
-                                        <th style="width: 5%;">Type</th>
-                                        <th style="width: 5%;">Number</th>
-                                        <th style="width: 6%;">Cheque #</th>
-                                        <th style="width: 6%;">Cheque Date</th>
-                                        <th style="width: 30%;">Narration</th>
-                                        <th style="width: 10%;">Dr.</th>
-                                        <th style="width: 10%;">Cr.</th>
-                                        <th style="width: 15%;">Running Balance</th>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Number</th>
+                                        <th>Cheque #</th>
+                                        <th>Cheque Date</th>
+                                        <th>Narration</th>
+                                        <th>Dr.</th>
+                                        <th>Cr.</th>
+                                        <th>Running Balance</th>
                                     </tr>
                                 </thead>
                                 <tfoot>

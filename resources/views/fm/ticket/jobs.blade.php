@@ -1,14 +1,14 @@
 <table class="table table-condensed table-hover" id="jobs_list">
     <thead>
         <tr>
-            <th style="width: 1%">#</th>
-            <th style="width: 5%">Date</th>
-            <th style="width: 15%">Tenant</th>
-            <th style="width: 10%">Contract #</th>
-            <th style="width: 30%">Details</th>
-            <th style="width: 30%">Remarks</th>
-            <th style="width: 1%">Status</th>
-            <th style="width: 10%">Actions</th>
+            <th>#</th>
+            <th>Date</th>
+            <th>Tenant</th>
+            <th>Contract #</th>
+            <th>Details</th>
+            <th>Remarks</th>
+            <th>Status</th>
+            <th>Actions</th>
         </tr>
     </thead>
 </table>

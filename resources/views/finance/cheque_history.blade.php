@@ -1,15 +1,15 @@
 <table class="table table-condensed table-hover" id="returned_cheque_list">
     <thead>
         <tr>
-            <th style="width: 5%">Type</th>
-            <th style="width: 2%">Number</th>
-            <th style="width: 10%">Date</th>
-            <th style="width: 10%">Cheque Date</th>
-            <th style="width: 15%">Cheque No.</th>
-            <th style="width: 20%">Bank</th>
-            <th style="width: 25%">Narration</th>
-            <th class="align-right" style="width: 10%">Amount</th>
-            <th style="width: 15%">Actions</th>
+            <th>Type</th>
+            <th>Number</th>
+            <th>Date</th>
+            <th>Cheque Date</th>
+            <th>Cheque No.</th>
+            <th>Bank</th>
+            <th>Narration</th>
+            <th>Amount</th>
+            <th>Actions</th>
         </tr>
     </thead>
 </table>

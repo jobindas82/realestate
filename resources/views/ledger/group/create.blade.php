@@ -81,15 +81,17 @@
                     data: $(this).serialize(),
                     success: function(response) {
                         if (response.message == 'success') {
-                            
+
                             $('#group_id').val(response.group_id);
-                            
+
                             $('.page-loader-wrapper').fadeOut();
                             Swal.fire(
                                 'SUCCESS',
                                 'Group Saved!',
                                 'success'
-                            );
+                            ).then((response) => {
+                                location.href = "/ledger/groups";
+                            });
 
                         } else {
                             $('.page-loader-wrapper').fadeOut();

@@ -71,11 +71,11 @@
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
             plugins: ['bootstrap', 'interaction', 'dayGrid', 'timeGrid', 'list'],
-            header: {
-                left: 'prevYear,prev,next,nextYear today',
-                center: 'title',
-                right: 'dayGridMonth,dayGridWeek,dayGridDay'
-            },
+            // header: {
+            //     left: 'prevYear,prev,next,nextYear today',
+            //     center: 'title',
+            //     right: 'dayGridMonth,dayGridWeek,dayGridDay'
+            // },
             navLinks: true,
             editable: true,
             eventLimit: true,

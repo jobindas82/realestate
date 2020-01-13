@@ -78,6 +78,7 @@
     <script src="{{ asset('plugins/jquery-datatable/extensions/export/vfs_fonts.js') }}"></script>
     <script src="{{ asset('plugins/jquery-datatable/extensions/export/buttons.html5.min.js') }}"></script>
     <script src="{{ asset('plugins/jquery-datatable/extensions/export/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('plugins/jquery-datatable/dataTables.responsive.js') }}"></script>
 
     <!-- Jquery CountTo Plugin Js -->
     <script src="{{ asset('plugins/jquery-countto/jquery.countTo.js') }}"></script>

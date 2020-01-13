@@ -40,11 +40,11 @@
                     </ul>
                 </li>
                 <!-- #END# Notifications -->
-                <!-- Tasks -->
+                <!-- Contracts -->
                 <li class="dropdown">
                     <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button">
                         <i class="material-icons">report_problem</i>
-                        <span class="label-count">9</span>
+                        <span class="label-count">{{ \App\models\ContractNotification::count() }}</span>
                     </a>
                     <ul class="dropdown-menu">
                         <li class="header">Contracts Expiring Soon</li>
@@ -72,7 +72,40 @@
                         </li> -->
                     </ul>
                 </li>
-                <!-- #END# Tasks -->
+                <!-- #END# Contracts -->
+                <!-- Tickets -->
+                <li class="dropdown">
+                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                        <i class="material-icons">sms_failed</i>
+                        <span class="label-count">{{ \App\models\Tickets::activeTicketsCount() }}</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="header">New Tickets</li>
+                        <li class="body">
+                            <ul class="menu tasks">
+                                @foreach( \App\models\Tickets::activeTickets() as $each )
+                                <li>
+                                    <a href="#" onclick="window.open('/fm/ticket/create/{{ $each->encoded_key() }}', '_blank')">
+                                        <div class="icon-circle bg-red">
+                                            <i class="material-icons">subject</i>
+                                        </div>
+                                        <div class="menu-info">
+                                            <small>{{ $each->contract_id }} : {{ mb_strimwidth($each->details, 0, 25, "...") }}</small>
+                                            <p>
+                                                <i class="material-icons">access_time</i> {{ date('d/m/Y h:i A', strtotime($each->created_at)) }}
+                                            </p>
+                                        </div>
+                                    </a>
+                                </li>
+                                @endforeach
+                            </ul>
+                        </li>
+                        <!-- <li class="footer">
+                            <a href="javascript:void(0);">View All Tasks</a>
+                        </li> -->
+                    </ul>
+                </li>
+                <!-- #END# Tickets -->
                 <li class="pull-right"><a href="javascript:void(0);" class="js-right-sidebar" data-close="true"><i class="material-icons">more_vert</i></a></li>
             </ul>
         </div>

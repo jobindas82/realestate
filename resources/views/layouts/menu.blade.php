@@ -37,7 +37,7 @@
                         }}">
             <a href="javascript:void(0);" class="menu-toggle">
                 <i class="material-icons">euro_symbol</i>
-                <span>Financial & Banking</span>
+                <span>Finance</span>
             </a>
             <ul class="ml-menu">
                 <li class="{{ Route::is('finance.receipt.index') ||  Route::is('finance.receipt.create') ? 'active' : '' }}">

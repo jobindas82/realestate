@@ -4,6 +4,7 @@ namespace App\models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use App\Essentials\UriEncode;
 
 class Tickets extends Model
 {
@@ -36,6 +37,11 @@ class Tickets extends Model
     public function tenant()
     {
         return $this->belongsTo(Tenants::class, 'tenant_id');
+    }
+
+    public function encoded_key()
+    {
+        return $this->exists ? UriEncode::encrypt((int) $this->id) : '';
     }
 
     public function convertToJob()
@@ -81,6 +87,11 @@ class Tickets extends Model
         Carbon::setWeekStartsAt(Carbon::SUNDAY);
         Carbon::setWeekEndsAt(Carbon::SATURDAY);
         return self::whereBetween('date', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
+    }
+
+    public static function activeTickets()
+    {
+        return self::where('is_active', 1)->where('job_type', 1)->orderBy('id', 'DESC')->get();
     }
 
     public static function activeTicketsCount()

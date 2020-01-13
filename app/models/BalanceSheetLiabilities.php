@@ -15,13 +15,13 @@ class BalanceSheetLiabilities extends Model
     {
         $year = Carbon::createFromFormat('Y-m-d', $toDate)->year;
         $fromDate = $year . '-01-01';
-        $currentProfit = \App\Models\Entries::leftJoin('ledgers', 'entries.ledger_id', 'ledgers.id')
+        $currentProfit = Entries::leftJoin('ledgers', 'entries.ledger_id', 'ledgers.id')
             ->where('entries.is_posted', 1)
             ->whereIn('ledgers.type', ["I", "E"])
             ->whereBetween('entries.date', [$fromDate, $toDate])
             ->sum('entries.amount');
 
-        $retainedEarnings = \App\Models\Entries::leftJoin('ledgers', 'entries.ledger_id', 'ledgers.id')
+        $retainedEarnings = Entries::leftJoin('ledgers', 'entries.ledger_id', 'ledgers.id')
             ->where('entries.is_posted', 1)
             ->whereIn('ledgers.type', ["I", "E"])
             ->where('entries.date', '<', $fromDate)

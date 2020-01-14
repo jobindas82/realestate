@@ -405,6 +405,7 @@ class BuildingController extends \App\Http\Controllers\Controller
 
         $query = Entries::query()
             ->leftJoin('ledgers', 'ledgers.id', 'entries.ledger_id')
+            ->where('entries.date', '<=', date('Y-m-d'))
             ->where('entries.building_id', $building_id);
 
         if ($flat_id > 0)
@@ -977,6 +978,7 @@ class BuildingController extends \App\Http\Controllers\Controller
     {
         $query = Entries::query()
             ->leftJoin('ledgers', 'ledgers.id', 'entries.ledger_id')
+            ->where('entries.date', '<=', date('Y-m-d'))
             ->where('entries.building_id', $building_id);
 
         if ($flat_id > 0)

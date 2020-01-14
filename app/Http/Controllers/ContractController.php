@@ -112,6 +112,7 @@ class ContractController extends Controller
             });
         }
 
+        $count = $query->count();
         $result = $query
             ->select('contracts.id', 'contracts.is_active', 'tenants.name AS tenant_name', 'buildings.name AS building_name', 'flats.name AS flat_name', 'contracts.from_date', 'contracts.to_date')
             ->skip($offset)
@@ -119,7 +120,7 @@ class ContractController extends Controller
             ->orderBy($filterColumn, $filterOrder)
             ->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;

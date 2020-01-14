@@ -55,9 +55,10 @@ class MasterController extends Controller
         }
 
         //Result
+        $count = $query->count();
         $result = $query->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
@@ -143,9 +144,10 @@ class MasterController extends Controller
         }
 
         //Result
+        $count = $query->count();
         $result = $query->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
@@ -231,9 +233,10 @@ class MasterController extends Controller
         }
 
         //Result
+        $count = $query->count();
         $result = $query->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
@@ -319,9 +322,10 @@ class MasterController extends Controller
         }
 
         //Result
+        $count = $query->count();
         $result = $query->select('locations.name AS location', 'countries.name AS country', 'locations.id AS id')->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
@@ -405,9 +409,10 @@ class MasterController extends Controller
         }
 
         //Result
+        $count = $query->count();
         $result = $query->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
@@ -494,9 +499,10 @@ class MasterController extends Controller
         }
 
         //Result
+        $count = $query->count();
         $result = $query->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;

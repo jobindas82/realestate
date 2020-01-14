@@ -165,6 +165,7 @@ class PortalController extends Controller
             });
         }
 
+        $count = $query->count();
         $result = $query
             ->select('ticket.id', 'ticket.date', 'ticket.contract_id', 'ticket.details', 'ticket.is_active')
             ->skip($offset)
@@ -172,7 +173,7 @@ class PortalController extends Controller
             ->orderBy($filterColumn, $filterOrder)
             ->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
@@ -228,6 +229,7 @@ class PortalController extends Controller
             });
         }
 
+        $count = $query->count();
         $result = $query
             ->select('finance.type', 'finance.method', 'finance.cheque_status', 'finance.number', 'finance.date', 'finance.contract_id', 'finance.cheque_no', 'finance.cheque_date', 'finance.id', 'finance.is_posted', 'finance.is_cancelled')
             ->skip($offset)
@@ -235,7 +237,7 @@ class PortalController extends Controller
             ->orderBy($filterColumn, $filterOrder)
             ->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;

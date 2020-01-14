@@ -45,6 +45,7 @@ class FinanceController extends \App\Http\Controllers\Controller
             $query->where('ledgers.contract_id', $contract_id);
         }
 
+        $count = $query->count();
         $result = $query
             ->select('entries.date', 'entries.head_id', 'entries.amount')
             ->skip($offset)
@@ -52,7 +53,7 @@ class FinanceController extends \App\Http\Controllers\Controller
             ->orderBy('entries.date', 'ASC')
             ->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
@@ -718,6 +719,7 @@ class FinanceController extends \App\Http\Controllers\Controller
             });
         }
 
+        $count = $query->count();
         $result = $query
             ->select('entries.date', 'entries.head_id', 'entries.amount', 'entries.ledger_id')
             ->skip($offset)
@@ -725,7 +727,7 @@ class FinanceController extends \App\Http\Controllers\Controller
             ->orderBy('entries.date', 'ASC')
             ->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
@@ -904,6 +906,7 @@ class FinanceController extends \App\Http\Controllers\Controller
             });
         }
 
+        $count = $query->count();
         $result = $query
             ->select('finance.id', 'finance.number', 'finance.cheque_no', 'finance.cheque_date', 'finance.tenant_id', 'finance.narration', 'finance.cheque_status', 'finance.method', 'finance.contract_id')
             ->skip($offset)
@@ -911,7 +914,7 @@ class FinanceController extends \App\Http\Controllers\Controller
             ->orderBy($filterColumn, $filterOrder)
             ->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;

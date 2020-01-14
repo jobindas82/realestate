@@ -76,6 +76,7 @@ class FmController extends Controller
             });
         }
 
+        $count = $query->count();
         $result = $query
             ->select('ticket.id', 'ticket.date', 'tenants.name', 'ticket.contract_id', 'ticket.details', 'ticket.job_type', 'ticket.is_active', 'ticket.remarks')
             ->skip($offset)
@@ -83,7 +84,7 @@ class FmController extends Controller
             ->orderBy($filterColumn, $filterOrder)
             ->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;

@@ -66,9 +66,10 @@ class TenantController extends Controller
                 ->orWhere('passport_number', 'LIKE', '%' . $keyword . '%');
         }
 
+        $count = $query->count();
         $result = $query->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->get();
-
-        $recordsTotal = $result->count();
+        
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;

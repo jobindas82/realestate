@@ -68,6 +68,7 @@ class BuildingController extends \App\Http\Controllers\Controller
             });
         }
 
+        $count = $query->count();
         $result = $query
             ->select('flats.name as flat_name', 'flats.premise_id', 'flats.plot_no', 'flats.floor', 'flats.minimum_value', 'flats.square_feet', 'flats.owner_name', 'flats.landlord_name', 'construction_type.name as construction_type', 'flat_types.name as flat_types', 'flats.is_available')
             ->skip($offset)
@@ -75,7 +76,7 @@ class BuildingController extends \App\Http\Controllers\Controller
             ->orderBy($filterColumn, $filterOrder)
             ->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
@@ -149,6 +150,7 @@ class BuildingController extends \App\Http\Controllers\Controller
             });
         }
 
+        $count = $query->count();
         $result = $query
             ->select('contracts.id', 'contracts.is_active', 'tenants.name AS tenant_name', 'flats.name AS flat_name', 'contracts.from_date', 'contracts.to_date', 'contracts.is_renewed', 'contracts.previous_contract')
             ->skip($offset)
@@ -156,7 +158,7 @@ class BuildingController extends \App\Http\Controllers\Controller
             ->orderBy($filterColumn, $filterOrder)
             ->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
@@ -231,9 +233,10 @@ class BuildingController extends \App\Http\Controllers\Controller
             });
         }
 
+        $count = $query->count();
         $result = $query->select('contracts.tenant_id', DB::raw('GROUP_CONCAT(contracts.id) as contracts_id'))->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->groupBy('contracts.tenant_id')->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
@@ -297,6 +300,7 @@ class BuildingController extends \App\Http\Controllers\Controller
             });
         }
 
+        $count = $query->count();
         $result = $query
             ->select('finance.type', 'finance.cheque_status', 'finance.number', 'finance.date', 'finance.contract_id', 'finance.cheque_no', 'finance.cheque_date', 'tenants.name', 'finance.id', 'finance.is_posted', 'finance.is_cancelled', 'finance.method', 'finance.narration')
             ->skip($offset)
@@ -304,7 +308,7 @@ class BuildingController extends \App\Http\Controllers\Controller
             ->orderBy($filterColumn, $filterOrder)
             ->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
@@ -365,6 +369,7 @@ class BuildingController extends \App\Http\Controllers\Controller
             });
         }
 
+        $count = $query->count();
         $result = $query
             ->select('ticket.id', 'ticket.date', 'tenants.name', 'ticket.contract_id', 'ticket.details', 'ticket.job_type', 'ticket.is_active', 'ticket.remarks', 'ticket.job_category', 'ticket.priority')
             ->skip($offset)
@@ -372,7 +377,7 @@ class BuildingController extends \App\Http\Controllers\Controller
             ->orderBy($filterColumn, $filterOrder)
             ->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
@@ -414,6 +419,7 @@ class BuildingController extends \App\Http\Controllers\Controller
             });
         }
 
+        $count = $query->count();
         $result = $query
             ->select('ledgers.name', 'ledgers.type', DB::raw('SUM(entries.amount) as amount'), 'ledgers.id')
             ->skip($offset)
@@ -421,7 +427,7 @@ class BuildingController extends \App\Http\Controllers\Controller
             ->groupBy('ledgers.id')
             ->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;

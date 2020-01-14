@@ -195,9 +195,10 @@ class UserController extends Controller
         }
 
         //Result
+        $count = $query->count();
         $result = $query->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;

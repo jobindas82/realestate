@@ -216,9 +216,10 @@ class BuildingController extends Controller
         }
 
         //Result
+        $count = $query->count();
         $result = $query->select('flats.id AS id', 'buildings.name AS building_name', 'flats.name AS flat_name', 'flats.square_feet', 'construction_type.name AS construction_name', 'flat_types.name AS flat_type_name', 'flats.is_available')->skip($offset)->take($limit)->orderBy($filterColumn, $filterOrder)->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;

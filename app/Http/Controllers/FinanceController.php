@@ -68,6 +68,7 @@ class FinanceController extends Controller
             });
         }
 
+        $count = $query->count();
         $result = $query
             ->select('finance.type', 'finance.cheque_status', 'finance.number', 'finance.date', 'finance.contract_id', 'finance.cheque_no', 'finance.cheque_date', 'tenants.name', 'finance.id', 'finance.is_posted', 'finance.is_cancelled')
             ->skip($offset)
@@ -75,7 +76,7 @@ class FinanceController extends Controller
             ->orderBy($filterColumn, $filterOrder)
             ->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;
@@ -401,13 +402,14 @@ class FinanceController extends Controller
             });
         }
 
+        $count = $query->count();
         $result = $query
             ->skip($offset)
             ->take($limit)
             ->orderBy($filterColumn, $filterOrder)
             ->get();
 
-        $recordsTotal = $result->count();
+        $recordsTotal = $count;
         $recordsFiltered = $recordsTotal;
         $data['draw'] = $draw;
         $data['recordsTotal'] = $recordsTotal;

@@ -15,7 +15,7 @@ class AddModifyExpandableLedgers extends Migration
     {
         Schema::table('ledgers', function (Blueprint $table) {
             $table->dropColumn('is_expandable');
-            $table->enum('is_contract_item', ['Y', 'N'])->after('is_generated')->default('N');
+            $table->enum('is_contract_item', ['Y', 'N'])->after('is_generated')->default('N')->index();
         });
     }
 

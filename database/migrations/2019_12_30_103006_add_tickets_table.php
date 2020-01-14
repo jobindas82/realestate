@@ -15,12 +15,12 @@ class AddTicketsTable extends Migration
     {
         Schema::create('ticket', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->date('date');
-            $table->integer('tenant_id');
-            $table->integer('contract_id');
-            $table->integer('job_type')->default(1);
+            $table->date('date')->index();
+            $table->integer('tenant_id')->index();
+            $table->integer('contract_id')->index();
+            $table->integer('job_type')->default(1)->index();
             $table->text('details');
-            $table->integer('is_active')->default(1);
+            $table->integer('is_active')->default(1)->index();
             $table->integer('priority');
             $table->text('remarks')->nullable();
             $table->decimal('amount', 20, 6)->nullable();

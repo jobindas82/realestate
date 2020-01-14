@@ -16,13 +16,13 @@ class AddTenantsTable extends Migration
         Schema::create('tenants', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name', 255);
-            $table->string('emirates_id')->nullable();
+            $table->string('emirates_id')->unique();
             $table->string('land_phone', 255)->nullable();
-            $table->string('mobile', 255)->nullable();
+            $table->string('mobile', 255)->unique();
             $table->string('email', 255)->nullable();
             $table->string('passport_number')->nullable();
             $table->string('trn_number')->nullable();
-            $table->integer('is_available')->default(1);
+            $table->integer('is_available')->default(1)->index();
             $table->integer('created_by')->default(0);
             $table->timestamps();
         });

@@ -14,11 +14,11 @@ class AddingTbLedgerFields extends Migration
     public function up()
     {
         Schema::table('entries', function (Blueprint $table) {
-            $table->integer('lv5')->after('visible')->nullable();
-            $table->integer('lv4')->after('visible')->nullable();
-            $table->integer('lv3')->after('visible')->nullable();
-            $table->integer('lv2')->after('visible')->nullable();
-            $table->integer('lv1')->after('visible')->nullable();
+            $table->integer('lv5')->after('visible')->nullable()->index();
+            $table->integer('lv4')->after('visible')->nullable()->index();
+            $table->integer('lv3')->after('visible')->nullable()->index();
+            $table->integer('lv2')->after('visible')->nullable()->index();
+            $table->integer('lv1')->after('visible')->nullable()->index();
         });
     }
 

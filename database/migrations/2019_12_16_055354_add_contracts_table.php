@@ -15,14 +15,14 @@ class AddContractsTable extends Migration
     {
         Schema::create('contracts', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('tenant_id');
-            $table->integer('building_id');
-            $table->integer('flat_id');
+            $table->integer('tenant_id')->index();
+            $table->integer('building_id')->index();
+            $table->integer('flat_id')->index();
             $table->date('generated_date');
             $table->date('from_date');
             $table->date('to_date');
             $table->integer('util_payment');
-            $table->integer('is_active')->default(1);
+            $table->integer('is_active')->default(1)->index();
             $table->integer('is_renewed')->nullable();
             $table->integer('previous_contract')->nullable();
             $table->integer('created_by')->default(0);

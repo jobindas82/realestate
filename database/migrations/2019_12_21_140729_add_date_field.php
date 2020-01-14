@@ -14,7 +14,7 @@ class AddDateField extends Migration
     public function up()
     {
         Schema::table('entries', function (Blueprint $table) {
-            $table->date('date')->after('head_id');
+            $table->date('date')->after('head_id')->index();
             $table->integer('visible')->after('code')->nullable()->default(1);
         });
     }

@@ -23,9 +23,9 @@ class AddBuildingsTable extends Migration
             $table->double('depreciation_percentage')->nullable();
             $table->integer('floor_count')->nullable();
             $table->text('address')->nullable();
-            $table->integer('country_id')->nullable();
-            $table->integer('location_id')->nullable();
-            $table->integer('is_available');
+            $table->integer('country_id')->nullable()->index();
+            $table->integer('location_id')->nullable()->index();
+            $table->integer('is_available')->index();
             $table->integer('created_by')->default(0);
             $table->timestamps();
         });

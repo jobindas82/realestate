@@ -15,18 +15,18 @@ class AddFinanceTable extends Migration
     {
         Schema::create('finance', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->date('date');
-            $table->integer('type');
+            $table->date('date')->index();
+            $table->integer('type')->index();
             $table->bigInteger('number');
-            $table->integer('method')->nullable();
-            $table->integer('contract_id')->nullable();
-            $table->integer('building_id')->nullable();
-            $table->integer('flat_id')->nullable();
-            $table->integer('tenant_id')->nullable();
-            $table->date('cheque_date')->nullable();
+            $table->integer('method')->nullable()->index();
+            $table->integer('contract_id')->nullable()->index();
+            $table->integer('building_id')->nullable()->index();
+            $table->integer('flat_id')->nullable()->index();
+            $table->integer('tenant_id')->nullable()->index();
+            $table->date('cheque_date')->nullable()->index();
             $table->string('cheque_no')->nullable();
-            $table->integer('cheque_status')->nullable()->default(0); // 1 => cleared 2 => returned
-            $table->integer('is_posted')->nullable()->default(1); //Posted;
+            $table->integer('cheque_status')->nullable()->default(0)->index(); // 1 => cleared 2 => returned
+            $table->integer('is_posted')->nullable()->default(1)->index(); //Posted;
             $table->integer('is_cancelled')->nullable()->default(0); //Not Cancelled;
             $table->integer('is_audited')->nullable()->default(0); //Not Audited;
             $table->integer('created_by')->default(0);

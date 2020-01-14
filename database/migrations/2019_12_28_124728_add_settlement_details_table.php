@@ -15,7 +15,7 @@ class AddSettlementDetailsTable extends Migration
     {
         Schema::create('contract_settlement', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('contract_id');
+            $table->integer('contract_id')->index();
             $table->text('remarks')->nullable();
             $table->decimal('amount', 15, 2)->nullable();
             $table->integer('created_by')->default(0);

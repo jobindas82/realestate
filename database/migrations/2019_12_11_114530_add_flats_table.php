@@ -16,13 +16,13 @@ class AddFlatsTable extends Migration
         Schema::create('flats', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name', 255);
-            $table->integer('building_id');
+            $table->integer('building_id')->index();
             $table->integer('floor')->nullable();
             $table->string('premise_id', 255)->nullable();
             $table->string('square_feet', 255)->nullable();
             $table->double('minimum_value')->nullable();
-            $table->integer('construction_type_id')->nullable();
-            $table->integer('flat_type_id')->nullable();
+            $table->integer('construction_type_id')->nullable()->index();
+            $table->integer('flat_type_id')->nullable()->index();
             $table->string('plot_no', 255)->nullable();
             $table->string('owner_name', 255)->nullable();
             $table->string('landlord_name', 255)->nullable();

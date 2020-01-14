@@ -15,12 +15,11 @@ class AddConstructionType extends Migration
     {
         Schema::create('construction_type', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name', 255);
-            $table->integer('tax_code')->default(0);
+            $table->string('name', 255)->unique();
+            $table->integer('tax_code')->default(0)->index();
             $table->enum('is_active', ['Y', 'N'])->default('Y');
             $table->integer('created_by')->default(0);
             $table->timestamps();
-            $table->unique('name');
         });
     }
 

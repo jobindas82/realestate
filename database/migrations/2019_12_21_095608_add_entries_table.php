@@ -15,10 +15,10 @@ class AddEntriesTable extends Migration
     {
         Schema::create('entries', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('head_id');
-            $table->integer('ledger_id');
+            $table->integer('head_id')->index();
+            $table->integer('ledger_id')->index();
             $table->decimal('amount', 20, 6);
-            $table->string('code')->nullable();
+            $table->string('code')->nullable()->index();
         });
     }
 

@@ -15,13 +15,11 @@ class AddTaxcodeTable extends Migration
     {
         Schema::create('tax_code', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('code', 255);
-            $table->decimal('percentage', 5, 2);
+            $table->string('code', 255)->unique();
+            $table->decimal('percentage', 5, 2)->unique();
             $table->enum('is_active', ['Y', 'N'])->default('Y');
             $table->integer('created_by')->default(0);
             $table->timestamps();
-            $table->unique('code');
-            $table->unique('percentage');
         });
     }
 

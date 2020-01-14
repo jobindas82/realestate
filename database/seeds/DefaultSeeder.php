@@ -340,6 +340,13 @@ class DefaultSeeder extends Seeder
             ]
         );
 
+        DB::table('flat_types')->insert(
+            [
+                ['name' => '1 BHK'],
+                ['name' => '2 BHK']
+            ]
+        );
+
         DB::table('construction_type')->insert(
             [
                 ['name' => 'Commercial', 'tax_code' => 1],

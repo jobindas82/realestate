@@ -14,7 +14,7 @@ class AddIsPostedInEntries extends Migration
     public function up()
     {
         Schema::table('entries', function (Blueprint $table) {
-            $table->integer('is_posted')->after('visible')->default(1)->nullable();
+            $table->integer('is_posted')->after('visible')->default(1)->nullable()->index();
         });
     }
 

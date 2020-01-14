@@ -15,10 +15,10 @@ class AddContractsItemsTable extends Migration
     {
         Schema::create('contract_items', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('contract_id');
-            $table->integer('ledger_id');
+            $table->integer('contract_id')->index();
+            $table->integer('ledger_id')->index();
             $table->decimal('amount', 15, 6);
-            $table->integer('tax_id');
+            $table->integer('tax_id')->index();
             $table->double('tax_percentage');
             $table->decimal('tax_amount', 15, 6);
             $table->decimal('net_amount', 15, 6);
